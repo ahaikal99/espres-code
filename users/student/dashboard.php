@@ -1,3 +1,24 @@
+<?php
+include 'connection.php';
+
+session_start();
+
+    if(isset($_SESSION["userid"])){
+        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='student'){
+            header("location: ../login.php");
+        }else{
+            $userid=$_SESSION["userid"];
+        }
+
+    }else{
+        header("location: ../login.php");
+    }
+
+    $sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid'");
+    $sql_stmnt->execute();
+    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,11 +29,11 @@
     <!-- bootstrap -->
     <link rel="stylesheet" href="\espres-code/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <!-- fontawesome icon -->
-    <link rel="stylesheet" href="\espres-code\public\assets/fonts/fontawesome/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="\espres-code/public\assets/fonts/fontawesome/css/fontawesome-all.min.css">
     <!-- animation css -->
-    <link rel="stylesheet" href="\espres-code\public\assets/plugins/animation/css/animate.min.css">
+    <link rel="stylesheet" href="\espres-code/public\assets/plugins/animation/css/animate.min.css">
     <!-- vendor css -->
-    <link rel="stylesheet" href="\espres-code\public\assets\css\style.css">
+    <link rel="stylesheet" href="\espres-code/public\assets\css\style.css">
 
     <title>Home</title>
 </head>
@@ -94,7 +115,7 @@
                 </li>
                 <li>
                     <div>
-                        <h6><?php echo "Welcome"." ".strtoupper($username); ?></h6>
+                        <h6><?php echo "Welcome"." ".strtoupper($user_db['uname']); ?></h6>
                     </div>
                 </li>
             </ul>
@@ -103,14 +124,14 @@
                     <div class="dropdown">
                         
                             <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
-                            <?php if(empty($userfetch['faculty'] && $userfetch['phone'] && $userfetch['address']&& $userfetch['supervisor'] )): ?>
+                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['supervisor'] )): ?>
                                 <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
                                 <div class="dropdown-menu dropdown-menu-right notification">
                                     <div class="noti-head">
                                         <h6 class="d-inline-block m-b-0">Notifications</h6>
                                     </div>
                                     <ul class="noti-body">
-                                            <?php if(empty($userfetch['faculty'] && $userfetch['phone'] && $userfetch['address'])):?>
+                                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address'])):?>
                                         <li class="notification">
                                             <div class="media">
                                                 <a class="media-body" href="profile.php">
@@ -119,7 +140,7 @@
                                             </div>
                                         </li>
                                             <?php endif; ?>
-                                            <?php if(empty($userfetch['supervisor'])):?>
+                                            <?php if(empty($user_db['supervisor'])):?>
                                         <li class="notification">
                                             <div class="media">
                                                 <a class="media-body" href="logbook.php">
@@ -146,15 +167,15 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
                             <div class="pro-head">
-                                <img src="<?php echo $userfetch['pic'] ?>" class="img-radius">
-                                <span><?php echo $username ?></span>
+                                <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
+                                <a><?php echo $user_db['uname'] ?></a>
                                 
                             </div>
                             <ul class="pro-body">
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
                                 <li><a href="profile.php" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
                                 <li><a href="message.php" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a></li>
-                                <li><a href="\fypcode\logout.php" class="dropdown-item"><i class="feather icon-log-out"></i> Log Out</a></li>
+                                <li><a href="\espres-code\logout.php" class="dropdown-item"><i class="feather icon-log-out"></i> Log Out</a></li>
                             </ul>
                         </div>
                     </div>
@@ -266,9 +287,12 @@
     </div>
 
     <!-- Required Js -->
-    <script src="\fypcode\public\assets/js/vendor-all.min.js"></script>
-	<script src="\fypcode\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-    <script src="\fypcode\public\assets/js/pcoded.min.js"></script>
+    <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>
+	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="\espres-code\public\assets/js/pcoded.min.js"></script>
+    <script src="\espres-code\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
+
+    
 
 </body>
 </html>

@@ -1,3 +1,83 @@
+<?php
+include 'connection.php';
+
+session_start();
+$_SESSION["userid"]="";
+$_SESSION["usertype"]="";
+
+// Set the new timezone
+date_default_timezone_set('Asia/Kolkata');
+$date = date('Y-m-d');
+
+$_SESSION["date"]=$date;
+$error = [];
+
+if($_POST){
+    $userid = $_POST["userid"];
+    $password = $_POST["password"];
+
+    $sql_stmnt = $pdo->prepare("SELECT * FROM users WHERE userid = '$userid'");
+    $sql_stmnt->execute();
+
+
+    if($sql_stmnt -> rowCount() ==1 ){
+        $utype = $sql_stmnt->fetch(PDO::FETCH_ASSOC);
+        
+        if($utype['usertype'] === "student"){
+            $db_check = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid' AND password = '$password'");
+            $db_check->execute();
+
+            if($db_check -> rowCount() >= 1){
+                $_SESSION['userid']=$userid;
+                $_SESSION['usertype']='student';
+                
+                header('location: users\student\dashboard.php');
+
+            } else{
+                $error[] = "Wrong credentials: Invalid ID or password";
+
+            }
+
+        } elseif($utype === "supervisor"){
+            $db_check = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid' AND password = '$password'");
+            $db_check->execute();
+
+            if($db_check -> rowCount() >= 1){
+                $_SESSION['userid']=$userid;
+                $_SESSION['usertype']='supervisor';
+                
+                header('location: users\supervisor\dashboard.php');
+
+            } else{
+                $error[] = "Wrong credentials: Invalid ID or password";
+
+            }
+
+        } elseif($utype === "admin"){
+            $db_check = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid' AND password = '$password'");
+            $db_check->execute();
+
+            if($db_check -> rowCount() >= 1){
+                $_SESSION['userid']=$userid;
+                $_SESSION['usertype']='admin';
+                
+                header('location: users\admin\dashboard.php');
+
+            } else{
+                $error[] = "Wrong credentials: Invalid ID or password";
+                
+            }
+
+        }
+
+        
+    } elseif(empty($userid) && empty($userid)){
+        $error[] = "Please insert ID and password";
+
+    }
+
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,10 +97,17 @@
     <title>Sign In</title>
 </head>
 <body>
-    <div class="alert alert-danger alert-dismissible w-50 rounded m-auto" role="alert">   
-        <div>Nice, you triggered this alert message!</div>   
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+    <?php if(!empty($error)): ?>
+        <div class="alert alert-danger alert-dismissible w-50 rounded m-auto" role="alert">   
+            <div><?php foreach($error as $errmsg): ?>
+                <li><?php echo $errmsg ?></li>
+                <?php endforeach; ?>
+            </div>   
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <?php endif; ?>
     <div class="auth-wrapper">
         <div class="auth-content">
             <div class="auth-bg">
@@ -35,7 +122,7 @@
                         <i class="feather icon-unlock auth-icon"></i>
                     </div>
                     <h3 class="mb-4">Login</h3>
-                    <form action="auth-signin.php" method="POST">
+                    <form action="" method="POST">
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" placeholder="ID" name="userid">
                         </div>

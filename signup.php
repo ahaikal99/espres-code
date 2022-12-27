@@ -29,7 +29,7 @@ if($_POST){
     $error = " ";
 
     if($password === $cpassword){
-        $sql_stmnt = $pdo->prepare("SELECT * FROM users WHERE userid = $userid");
+        $sql_stmnt = $pdo->prepare("SELECT * FROM users WHERE userid = '$userid'");
         $sql_stmnt->execute();
 
         if($sql_stmnt->rowCount() >= 1){
@@ -38,7 +38,7 @@ if($_POST){
         } else{
             $db_insert = $pdo->prepare("INSERT INTO student(uname, userid, email, pcode, password) VALUES('$name','$userid','$email', '$pcode', '$password');");
             $db_insert->execute();
-            $db_insert = $pdo->prepare("INSERT INTO users(uname, userid, email, usertype) VALUES('$name', '$userid', '$email','student')");
+            $db_insert = $pdo->prepare("INSERT INTO users(userid, email, usertype) VALUES('$userid', '$email','student')");
             $db_insert->execute();
 
             $_SESSION["user"]=$userid;

@@ -11,6 +11,6 @@
 	session_destroy();
 
 	// redirecting the user to the login page
-	header('Location: auth-signin.php?action=logout');
+	header('Location: signin.php?action=logout');
 
 ?>

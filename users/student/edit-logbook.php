@@ -1,3 +1,24 @@
+<?php
+include 'connection.php';
+
+session_start();
+
+    if(isset($_SESSION["userid"])){
+        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='student'){
+            header("location: ../login.php");
+        }else{
+            $userid=$_SESSION["userid"];
+        }
+
+    }else{
+        header("location: ../login.php");
+    }
+
+    $sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid'");
+    $sql_stmnt->execute();
+    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,11 +29,11 @@
     <!-- bootstrap -->
     <link rel="stylesheet" href="\espres-code/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <!-- fontawesome icon -->
-    <link rel="stylesheet" href="\espres-code\public\assets/fonts/fontawesome/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="\espres-code/public\assets/fonts/fontawesome/css/fontawesome-all.min.css">
     <!-- animation css -->
-    <link rel="stylesheet" href="\espres-code\public\assets/plugins/animation/css/animate.min.css">
+    <link rel="stylesheet" href="\espres-code/public\assets/plugins/animation/css/animate.min.css">
     <!-- vendor css -->
-    <link rel="stylesheet" href="\espres-code\public\assets\css\style.css">
+    <link rel="stylesheet" href="\espres-code/public\assets\css\style.css">
 
     <title>ESPRES</title>
 </head>
@@ -41,13 +62,13 @@
                     <li class="nav-item pcoded-menu-caption">
                         <label>Navigation</label>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
                     <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a href="logbook.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">Logbook</span></a>
                     </li>
                     <li class="nav-item">
@@ -169,9 +190,10 @@
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->
-    <script src="\fypcode\public\assets/js/vendor-all.min.js"></script>
-	<script src="\fypcode\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-    <script src="\fypcode\public\assets/js/pcoded.min.js"></script>
+    <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>
+	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="\espres-code\public\assets/js/pcoded.min.js"></script>
+    <script src="\espres-code\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
 
 </body>
 </html>
