@@ -18,6 +18,10 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
+    $sql_check = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid'");
+    $sql_check->execute();
+    $list_logbook = $sql_check -> fetchAll();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -119,7 +123,7 @@ session_start();
                     <div class="dropdown">
                         
                             <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
-                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['supervisor'] )): ?>
+                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['svname'] )): ?>
                                 <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
                                 <div class="dropdown-menu dropdown-menu-right notification">
                                     <div class="noti-head">
@@ -181,7 +185,89 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-
+    <section class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                        
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                                <!-- [ Hover-table ] start -->
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-header mb-3">
+                                            <h5>History</h5>
+                                        </div>
+                                        <div class="card-block table-border-style">
+                                            <div class="table-responsive text-center">
+                                                <?php if(!$list_logbook): ?>
+                                                    <h4>No Data</h4>
+                                                <?php else: ?>
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Date</th>
+                                                                <th>Activity</th>
+                                                                <th>Start Time</th>
+                                                                <th>End Time</th>
+                                                                <th>Status</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <?php foreach($list_logbook as $i => $data):?>
+                                                                <tr>
+                                                                <td><?php echo $data['date'] ?></td>
+                                                                <td><?php echo $data['activity'] ?></td>
+                                                                <td><?php echo $data['starttime'] ?></td>
+                                                                <td><?php echo $data['endtime'] ?></td>
+                                                                <td><?php echo $data['status'] ?></td>
+                                                                <td>
+                                                                    <form style="display: inline-block;" action="history-view.php" method="post">
+                                                                        <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
+                                                                        <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
+                                                                    </form>
+                                                                    <form style="display: inline-block;" action="delete.php" method="POST">
+                                                                        <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
+                                                                        <button type="submit" class="label bg-danger text-white f-12" style="border-radius: 10px; border-width: 0px;">Delete</button>
+                                                                    </form>
+                                                                </td>
+                                                                </tr>
+                                                                <?php endforeach; ?>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- [ Hover-table ] end -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->

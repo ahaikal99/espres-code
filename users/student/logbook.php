@@ -119,7 +119,7 @@ session_start();
                     <div class="dropdown">
                         
                             <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
-                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['supervisor'] )): ?>
+                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['svname'] )): ?>
                                 <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
                                 <div class="dropdown-menu dropdown-menu-right notification">
                                     <div class="noti-head">
@@ -181,7 +181,89 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Logbook</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <?php if(empty($user_db['svname'])):?>
+                                                <div class="text-center">
+                                                    <h4>Please add supervisor first</h4>
+                                                    <a href="add-supervisor.php" class="btn label bg-success text-white f-12" style="border-radius: 10px; border-width: 0px; cursor:pointer">Add</a>
+                                                </div>
+                                            <?php else: ?>
+                                                <form action="" method="POST" enctype="multipart/form-data">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <label for="date">Date</label>
+                                                            <input type="date" class="form-control w-50" id="date" name="date">
+                                                        </div>
+                                                        <div class="form-group d-flex">
+                                                            <div>
+                                                                <label for="startTime">Start Time</label>
+                                                                <input type="time" class="form-control" id="startTime" name="startTime">
+                                                            </div>
+                                                            <div style="margin-left: 10px;">
+                                                                <label for="endTime">End Time</label>
+                                                                <input type="time" class="form-control" id="endTime" name="endTime">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="activity">Activity</label>
+                                                            <input type="text" class="form-control" id="activity" name="activity">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <label for="discussion">Discussion</label>
+                                                            <textarea class="form-control" id="discussion" rows="5" name="discuss"></textarea>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>File</label>
+                                                            <input type="file" class="form-control" style="width: 230px;" name="file">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <input type="text" value="<?php echo $userfetch['supervisor'] ?>" name="supervisor" hidden>
+                                                <input type="text" value="<?php echo $userfetch['svid'] ?>" name="svid" hidden>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                                </form>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->

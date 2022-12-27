@@ -119,7 +119,7 @@ session_start();
                     <div class="dropdown">
                         
                             <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
-                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['supervisor'] )): ?>
+                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['svname'] )): ?>
                                 <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
                                 <div class="dropdown-menu dropdown-menu-right notification">
                                     <div class="noti-head">
@@ -181,7 +181,94 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-    
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <div class="row">
+                                <!-- [ basic-table ] start -->
+                                <div class="col-xl-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Profile</h5>
+                                        </div>
+                                        <div class="card-block table-border-style">
+                                            <?php if(empty($user_db['pic'])): ?>
+                                                <div class="mb-5"><img src="profile.png" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
+                                            <?php else: ?>
+                                                <div class="mb-5"><img src="<?php echo $user_db['pic'] ?>" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
+                                            <?php endif; ?>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row">ID</th>
+                                                            <td><?php echo $user_db['userid'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Name</th>
+                                                            <td><?php echo $user_db['uname'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Research Title<Title></Title></th>
+                                                            <td><?php echo $user_db['title'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Faculty</th>
+                                                            <td><?php echo $user_db['faculty'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Program Code</th>
+                                                            <td><?php echo strtoupper($user_db['pcode']) ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">No. Tel</th>
+                                                            <td><?php echo $user_db['phone'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Email</th>
+                                                            <td><?php echo $user_db['email'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Address</th>
+                                                            <td><?php echo $user_db['address'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Supervisor</th>
+                                                            <td><?php echo strtoupper($user_db['svname']) ?></td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <a href="edit-profile.php" class="btn btn-primary" style="position: absolute; right:0; bottom: 0;">Edit</a>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- [ basic-table ] end -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->

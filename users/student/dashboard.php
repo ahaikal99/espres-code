@@ -124,7 +124,7 @@ session_start();
                     <div class="dropdown">
                         
                             <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
-                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['supervisor'] )): ?>
+                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['svname'] )): ?>
                                 <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
                                 <div class="dropdown-menu dropdown-menu-right notification">
                                     <div class="noti-head">
@@ -275,8 +275,6 @@ session_start();
                                         </div>
                                     </div>
                                 </div>
-                                <!--[ Recent Users ] end-->
-
                             </div>
                             <!-- [ Main Content ] end -->
                         </div>
