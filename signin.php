@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="\espres-code/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <!-- fontawesome icon -->
     <link rel="stylesheet" href="public/assets/fonts/fontawesome/css/fontawesome-all.min.css">
     <!-- animation css -->
@@ -15,6 +17,10 @@
     <title>Sign In</title>
 </head>
 <body>
+    <div class="alert alert-danger alert-dismissible w-50 rounded m-auto" role="alert">   
+        <div>Nice, you triggered this alert message!</div>   
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     <div class="auth-wrapper">
         <div class="auth-content">
             <div class="auth-bg">
@@ -45,7 +51,7 @@
                         <button class="btn btn-primary shadow-2 mb-4" type="submit">Login</button>
                     </form>
                     <!-- <p class="mb-2 text-muted">Forgot password? <a href="auth-reset-password.html">Reset</a></p> -->
-                    <p class="mb-0 text-muted">Don’t have an account? <a href="auth-signup.php">Signup</a></p>
+                    <p class="mb-0 text-muted">Don’t have an account? <a href="signup.php">Signup</a></p>
                 </div>
             </div>
         </div>
@@ -53,6 +59,7 @@
 
     <!-- Required Js -->
     <script src="public/assets/js/vendor-all.min.js"></script>
+    <script src="public/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
 	<script src="node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
     <script>
         
