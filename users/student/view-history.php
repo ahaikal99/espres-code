@@ -18,6 +18,14 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
+    if($_POST){
+        $check = $_POST['id'];
+
+        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE id = '$check'");
+        $db_sql->execute();
+        $logbook = $db_sql -> fetch(PDO::FETCH_ASSOC);
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -119,7 +127,7 @@ session_start();
                     <div class="dropdown">
                         
                             <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
-                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['supervisor'] )): ?>
+                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['svname'] )): ?>
                                 <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
                                 <div class="dropdown-menu dropdown-menu-right notification">
                                     <div class="noti-head">
@@ -181,7 +189,90 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-    
+    <section class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                        
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="history.php">History</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                            <div class="col">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>History</h5>
+                                        </div>
+                                        <div class="card-block table-border-style">
+                                            <div class="text-center">
+                                                <div class="row mb-5">
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 220px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">DATE</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" value="<?php echo $logbook['date'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 230px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">START TIME</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" value="<?php echo $logbook['starttime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 210px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">END TIME</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" value="<?php echo $logbook['endtime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">ACTIVITY</span>
+                                                    </div>
+                                                    <input type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 1000px;">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text" style="width: 1000px;">DISCUSSION</span>
+                                                    </div>
+                                                    <textarea type="text" class="form-control" value="" style="height: 300px;" disabled><?php echo $logbook['discuss'] ?></textarea>
+                                                </div>
+                                                <?php if($logbook['doc']): ?>
+                                                    <iframe src="<?php echo $logbook['doc'] ?>" width="100%" height="1000px"></iframe>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->

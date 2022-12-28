@@ -241,7 +241,7 @@ session_start();
                                                                 <td><?php echo $data['endtime'] ?></td>
                                                                 <td><?php echo $data['status'] ?></td>
                                                                 <td>
-                                                                    <form style="display: inline-block;" action="history-view.php" method="post">
+                                                                    <form style="display: inline-block;" action="view-history.php" method="post">
                                                                         <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
                                                                         <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
                                                                     </form>

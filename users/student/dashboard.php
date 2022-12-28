@@ -18,6 +18,12 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
+    $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' limit 5");
+    $db_sql->execute();
+    $logbook = $db_sql -> fetchAll();
+
+    $total_logbook = $db_sql->rowCount();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -204,7 +210,7 @@ session_start();
                                             <h6 class="mb-4">Total Logbook</h6>
                                             <div class="row d-flex align-items-center">
                                                 <div class="col-9">
-                                                    <h4 class="f-w-300 d-flex align-items-center m-b-0"><?php echo $rowcount ?></h4>
+                                                    <h4 class="f-w-300 d-flex align-items-center m-b-0"><?php echo $total_logbook ?></h4>
                                                 </div>
                                             </div>
                                             <div class="progress m-t-30" style="height: 7px;">
@@ -258,7 +264,7 @@ session_start();
                                             <div class="table-responsive">
                                                 <table class="table table-hover">
                                                     <tbody>
-                                                        <?php foreach($list_data as $i => $data): ?>
+                                                        <?php foreach($logbook as $i => $data): ?>
                                                             <tr class="unread">
                                                                 <td> 
                                                                     <h6 class="mb-1"><?php echo $data['activity'] ?></h6>

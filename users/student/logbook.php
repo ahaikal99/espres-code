@@ -18,6 +18,59 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
+    if($_POST){
+
+        $date=$_POST['date'];
+        $startTime=$_POST['startTime'];
+        $endTime=$_POST['endTime'];
+        $activity=$_POST['activity'];
+        $discuss=$_POST['discuss'];
+        $svname=$_POST['svname'];
+        $svid=$_POST['svid'];
+        
+        if(!is_dir('file')){
+            mkdir('file');
+        }
+        
+        $file_path="";
+        $char_file = $_FILES['file'];
+        if($char_file && $char_file['tmp_name'])
+        {
+    
+            $file_path = 'file/' . randomString(9) .'/' . $char_file['name'];
+            mkdir(dirname($file_path));
+            move_uploaded_file($char_file['tmp_name'], $file_path);
+    
+        }
+
+        $sql="INSERT INTO logbook(date,starttime,endtime,activity,discuss,doc,userid,svname,svid,status) values ('$date','$startTime','$endTime','$activity','$discuss','$file_path','$userid','$svname','$svid','submitted')";
+        $result= $pdo->prepare($sql);
+        $result->execute();
+        echo '<script type="text/javascript">';
+        echo ' alert("Information has been successfully saved.")';  //not showing an alert box.
+        echo '</script>';
+        $_SESSION["user"]=$userid;
+    
+    }else{
+        $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Error!</label>';
+    
+    }
+    function randomString($n) {
+    
+        $character = '1234567890qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM';
+        $str = '';
+    
+    for($i = 0; $i < $n; $i++){
+    
+        $index = rand(0, strlen($character) -1);
+        $str .= $character[$index];
+    
+    }
+    
+    return $str;
+    
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -249,8 +302,8 @@ session_start();
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <input type="text" value="<?php echo $userfetch['supervisor'] ?>" name="supervisor" hidden>
-                                                <input type="text" value="<?php echo $userfetch['svid'] ?>" name="svid" hidden>
+                                                <input type="text" value="<?php echo $user_db['svname'] ?>" name="svname" hidden>
+                                                <input type="text" value="<?php echo $user_db['svid'] ?>" name="svid" hidden>
                                                 <button type="submit" class="btn btn-primary">Submit</button>
                                                 </form>
                                             <?php endif; ?>
