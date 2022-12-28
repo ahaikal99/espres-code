@@ -17,7 +17,10 @@ session_start();
     $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
-
+    
+    $db_list = $pdo->prepare("SELECT * FROM student");
+    $db_list->execute();
+    $student_list = $db_list -> fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -120,7 +123,7 @@ session_start();
                 </li>
                 <li class="nav-item">
                     <div>
-                        <h6><?php echo "Welcome"." ".$userfetch['fname'] ?></h6>
+                        <h6></h6>
                     </div>
                 </li>
             </ul>
@@ -151,8 +154,8 @@ session_start();
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
                             <div class="pro-head">
-                                <img src="<?php echo $userfetch['pic'] ?>" class="img-radius">
-                                <span><?php echo $userfetch['fname'] ?></span>
+                                <img src="profile.png" class="img-radius">
+                                <span><?php echo $user_db['uname'] ?></span>
                                 
                             </div>
                             <ul class="pro-body">
@@ -200,7 +203,7 @@ session_start();
                                         <div class="card-header">
                                             <h5>Supervisor</h5>
                                         </div>
-                                        <?php if(!$user_list): ?>
+                                        <?php if(!$student_list): ?>
                                             <div class="text-center" style="padding: 20px;">
                                                 <h4><?php echo "No Data"?></h4>
                                             </div>
@@ -213,16 +216,18 @@ session_start();
                                                             <th>No</th>
                                                             <th>ID</th>
                                                             <th>Name</th>
+                                                            <th>Program Code</th>
                                                             <th>Email</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <?php foreach($user_list as $i => $data): ?>
+                                                    <?php foreach($student_list as $i => $data): ?>
                                                         <tr>
                                                             <td scope="row"><?php echo $i + 1 ?></td>
                                                             <td><?php echo $data['userid'] ?></td>
-                                                            <td><?php echo strtoupper($data['fname']) ?></td>
+                                                            <td><?php echo strtoupper($data['uname']) ?></td>
+                                                            <td><?php echo $data['pcode'] ?></td>
                                                             <td><?php echo $data['email'] ?></td>
                                                             <td>
                                                                 <form action="student-view.php" method="post">

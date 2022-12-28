@@ -22,6 +22,23 @@ session_start();
     $sql_read->execute();
     $list_sv = $sql_read -> fetchAll();
 
+    if($_POST){
+
+        $svname=$_POST['svname'];
+        $svid=$_POST['svid'];
+    
+        $sql="UPDATE student SET svname='$svname', svid='$svid' WHERE userid='$userid'";
+        $result=$pdo->prepare($sql);
+        $result->execute();
+        $_SESSION["user"]=$userid;
+        header("location: logbook.php");
+    
+    
+    }else{
+        $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Error!</label>';
+    
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -236,7 +253,7 @@ session_start();
                                                             <tr>
                                                                 <td><?php echo strtoupper($data['uname']) ?></td>
                                                                 <td><?php echo strtoupper($data['userid']) ?></td>
-                                                                <input type="text" value="<?php echo $data['uname'] ?>" name="uname" hidden>
+                                                                <input type="text" value="<?php echo $data['uname'] ?>" name="svname" hidden>
                                                                 <input type="text" value="<?php echo $data['userid'] ?>" name="svid" hidden>
                                                                 <td><button type="submit" class="label bg-success text-white f-12" style="border-radius: 10px; border-width: 0px; cursor:pointer">Add</button></td>
                                                             </tr>
