@@ -38,7 +38,7 @@ if($_POST){
 
             }
 
-        } elseif($utype === "supervisor"){
+        } elseif($utype['usertype'] === "supervisor"){
             $db_check = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid' AND password = '$password'");
             $db_check->execute();
 
@@ -53,11 +53,11 @@ if($_POST){
 
             }
 
-        } elseif($utype === "admin"){
+        } elseif($utype['usertype'] === "admin"){
             $db_check = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid' AND password = '$password'");
             $db_check->execute();
 
-            if($db_check -> rowCount() >= 1){
+            if($db_check -> rowCount() == 1){
                 $_SESSION['userid']=$userid;
                 $_SESSION['usertype']='admin';
                 
