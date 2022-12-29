@@ -18,12 +18,34 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' limit 5");
+    $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' ");
     $db_sql->execute();
     $logbook = $db_sql -> fetchAll();
 
     $total_logbook = $db_sql->rowCount();
-
+    
+    $total = 0;
+    // ------calculate total hour------------------------------
+    // Loop the data items
+    foreach( $logbook as $element):
+        
+        // Explode by separator :
+        $temp = explode(":", $element['totaltime']);
+        
+        // Convert the hours into seconds
+        // and add to total
+        $total+= (int) $temp[0] * 3600;
+        
+        // Convert the minutes to seconds
+        // and add to total
+        $total+= (int) $temp[1] * 60;
+        
+        // Add the seconds to total
+        $total+= (int) $temp[2];
+    endforeach;
+    
+    // Format the seconds back into HH:MM:SS
+    $jojo = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -227,7 +249,7 @@ session_start();
                                             <h6 class="mb-4">Total Hour</h6>
                                             <div class="row d-flex align-items-center">
                                                 <div class="col-9">
-                                                    <h4 class="f-w-300 d-flex align-items-center  m-b-0"><?php echo round($sum,2) ?> Hour</h4>
+                                                    <h4 class="f-w-300 d-flex align-items-center  m-b-0"><?php echo $jojo ?> Hour</h4>
                                                 </div>
                                             </div>
                                             <div class="progress m-t-30" style="height: 7px;">

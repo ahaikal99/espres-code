@@ -27,6 +27,17 @@ session_start();
         $discuss=$_POST['discuss'];
         $svname=$_POST['svname'];
         $svid=$_POST['svid'];
+
+        $current_date_time_sec=strtotime($startTime);
+        $future_date_time_sec=strtotime($endTime);
+        $difference=$future_date_time_sec-$current_date_time_sec;
+        $hours=($difference / 3600);
+        $minutes=($difference / 60 % 60);
+        $seconds=($difference % 60);  
+        $hours=($hours % 24);
+        $total =   sprintf("%02d",$hours).":".sprintf("%02d",$minutes).":".sprintf("%02d",$seconds);
+
+
         
         if(!is_dir('file')){
             mkdir('file');
@@ -43,7 +54,7 @@ session_start();
     
         }
 
-        $sql="INSERT INTO logbook(date,starttime,endtime,activity,discuss,doc,userid,svname,svid,status) values ('$date','$startTime','$endTime','$activity','$discuss','$file_path','$userid','$svname','$svid','submitted')";
+        $sql="INSERT INTO logbook(date,starttime,endtime,activity,discuss,doc,userid,svname,svid,status,totaltime) values ('$date','$startTime','$endTime','$activity','$discuss','$file_path','$userid','$svname','$svid','submitted', '$total')";
         $result= $pdo->prepare($sql);
         $result->execute();
         echo '<script type="text/javascript">';
