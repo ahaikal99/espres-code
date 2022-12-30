@@ -18,6 +18,38 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
+    $sql_check = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid'");
+    $sql_check->execute();
+    $list_logbook = $sql_check -> fetchAll();
+
+    $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' ");
+    $db_sql->execute();
+    $calculate_total = $db_sql -> fetchAll();
+
+    
+    $total = 0;
+    // ------calculate total hour------------------------------
+    // Loop the data items
+    foreach( $calculate_total as $element):
+        
+        // Explode by separator :
+        $temp = explode(":", $element['totaltime']);
+        
+        // Convert the hours into seconds
+        // and add to total
+        $total+= (int) $temp[0] * 3600;
+        
+        // Convert the minutes to seconds
+        // and add to total
+        $total+= (int) $temp[1] * 60;
+        
+        // Add the seconds to total
+        $total+= (int) $temp[2];
+    endforeach;
+    
+    // Format the seconds back into HH:MM:SS
+    $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -119,7 +151,7 @@ session_start();
                     <div class="dropdown">
                         
                             <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
-                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['supervisor'] )): ?>
+                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['svname'] )): ?>
                                 <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
                                 <div class="dropdown-menu dropdown-menu-right notification">
                                     <div class="noti-head">
@@ -181,7 +213,72 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
+    <div class="pcoded-main-container">
+    <div class="row">
+        <!-- [ basic-table ] start -->
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Report</h5>
+                </div>
+                <div class="card-block table-border-style">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Student Name:</th>
+                                    <td><?php echo $user_db['uname'] ?></td>
 
+                                    <th scope="row">Student ID:</th>
+                                    <td><?php echo $user_db['userid'] ?></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Supervisor:</th>
+                                    <td><?php echo $user_db['svname'] ?></td>
+
+                                    <th scope="row"></th>
+                                    <td></td>
+                                </tr>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Faculty:</th>
+                                    <td><?php echo $user_db['faculty'] ?></td>
+
+                                    <th scope="row">Year:</th>
+                                    <td>2022</td>
+                                </tr>
+                                <tr>
+
+                                    <th scope="row">Date</th>
+                                    <th scope="row">Activity</th>
+                                    <th scope="row">Duration</th>
+                                    
+                                    <?php foreach($list_logbook as $logbook): ?>
+                                    <tbody>
+                                            <td><?php echo $logbook['date'] ?></td>
+                                            <td><?php echo $logbook['activity'] ?></td>
+                                            <td><?php echo $logbook['totaltime'] ?></td>
+                                    </tbody>
+                                    <?php endforeach; ?>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Total Meeting Hour</th>
+                                        <td></td>
+                                        <td><?php echo $display . " " . "Hours" ?></td>
+
+                                    <th scope="row"></th>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                            <a href="" class="btn btn-primary" style="position: absolute; right:0; bottom: 0; margin-top: 10px">Print</a>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- [ basic-table ] end -->
+    </div>
+    </div>
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->
