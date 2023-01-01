@@ -18,56 +18,9 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    if($_POST){
-        $pic = $_POST['pic'];
-        $name = $_POST['uname'];
-        $phone = $_POST['phone'];
-        $email = $_POST['email'];
-        $address = $_POST['address'];
-
-        if(!is_dir('image')){
-            mkdir('image');
-        }
-    
-            $file_path = $user_db['pic'];
-            $char_file = $_FILES['pic'];
-            if($char_file && $char_file['tmp_name'])
-            {
-    
-                if($user_db['pic']){
-                    unlink($user_db['pic']);
-                }
-    
-                $file_path = 'image/' . randomString(9) .'/' . $char_file['name'];
-                mkdir(dirname($file_path));
-    
-                move_uploaded_file($char_file['tmp_name'], $file_path);
-    
-            }
-
-            $sql="UPDATE supervisor SET uname='$name', email='$email', phone='$phone', address='$address' , pic='$file_path' WHERE userid='$userid'";
-            $result=$pdo->prepare($sql);
-            $result->execute();
-
-            header("location: profile.php");
-
-    }
-
-    function randomString($n) {
-
-        $character = '1234567890qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM';
-        $str = '';
-        
-        for($i = 0; $i < $n; $i++){
-        
-            $index = rand(0, strlen($character) -1);
-            $str .= $character[$index];
-        
-        }
-        
-        return $str;
-        
-        }
+    $db_list = $pdo->prepare("SELECT * FROM logbook WHERE svid = '$userid'");
+    $db_list->execute();
+    $logbook_list = $db_list -> fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -116,7 +69,7 @@ session_start();
                     <li class="nav-item pcoded-menu-caption">
                         <label>Navigation</label>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
                     <li  class="nav-item pcoded-hasmenu">
@@ -126,7 +79,7 @@ session_start();
                             <li class=""><a href="student-profile.php" class="">Student</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a href="logbook.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">Logbook</span></a>
                     </li>
                     <li class="nav-item">
@@ -220,79 +173,7 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-    <div class="pcoded-main-container">
-        <div class="pcoded-wrapper">
-            <div class="pcoded-content">
-                <div class="pcoded-inner-content">
-                    <!-- [ breadcrumb ] start -->
-                    <div class="page-header">
-                        <div class="page-block">
-                            <div class="row align-items-center">
-                                <div class="col-md-12">
-                                    <div class="page-header-title">
-                                    </div>
-                                    <ul class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
-                                        <li class="breadcrumb-item"><a href="profile.php">Profile</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- [ breadcrumb ] end -->
-                    <div class="main-body">
-                        <div class="page-wrapper">
-                            <!-- [ Main Content ] start -->
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5>Profile</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <form action="" method="post" enctype="multipart/form-data">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        
-                                                        <?php if(empty($user_db['pic'])): ?>
-                                                            <div class="mb-5"><img src="profile.png" style="width: 100px; height: 100px;  object-fit: fill; border-radius: 100px;"></div>
-                                                        <?php else: ?>
-                                                            <div class="mb-5"><img src="<?php echo $user_db['pic'] ?>" style="width: 100px; height: 100px;  object-fit: fill; border-radius: 100px;"></div>
-                                                        <?php endif; ?>
-                                                        <div class="form-group">
-                                                            <label for="id">Picture</label>
-                                                            <input type="File" class="form-control w-25" id="id" name="pic">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="name">Name</label>
-                                                            <input type="text" class="form-control w-50" id="name" value="<?php echo strtoupper($user_db['uname']) ?>" name="uname">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="no-tel">No. Tel</label>
-                                                            <input type="text" class="form-control w-50" id="no-tel" value="<?php echo $user_db['phone'] ?>" name="phone">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="email">Email</label>
-                                                            <input type="text" class="form-control w-50" id="email"value="<?php echo $user_db['email'] ?>" name="email">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label for="address">Address</label>
-                                                            <input type="text" class="form-control w-50" id="address"value="<?php echo $user_db['address'] ?>" name="address">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button type="submit" class="btn btn-primary">Save</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
     <!-- [ Main Content ] end -->
 
     <!-- Required Js -->

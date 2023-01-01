@@ -18,7 +18,7 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $sudent_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
+    $sudent_list = $pdo->prepare("SELECT * FROM logbook WHERE svid = '$userid'");
     $sudent_list->execute();
     $student = $sudent_list -> fetchAll();
 ?>

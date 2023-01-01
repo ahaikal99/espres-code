@@ -1,3 +1,27 @@
+<?php
+include 'connection.php';
+
+session_start();
+
+    if(isset($_SESSION["userid"])){
+        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='supervisor'){
+            header("location: ../signin.php");
+        }else{
+            $userid=$_SESSION["userid"];
+        }
+
+    }else{
+        header("location: ../login.php");
+    }
+
+    $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
+    $sql_stmnt->execute();
+    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+
+    $db_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
+    $db_list->execute();
+    $student_list = $db_list -> fetchAll();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,14 +69,14 @@
                     <li class="nav-item pcoded-menu-caption">
                         <label>Navigation</label>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
-                    <li  class="nav-item pcoded-hasmenu">
+                    <li  class="nav-item pcoded-hasmenu active">
                         <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
                         <ul class="pcoded-submenu">
                             <li class=""><a href="profile.php" class="">My Profile</a></li>
-                            <li class=""><a href="student-profile.php" class="">Student</a></li>
+                            <li class=" active"><a href="student-profile.php" class="">Student</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -99,7 +123,7 @@
                 </li>
                 <li>
                     <div>
-                        <h6><?php echo "Welcome"." ".strtoupper($userfetch['fname']) ?></h6>
+                        <h6></h6>
                     </div>
                 </li>
             </ul>
@@ -130,8 +154,8 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
                             <div class="pro-head">
-                                <img src="<?php echo $userfetch['pic'] ?>" class="img-radius">
-                                <span><?php echo $userfetch['fname'] ?></span>
+                                <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
+                                <span><?php echo strtoupper($user_db['uname']) ?></span>
                                 
                             </div>
                             <ul class="pro-body">
@@ -149,7 +173,86 @@
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-
+    <section class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                        
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="student-profile.php">Student</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                                <!-- [ Hover-table ] start -->
+                                <div class="col-xl-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Profile</h5>
+                                        </div>
+                                        <?php foreach($student_list as $i => $data):?>
+                                        <div class="card-block table-border-style">
+                                            <div class="mb-5"><img src="\espres-code\users\student\<?php echo $data['pic'] ?>" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row">ID</th>
+                                                            <td><?php echo $data['userid'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Faculty</th>
+                                                            <td><?php echo $data['faculty'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Name</th>
+                                                            <td><?php echo strtoupper($data['uname']) ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">No. Tel</th>
+                                                            <td><?php echo $data['phone'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Email</th>
+                                                            <td><?php echo $data['email'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Address</th>
+                                                            <td><?php echo strtoupper($data['address']) ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Supervisor</th>
+                                                            <td><?php echo strtoupper($data['svname']) ?></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <!-- [ Hover-table ] end -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <!-- [ Main Content ] end -->
 
     <!-- Required Js -->
