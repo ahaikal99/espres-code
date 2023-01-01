@@ -1,3 +1,28 @@
+<?php
+include 'connection.php';
+
+session_start();
+
+    if(isset($_SESSION["userid"])){
+        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='supervisor'){
+            header("location: ../signin.php");
+        }else{
+            $userid=$_SESSION["userid"];
+        }
+
+    }else{
+        header("location: ../login.php");
+    }
+
+    $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
+    $sql_stmnt->execute();
+    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+
+    $sudent_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
+    $sudent_list->execute();
+    $student = $sudent_list -> fetchAll();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -99,7 +124,7 @@
                 </li>
                 <li>
                     <div>
-                        <h6><?php echo "Welcome"." ".strtoupper($userfetch['fname']) ?></h6>
+                        <h6><?php echo "Welcome"." ".strtoupper($user_db['uname']) ?></h6>
                     </div>
                 </li>
             </ul>
@@ -130,15 +155,15 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
                             <div class="pro-head">
-                                <img src="<?php echo $userfetch['pic'] ?>" class="img-radius">
-                                <span><?php echo $userfetch['fname'] ?></span>
+                                <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
+                                <span><?php echo strtoupper($user_db['uname']) ?></span>
                                 
                             </div>
                             <ul class="pro-body">
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
                                 <li><a href="profile.php" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
                                 <li><a href="message.php" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a></li>
-                                <li><a href="\fypcode\logout.php" class="dropdown-item"><i class="feather icon-log-out"></i> Log Out</a></li>
+                                <li><a href="\espres-code\logout.php" class="dropdown-item"><i class="feather icon-log-out"></i> Log Out</a></li>
                             </ul>
                         </div>
                     </div>
@@ -204,8 +229,11 @@
                                             <div class="table-responsive">
                                                 <table class="table table-hover">
                                                     <tbody>
-                                                        <?php foreach($list_data as $i => $data): ?>
+                                                        <?php foreach($student as $i => $data): ?>
                                                             <tr class="unread">
+                                                                <td> 
+                                                                    <h6 class="mb-1"><?php echo $data['uname'] ?></h6>
+                                                                </td>
                                                                 <td> 
                                                                     <h6 class="mb-1"><?php echo $data['date'] ?></h6>
                                                                 </td>

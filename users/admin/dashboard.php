@@ -18,6 +18,16 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
+    $student_list = $pdo->prepare("SELECT * FROM student");
+    $student_list->execute();
+    $student = $student_list -> fetchAll();
+    $total_student = $student_list->rowCount();
+
+    $sv_list = $pdo->prepare("SELECT * FROM supervisor");
+    $sv_list->execute();
+    $supervisor = $sv_list -> fetchAll();
+    $total_sv = $sv_list->rowCount();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -159,7 +169,7 @@ session_start();
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
                                 <li><a href="profile.php" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
                                 <li><a href="message.php" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a></li>
-                                <li><a href="\fypcode\logout.php" class="dropdown-item"><i class="feather icon-log-out"></i> Log Out</a></li>
+                                <li><a href="\espres-code\logout.php" class="dropdown-item"><i class="feather icon-log-out"></i> Log Out</a></li>
                             </ul>
                         </div>
                     </div>
@@ -188,7 +198,7 @@ session_start();
                                             <h6 class="mb-4">Total Student</h6>
                                             <div class="row d-flex align-items-center">
                                                 <div class="col-9">
-                                                    <h4 class="f-w-300 d-flex align-items-center m-b-0">2</h4>
+                                                    <h4 class="f-w-300 d-flex align-items-center m-b-0"><?php echo $total_student ?></h4>
                                                 </div>
                                             </div>
                                             <div class="progress m-t-30" style="height: 7px;">
@@ -205,7 +215,7 @@ session_start();
                                             <h6 class="mb-4">Total Supervisor</h6>
                                             <div class="row d-flex align-items-center">
                                                 <div class="col-9">
-                                                    <h4 class="f-w-300 d-flex align-items-center  m-b-0">3</h4>
+                                                    <h4 class="f-w-300 d-flex align-items-center  m-b-0"><?php echo $total_sv ?></h4>
                                                 </div>
                                             </div>
                                             <div class="progress m-t-30" style="height: 7px;">
@@ -242,13 +252,13 @@ session_start();
                                             <div class="table-responsive">
                                                 <table class="table table-hover">
                                                     <tbody>
-                                                        <?php foreach($sv_data as $i => $datasv): ?>
+                                                        <?php foreach($supervisor as $i => $datasv): ?>
                                                             <tr class="unread">
                                                                 <td> 
                                                                     <h6 class="mb-1"><?php echo $datasv['userid'] ?></h6>
                                                                 </td>
                                                                 <td>
-                                                                    <h6 class="text-muted"><?php echo $datasv['fname'] ?></h6>
+                                                                    <h6 class="text-muted"><?php echo strtoupper($datasv['uname']) ?></h6>
                                                                 </td>
                                                                 <td><a href="sv-profile.php" class="label theme-bg2 text-white f-12">View</a></td>
                                                             </tr>
@@ -270,13 +280,13 @@ session_start();
                                             <div class="table-responsive">
                                                 <table class="table table-hover">
                                                     <tbody>
-                                                        <?php foreach($list_data as $i => $data): ?>
+                                                        <?php foreach($student as $i => $data): ?>
                                                             <tr class="unread">
                                                                 <td> 
                                                                     <h6 class="mb-1"><?php echo $data['userid'] ?></h6>
                                                                 </td>
                                                                 <td>
-                                                                    <h6 class="text-muted"><?php echo $data['fname'] ?></h6>
+                                                                    <h6 class="text-muted"><?php echo strtoupper($data['uname']) ?></h6>
                                                                 </td>
                                                                 <td><a href="student-profile.php" class="label theme-bg2 text-white f-12">View</a></td>
                                                             </tr>
