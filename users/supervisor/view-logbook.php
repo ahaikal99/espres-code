@@ -216,6 +216,7 @@ session_start();
                                                             <th>No</th>
                                                             <th>Date</th>
                                                             <th>Activity</th>
+                                                            <th>Duration</th>
                                                             <th>Status</th>
                                                             <th>Action</th>
                                                         </tr>
@@ -226,10 +227,11 @@ session_start();
                                                             <td scope="row"><?php echo $i + 1 ?></td>
                                                             <td><?php echo $data['date'] ?></td>
                                                             <td><?php echo strtoupper($data['activity']) ?></td>
+                                                            <td><?php echo $data['totaltime']." "."Hours" ?></td>
                                                             <td><?php echo $data['status'] ?></td>
                                                             <td>
                                                                 <form action="view-logbook-detail.php" method="post">
-                                                                    <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
+                                                                    <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
                                                                     <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
                                                                 </form>
                                                             </td>

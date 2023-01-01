@@ -21,6 +21,15 @@ session_start();
     $db_list = $pdo->prepare("SELECT * FROM logbook WHERE svid = '$userid'");
     $db_list->execute();
     $logbook_list = $db_list -> fetchAll();
+
+    if($_POST){
+        $id = $_POST['id'];
+
+        $logbook = $pdo->prepare("SELECT * FROM logbook WHERE id = '$id'");
+        $logbook->execute();
+        $logbook_detail = $logbook -> fetch(PDO::FETCH_ASSOC);
+
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -173,7 +182,94 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-    
+    <section class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                        
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                                <!-- [ Hover-table ] start -->
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Report</h5>
+                                        </div>
+                                        <div class="p-2 d-flex flex-row mb-3" style="color:black; font-size: 20px;">
+                                            <div class="p-2 w-25">
+                                                <span>
+                                                    Date : <?php echo $logbook_detail['date'] ?>
+                                                </span>
+                                            </div>
+                                            <div class="p-2 w-25">
+                                                <span>
+                                                    Start Time : <?php echo $logbook_detail['starttime'] ?>
+                                                </span>
+                                            </div>
+                                            <div class="p-2 w-25">
+                                                <span>
+                                                    End Time : <?php echo $logbook_detail['endtime'] ?>
+                                                </span>
+                                            </div>
+                                            <div class="p-2 w-25">
+                                                <span>
+                                                    Duration : <?php echo $logbook_detail['totaltime']." "."Hours" ?>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 d-flex" style="color:black">
+                                            <div class="p-2 d-flex justify-content-start">
+                                                <span style="font-size: 20px; min-width: 100px">
+                                                    Activity :
+                                                </span>
+                                            </div>
+                                            <div class="p-2 d-flex justify-content-start">
+                                                <span style="color:black; font-size: 20px">
+                                                    <?php echo $logbook_detail['activity'] ?>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 d-flex text-center" style="color:black">
+                                            <div class="p-2 d-flex justify-content-start">
+                                                <span style="font-size: 20px;">
+                                                    Discussion :
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 d-flex">
+                                            <div class="p-2 flex-fill" style="min-height: 300px;">
+                                                <span>
+                                                    <?php echo $logbook_detail['discuss'] ?>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- [ Hover-table ] end -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <!-- [ Main Content ] end -->
 
     <!-- Required Js -->

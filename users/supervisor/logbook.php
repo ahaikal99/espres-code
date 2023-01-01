@@ -69,7 +69,7 @@ session_start();
                     <li class="nav-item pcoded-menu-caption">
                         <label>Navigation</label>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
                     <li  class="nav-item pcoded-hasmenu">
@@ -79,7 +79,7 @@ session_start();
                             <li class=""><a href="student-profile.php" class="">Student</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a href="logbook.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">Logbook</span></a>
                     </li>
                     <li class="nav-item">
