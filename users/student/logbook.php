@@ -335,6 +335,12 @@ session_start();
 	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="\espres-code\public\assets/js/pcoded.min.js"></script>
     <script src="\espres-code\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
+    <script src="\espres-code\node_modules\tinymce\tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#discussion'
+        });
+    </script>
 
 </body>
 </html>
