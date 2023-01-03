@@ -220,7 +220,7 @@ session_start();
                                             <h5>History</h5>
                                         </div>
                                         <div class="card-block table-border-style">
-                                            <div class="text-center">
+                                            <div class="">
                                                 <div class="row mb-5">
                                                     <div class="col-3">
                                                         <div class="input-group" style="width: 220px;">
@@ -257,7 +257,7 @@ session_start();
                                                     <div class="input-group">
                                                         <span class="input-group-text" style="width: 1000px;">DISCUSSION</span>
                                                     </div>
-                                                    <textarea type="text" class="form-control" value="" style="height: 300px;" disabled><?php echo $logbook['discuss'] ?></textarea>
+                                                    <span type="text" class="form-control" value="" style="height: 300px;" disabled><?php echo $logbook['discuss'] ?></span>
                                                 </div>
                                                 <?php if($logbook['doc']): ?>
                                                     <iframe src="<?php echo $logbook['doc'] ?>" width="100%" height="1000px"></iframe>

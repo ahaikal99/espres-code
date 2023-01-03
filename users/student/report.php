@@ -213,72 +213,97 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-    <div class="pcoded-main-container">
-    <div class="row">
-        <!-- [ basic-table ] start -->
-        <div class="col-xl-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Report</h5>
-                </div>
-                <div class="card-block table-border-style">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <tbody>
-                                <tr>
-                                    <th scope="row">Student Name:</th>
-                                    <td><?php echo $user_db['uname'] ?></td>
-
-                                    <th scope="row">Student ID:</th>
-                                    <td><?php echo $user_db['userid'] ?></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Supervisor:</th>
-                                    <td><?php echo $user_db['svname'] ?></td>
-
-                                    <th scope="row"></th>
-                                    <td></td>
-                                </tr>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Faculty:</th>
-                                    <td><?php echo $user_db['faculty'] ?></td>
-
-                                    <th scope="row">Year:</th>
-                                    <td>2022</td>
-                                </tr>
-                                <tr>
-
-                                    <th scope="row">Date</th>
-                                    <th scope="row">Activity</th>
-                                    <th scope="row">Duration</th>
-                                    
-                                    <?php foreach($list_logbook as $logbook): ?>
-                                    <tbody>
-                                            <td><?php echo $logbook['date'] ?></td>
-                                            <td><?php echo $logbook['activity'] ?></td>
-                                            <td><?php echo $logbook['totaltime'] ?></td>
-                                    </tbody>
-                                    <?php endforeach; ?>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Total Meeting Hour</th>
-                                        <td></td>
-                                        <td><?php echo $display . " " . "Hours" ?></td>
-
-                                    <th scope="row"></th>
-                                    <td></td>
-                                </tr>
-                            </tbody>
-                            <a href="" class="btn btn-primary" style="position: absolute; right:0; bottom: 0; margin-top: 10px">Print</a>
-                        </table>
+    <section class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                        
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                                <!-- [ Hover-table ] start -->
+                                <div class="col">
+                                    <div class="card">
+                                        <div class="card-header mb-3">
+                                            <h5>History</h5>
+                                        </div>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Student Name : </a><?php echo $user_db['uname'] ?></span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Student ID : </a><?php echo $user_db['userid'] ?></span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Month : </a>Null</span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Year : </a>Null</span>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Supervisor Name : </a><?php echo $user_db['svname'] ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 d-flex flex-row mb-2 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Co-Supervisor Name : </a><?php echo $user_db['svname'] ?></span>
+                                            </div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="p-2 d-flex"style="font-weight: bold; color: black;">
+                                            <div class="p-2 flex-fill w-25">Date</div>
+                                            <div class="p-2 flex-fill w-25">Activity</div>
+                                            <div class="p-2 flex-fill w-25">Duration</div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <?php foreach($calculate_total as $logbook): ?>
+                                            <div class="p-2 d-flex"style="color: black;">
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['date']?></div>
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['activity']?></div>
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['totaltime']?></div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="p-2 d-flex"style="color: black;">
+                                            <div class="p-2 flex-fill"></div>
+                                            <div class="p-2 flex-fill"></div>
+                                            <div class="p-2 flex-fill"><a style="font-weight: bold;">Total Hours : </a><?php echo $display." "."Hours" ?></div>
+                                        </div>
+                                        <hr class="mb-3" style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="d-flex mb-3">
+                                            <div class="p-2"></div>
+                                            <div class="p-2"></div>
+                                            <div class="ms-auto p-2">
+                                                <button type="button" class="m-2 btn btn-primary">Print</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- [ basic-table ] end -->
-    </div>
-    </div>
+    </section>
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->
