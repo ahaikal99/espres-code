@@ -23,20 +23,21 @@ session_start();
         $year = $_POST['year'];
         $month = $_POST['month'];
 
-        $check_db = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' ");
+        $check_db = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' && month = '$month' && year = '$year' ");
         $check_db->execute();
         $report = $check_db -> fetch(PDO::FETCH_ASSOC);
 
         if($year =='Choose...' && $month=='Choose...'){
             header('Location: report.php');
 
-        } elseif($month == $report['month'] && $year == $report['year']){
-            header('Location: report.php');
-
+        } elseif($report){
+            if($month === $report['month'] && $year === $report['year']){
+                header('Location: report.php');
+            } 
         } else{
             $insert_db = $pdo->prepare("INSERT INTO report(userid,year,month) VALUES('$id','$year','$month')");
             $insert_db->execute();
-        }
+            }
     }
 
     $report_db = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' ORDER BY year DESC");
@@ -295,21 +296,68 @@ session_start();
                                         </div>
                                         <div class="card-block table-border-style">
                                             <div class="table-responsive">
-                                                <table class="table table-borderless">
+                                                <table class="table table-hover text-center">
                                                     <thead>
                                                         <tr>
-                                                            <th></th>
+                                                            <th>Year</th>
+                                                            <th>Month</th>
+                                                            <th>Action</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
-                                                        <form action="" method="post">
+                                                    <?php if(empty($report_data)):?>
+                                                        <td></td>
+                                                        <td><?php echo "No Data";?></td>
+                                                        <td></td>
+                                                    <?php else: ?>
+                                                        <tbody>
                                                         <?php foreach($report_data as $data): ?>
                                                             <tr>
-                                                                <td><?php echo $data['year']." ".$data['month'] ?></td>
+                                                                <td><?php echo $data['year'] ?></td>
+                                                                <td><?php 
+                                                                
+                                                                if($data['month']==1){
+                                                                    echo "January";
+                                                                } elseif($data['month']==2){
+                                                                    echo "February";
+                                                                } elseif($data['month']==3){
+                                                                    echo "March";
+                                                                } elseif($data['month']==4){
+                                                                    echo "April";
+                                                                } elseif($data['month']==5){
+                                                                    echo "May";
+                                                                } elseif($data['month']==6){
+                                                                    echo "June";
+                                                                } elseif($data['month']==7){
+                                                                    echo "July";
+                                                                } elseif($data['month']==8){
+                                                                    echo "August";
+                                                                } elseif($data['month']==9){
+                                                                    echo "September";
+                                                                } elseif($data['month']==10){
+                                                                    echo "October";
+                                                                } elseif($data['month']==11){
+                                                                    echo "November";
+                                                                } else{
+                                                                    echo "December";
+                                                                }
+
+                                                                ?></td>
+                                                                <td>
+                                                                    <form style="display: inline-block;" action="report-detail.php" method="post">
+                                                                        <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
+                                                                        <input type="hidden" name="year" value="<?php echo $data['year'] ?>">
+                                                                        <input type="hidden" name="month" value="<?php echo $data['month'] ?>">
+                                                                        <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
+                                                                    </form>
+                                                                    <form style="display: inline-block;" action="delete-report.php" method="post">
+                                                                        <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
+                                                                        <button type="submit" class="label bg-danger text-white f-12" style="border-radius: 10px; border-width: 0px;">Delete</button>
+                                                                    </form>
+                                                                </td>
                                                             </tr>
                                                         <?php endforeach; ?>
-                                                        </form>
                                                     </tbody>
+                                                    <?php endif; ?>
                                                 </table>
                                             </div>
                                         </div>
@@ -333,3 +381,7 @@ session_start();
 
 </body>
 </html>
+SELECT COUNT(ProductID)
+FROM Products;
+$count = $conn->query("SELECT (quantity) as items from `cart` where client_id =".$_settings->userdata('id'))->fetch_assoc()['items'];
+echo ($count > 0 ? $count : 0);

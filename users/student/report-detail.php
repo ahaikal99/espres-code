@@ -18,37 +18,43 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $sql_check = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid'");
-    $sql_check->execute();
-    $list_logbook = $sql_check -> fetchAll();
+    if($_POST){
+        $id = $_POST['id'];
+        $month = $_POST['month'];
+        $year = $_POST['year'];
 
-    $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' ");
-    $db_sql->execute();
-    $calculate_total = $db_sql -> fetchAll();
+        $db_report = $pdo->prepare("SELECT * FROM report WHERE id = '$id'");
+        $db_report->execute();
+        $report_list = $db_report -> fetch(PDO::FETCH_ASSOC);
 
-    
-    $total = 0;
-    // ------calculate total hour------------------------------
-    // Loop the data items
-    foreach( $calculate_total as $element):
+        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' && MONTH(date) = '$month' && YEAR(date) = '$year' ");
+        $db_sql->execute();
+        $calculate_total = $db_sql -> fetchAll();
+
+        $total = 0;
+        // ------calculate total hour------------------------------
+        // Loop the data items
+        foreach( $calculate_total as $element):
+            
+            // Explode by separator :
+            $temp = explode(":", $element['totaltime']);
+            
+            // Convert the hours into seconds
+            // and add to total
+            $total+= (int) $temp[0] * 3600;
+            
+            // Convert the minutes to seconds
+            // and add to total
+            $total+= (int) $temp[1] * 60;
+            
+            // Add the seconds to total
+            $total+= (int) $temp[2];
+        endforeach;
         
-        // Explode by separator :
-        $temp = explode(":", $element['totaltime']);
-        
-        // Convert the hours into seconds
-        // and add to total
-        $total+= (int) $temp[0] * 3600;
-        
-        // Convert the minutes to seconds
-        // and add to total
-        $total+= (int) $temp[1] * 60;
-        
-        // Add the seconds to total
-        $total+= (int) $temp[2];
-    endforeach;
-    
-    // Format the seconds back into HH:MM:SS
-    $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
+        // Format the seconds back into HH:MM:SS
+        $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
+
+    }
 
 ?>
 <!DOCTYPE html>
@@ -251,10 +257,38 @@ session_start();
                                                 <span> <a style="font-weight: bold;">Student ID : </a><?php echo $user_db['userid'] ?></span>
                                             </div>
                                             <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Month : </a>Null</span>
+                                                <span> <a style="font-weight: bold;">Month : </a>
+                                                    <?php
+                                                        if($report_list['month']==1){
+                                                            echo "January";
+                                                        } elseif($report_list['month']==2){
+                                                            echo "February";
+                                                        } elseif($report_list['month']==3){
+                                                            echo "March";
+                                                        } elseif($report_list['month']==4){
+                                                            echo "April";
+                                                        } elseif($report_list['month']==5){
+                                                            echo "May";
+                                                        } elseif($report_list['month']==6){
+                                                            echo "June";
+                                                        } elseif($report_list['month']==7){
+                                                            echo "July";
+                                                        } elseif($report_list['month']==8){
+                                                            echo "August";
+                                                        } elseif($report_list['month']==9){
+                                                            echo "September";
+                                                        } elseif($report_list['month']==10){
+                                                            echo "October";
+                                                        } elseif($report_list['month']==11){
+                                                            echo "November";
+                                                        } else{
+                                                            echo "December";
+                                                        }
+                                                    ?>
+                                                </span>
                                             </div>
                                             <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Year : </a>Null</span>
+                                                <span> <a style="font-weight: bold;">Year : </a><?php echo $report_list['year'] ?></span>
                                             </div>
                                         </div>
                                         <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
