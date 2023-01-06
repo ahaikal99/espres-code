@@ -18,34 +18,37 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    if($_POST){
-        $id = $_POST['userid'];
-        $year = $_POST['year'];
-        $month = $_POST['month'];
+    $sql_check = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid'");
+    $sql_check->execute();
+    $list_logbook = $sql_check -> fetchAll();
 
-        $check_db = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' ");
-        $check_db->execute();
-        $report = $check_db -> fetch(PDO::FETCH_ASSOC);
-
-        if($year =='Choose...' && $month=='Choose...'){
-            header('Location: report.php');
-
-        } elseif($month == $report['month'] && $year == $report['year']){
-            header('Location: report.php');
-
-        } else{
-            $insert_db = $pdo->prepare("INSERT INTO report(userid,year,month) VALUES('$id','$year','$month')");
-            $insert_db->execute();
-        }
-    }
-
-    $report_db = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' ORDER BY year DESC");
-    $report_db->execute();
-    $report_data = $report_db->fetchAll();
-
-    $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = 1 && YEAR(date) = 2022 && userid = '$userid';");
+    $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' ");
     $db_sql->execute();
     $calculate_total = $db_sql -> fetchAll();
+
+    
+    $total = 0;
+    // ------calculate total hour------------------------------
+    // Loop the data items
+    foreach( $calculate_total as $element):
+        
+        // Explode by separator :
+        $temp = explode(":", $element['totaltime']);
+        
+        // Convert the hours into seconds
+        // and add to total
+        $total+= (int) $temp[0] * 3600;
+        
+        // Convert the minutes to seconds
+        // and add to total
+        $total+= (int) $temp[1] * 60;
+        
+        // Add the seconds to total
+        $total+= (int) $temp[2];
+    endforeach;
+    
+    // Format the seconds back into HH:MM:SS
+    $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
 
 ?>
 <!DOCTYPE html>
@@ -210,7 +213,7 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-    <div class="pcoded-main-container">
+    <section class="pcoded-main-container">
         <div class="pcoded-wrapper">
             <div class="pcoded-content">
                 <div class="pcoded-inner-content">
@@ -220,6 +223,7 @@ session_start();
                             <div class="row align-items-center">
                                 <div class="col-md-12">
                                     <div class="page-header-title">
+                                        
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
@@ -233,86 +237,63 @@ session_start();
                         <div class="page-wrapper">
                             <!-- [ Main Content ] start -->
                             <div class="row">
-                                <div class="col-sm-12">
+                                <!-- [ Hover-table ] start -->
+                                <div class="col">
                                     <div class="card">
-                                        <div class="card-header">
-                                            <h5>Report</h5>
+                                        <div class="card-header mb-3">
+                                            <h5>History</h5>
                                         </div>
-                                        <div class="card-body">
-
-                                        <!-- Button trigger modal -->
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Generate Report</button>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Generate Report</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <form action="" method="post">
-                                                        <div class="modal-body">
-                                                            <div class="input-group mb-4">
-                                                                <label class="input-group-text" for="year">Year</label>
-                                                                <select class="form-select" id="year" name="year">
-                                                                    <option selected>Choose...</option>
-                                                                    <option value="2022">2022</option>
-                                                                    <option value="2023">2023</option>
-                                                                    <option value="2024">2024</option>
-                                                                    <option value="2025">2025</option>
-                                                                    <option value="2026">2026</option>
-                                                                    <option value="2027">2027</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="input-group mb-3">
-                                                                <label class="input-group-text" for="month">Month</label>
-                                                                <select class="form-select" id="month" name="month">
-                                                                    <option selected>Choose...</option>
-                                                                    <option value="1">January</option>
-                                                                    <option value="2">February</option>
-                                                                    <option value="3">March</option>
-                                                                    <option value="4">April</option>
-                                                                    <option value="5">May</option>
-                                                                    <option value="6">June</option>
-                                                                    <option value="7">July</option>
-                                                                    <option value="8">August</option>
-                                                                    <option value="9">September</option>
-                                                                    <option value="10">October</option>
-                                                                    <option value="11">November</option>
-                                                                    <option value="12">December</option>
-                                                                </select>
-                                                            </div>
-                                                            <input type="hidden" value="<?php echo $userid ?>" name="userid">
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                            <button type="submit" class="btn btn-primary">Save</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Student Name : </a><?php echo $user_db['uname'] ?></span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Student ID : </a><?php echo $user_db['userid'] ?></span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Month : </a>Null</span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Year : </a>Null</span>
                                             </div>
                                         </div>
-                                        <div class="card-block table-border-style">
-                                            <div class="table-responsive">
-                                                <table class="table table-borderless">
-                                                    <thead>
-                                                        <tr>
-                                                            <th></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <form action="" method="post">
-                                                        <?php foreach($report_data as $data): ?>
-                                                            <tr>
-                                                                <td><?php echo $data['year']." ".$data['month'] ?></td>
-                                                            </tr>
-                                                        <?php endforeach; ?>
-                                                        </form>
-                                                    </tbody>
-                                                </table>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Supervisor Name : </a><?php echo $user_db['svname'] ?></span>
                                             </div>
                                         </div>
+                                        <div class="p-2 d-flex flex-row mb-2 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Co-Supervisor Name : </a><?php echo $user_db['svname'] ?></span>
+                                            </div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="p-2 d-flex"style="font-weight: bold; color: black;">
+                                            <div class="p-2 flex-fill w-25">Date</div>
+                                            <div class="p-2 flex-fill w-25">Activity</div>
+                                            <div class="p-2 flex-fill w-25">Duration</div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <?php foreach($calculate_total as $logbook): ?>
+                                            <div class="p-2 d-flex"style="color: black;">
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['date']?></div>
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['activity']?></div>
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['totaltime']?></div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="p-2 d-flex"style="color: black;">
+                                            <div class="p-2 flex-fill"></div>
+                                            <div class="p-2 flex-fill"></div>
+                                            <div class="p-2 flex-fill"><a style="font-weight: bold;">Total Hours : </a><?php echo $display." "."Hours" ?></div>
+                                        </div>
+                                        <hr class="mb-3" style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="d-flex mb-3">
+                                            <div class="p-2"></div>
+                                            <div class="p-2"></div>
+                                            <div class="ms-auto p-2">
+                                                <a href="report2.php" type="button" class="m-2 btn btn-primary">Print</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -322,7 +303,7 @@ session_start();
                 </div>
             </div>
         </div>
-    </div>
+    </section>
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->
