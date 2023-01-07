@@ -1,6 +1,8 @@
 <?php
 include 'connection.php';
 
+$date = date("l j F Y");
+
 session_start();
 
     if(isset($_SESSION["userid"])){
@@ -21,6 +23,10 @@ session_start();
     $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' ");
     $db_sql->execute();
     $logbook = $db_sql -> fetchAll();
+   
+    $report = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' ");
+    $report->execute();
+    $display_report = $report -> fetchAll();
 
     $total_logbook = $db_sql->rowCount();
     
@@ -266,7 +272,24 @@ session_start();
                                             <h6 class="mb-4">Today</h6>
                                             <div class="row d-flex align-items-center">
                                                 <div class="col-9">
-                                                    <h5 class="f-w-300 d-flex align-items-center  m-b-0"><?php echo date("l j F Y") ?></h5>
+                                                    <h5 class="f-w-300 d-flex align-items-center  m-b-0"><?php echo $date ?></h5>
+                                                </div>
+                                            </div>
+                                            <div class="progress m-t-30" style="height: 7px;">
+                                                <div class="" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--[ year  sales section ] end-->
+                                <!--[ year  sales section ] starts-->
+                                <div class="col-md-12 col-xl-4">
+                                    <div class="card yearly-sales">
+                                        <div class="card-block">
+                                            <h6 class="mb-4">Today</h6>
+                                            <div class="row d-flex align-items-center">
+                                                <div class="col-9">
+                                                    <h5 class="f-w-300 d-flex align-items-center  m-b-0"><?php echo $date ?></h5>
                                                 </div>
                                             </div>
                                             <div class="progress m-t-30" style="height: 7px;">
@@ -282,17 +305,48 @@ session_start();
                                         <div class="card-header">
                                             <h5>Latest Logbook</h5>
                                         </div>
-                                        <div class="card-block px-0 py-3">
+                                        <div class="card-block px-0 py-3 text-center">
                                             <div class="table-responsive">
                                                 <table class="table table-hover">
+                                                    <thead>
+                                                        <th>Year</th>
+                                                        <th>Month</th>
+                                                        <th>Action</th>
+                                                    </thead>
                                                     <tbody>
-                                                        <?php foreach($logbook as $i => $data): ?>
+                                                        <?php foreach($display_report as $i => $data): ?>
                                                             <tr class="unread">
                                                                 <td> 
-                                                                    <h6 class="mb-1"><?php echo $data['activity'] ?></h6>
+                                                                    <h6 class="mb-1"><?php echo $data['year'] ?></h6>
                                                                 </td>
                                                                 <td>
-                                                                    <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i><?php echo $data['date'] ?></h6>
+                                                                    <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i><?php 
+                                                                        if($data['month']==1){
+                                                                            echo "January";
+                                                                        } elseif($data['month']==2){
+                                                                            echo "February";
+                                                                        } elseif($data['month']==3){
+                                                                            echo "March";
+                                                                        } elseif($data['month']==4){
+                                                                            echo "April";
+                                                                        } elseif($data['month']==5){
+                                                                            echo "May";
+                                                                        } elseif($data['month']==6){
+                                                                            echo "June";
+                                                                        } elseif($data['month']==7){
+                                                                            echo "July";
+                                                                        } elseif($data['month']==8){
+                                                                            echo "August";
+                                                                        } elseif($data['month']==9){
+                                                                            echo "September";
+                                                                        } elseif($data['month']==10){
+                                                                            echo "October";
+                                                                        } elseif($data['month']==11){
+                                                                            echo "November";
+                                                                        } else{
+                                                                            echo "December";
+                                                                        }
+                                                                    ?></h6>
                                                                 </td>
                                                                 <td><a href="history.php" class="label theme-bg2 text-white f-12">View</a></td>
                                                             </tr>
