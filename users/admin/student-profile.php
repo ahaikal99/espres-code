@@ -14,13 +14,23 @@ session_start();
         header("location: ../login.php");
     }
 
+    
+        $search = $_GET['search']?? "";
+
+        if($search){
+            $db_list = $pdo->prepare("SELECT * FROM student WHERE email LIKE '%$search%' OR uname LIKE '%$search%' OR pcode LIKE '%$search%' OR userid LIKE '%$search%' ORDER BY uname DESC");
+        } else{
+            $db_list = $pdo->prepare("SELECT * FROM student");
+        }
+        $db_list->execute();
+        $student_list = $db_list -> fetchAll();
+    
+
     $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
     
-    $db_list = $pdo->prepare("SELECT * FROM student");
-    $db_list->execute();
-    $student_list = $db_list -> fetchAll();
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -201,8 +211,14 @@ session_start();
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Supervisor</h5>
+                                            <h5>Student</h5>
                                         </div>
+                                        <form action="" method="get">
+                                            <div class="input-group mb-3 m-auto" style="max-width: 600px;">
+                                                <input type="text" class="form-control" placeholder="Search" name="search">
+                                                <button class="btn bg-primary" type="submit" id="button-addon2"><i style="color: white; font-size: 20px; margin: auto" class="feather icon-search"></i></button>
+                                            </div>
+                                        </form>
                                         <?php if(!$student_list): ?>
                                             <div class="text-center" style="padding: 20px;">
                                                 <h4><?php echo "No Data"?></h4>
