@@ -18,42 +18,25 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
+    $sql_read = $pdo->prepare("SELECT * FROM supervisor");
+    $sql_read->execute();
+    $list_sv = $sql_read -> fetchAll();
+
     if($_POST){
-        $id = $_POST['id'];
-        $month = $_POST['month'];
-        $year = $_POST['year'];
 
-        $db_report = $pdo->prepare("SELECT * FROM report WHERE id = '$id'");
-        $db_report->execute();
-        $report_list = $db_report -> fetch(PDO::FETCH_ASSOC);
-
-        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' && MONTH(date) = '$month' && YEAR(date) = '$year' ");
-        $db_sql->execute();
-        $calculate_total = $db_sql -> fetchAll();
-
-        $total = 0;
-        // ------calculate total hour------------------------------
-        // Loop the data items
-        foreach( $calculate_total as $element):
-            
-            // Explode by separator :
-            $temp = explode(":", $element['totaltime']);
-            
-            // Convert the hours into seconds
-            // and add to total
-            $total+= (int) $temp[0] * 3600;
-            
-            // Convert the minutes to seconds
-            // and add to total
-            $total+= (int) $temp[1] * 60;
-            
-            // Add the seconds to total
-            $total+= (int) $temp[2];
-        endforeach;
-        
-        // Format the seconds back into HH:MM:SS
-        $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
-
+        $svname=$_POST['svname'];
+        $svid=$_POST['svid'];
+    
+        $sql="UPDATE student SET cosv='$svname', cosvid='$svid' WHERE userid='$userid'";
+        $result=$pdo->prepare($sql);
+        $result->execute();
+        $_SESSION["user"]=$userid;
+        header("location: logbook.php");
+    
+    
+    }else{
+        $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Error!</label>';
+    
     }
 
 ?>
@@ -106,13 +89,13 @@ session_start();
                     <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a href="logbook.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">Logbook</span></a>
                     </li>
                     <li class="nav-item">
                         <a href="history.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-clock"></i></span><span class="pcoded-mtext">History</span></a>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a href="report.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file"></i></span><span class="pcoded-mtext">Report</span></a>
                     </li>
                 </ul>
@@ -219,7 +202,7 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-    <section class="pcoded-main-container">
+    <div class="pcoded-main-container">
         <div class="pcoded-wrapper">
             <div class="pcoded-content">
                 <div class="pcoded-inner-content">
@@ -229,7 +212,6 @@ session_start();
                             <div class="row align-items-center">
                                 <div class="col-md-12">
                                     <div class="page-header-title">
-                                        
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
@@ -243,91 +225,44 @@ session_start();
                         <div class="page-wrapper">
                             <!-- [ Main Content ] start -->
                             <div class="row">
-                                <!-- [ Hover-table ] start -->
-                                <div class="col">
+                                <div class="col-sm-12">
                                     <div class="card">
-                                        <div class="card-header mb-3">
-                                            <h5>History</h5>
+                                        <div class="card-header">
+                                            <h5>Supervisor</h5>
                                         </div>
-                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Student Name : </a><?php echo $user_db['uname'] ?></span>
+                                        <div class="card-body">
+                                        <form class="row justify-content-center ">
+                                            <div class="input-group mb-3 w-50">
+                                                <input type="text" class="form-control" placeholder="Search" style="background-color: white">
+                                                <button class="btn bg-primary" type="submit" style="color: white;"><i class="feather icon-search m-0"></i></button>
                                             </div>
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Student ID : </a><?php echo $user_db['userid'] ?></span>
-                                            </div>
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Month : </a>
-                                                    <?php
-                                                        if($report_list['month']==1){
-                                                            echo "January";
-                                                        } elseif($report_list['month']==2){
-                                                            echo "February";
-                                                        } elseif($report_list['month']==3){
-                                                            echo "March";
-                                                        } elseif($report_list['month']==4){
-                                                            echo "April";
-                                                        } elseif($report_list['month']==5){
-                                                            echo "May";
-                                                        } elseif($report_list['month']==6){
-                                                            echo "June";
-                                                        } elseif($report_list['month']==7){
-                                                            echo "July";
-                                                        } elseif($report_list['month']==8){
-                                                            echo "August";
-                                                        } elseif($report_list['month']==9){
-                                                            echo "September";
-                                                        } elseif($report_list['month']==10){
-                                                            echo "October";
-                                                        } elseif($report_list['month']==11){
-                                                            echo "November";
-                                                        } else{
-                                                            echo "December";
-                                                        }
-                                                    ?>
-                                                </span>
-                                            </div>
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Year : </a><?php echo $report_list['year'] ?></span>
+                                        </form>
+                                        <div class="card-block table-border-style">
+                                            <div class="table-responsive">
+                                                <table class="table text-center">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>ID</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <?php foreach($list_sv as $i=>$data): ?>
+                                                        <tbody>
+                                                            <form action="" method="post">
+                                                            <tr>
+                                                                <td><?php echo strtoupper($data['uname']) ?></td>
+                                                                <td><?php echo strtoupper($data['userid']) ?></td>
+                                                                <input type="text" value="<?php echo $data['uname'] ?>" name="svname" hidden>
+                                                                <input type="text" value="<?php echo $data['userid'] ?>" name="svid" hidden>
+                                                                <td><button type="submit" class="label bg-success text-white f-12" style="border-radius: 10px; border-width: 0px; cursor:pointer">Add</button></td>
+                                                            </tr>
+                                                            </form>
+                                                        </tbody>
+                                                    <?php endforeach; ?>
+                                                </table>
                                             </div>
                                         </div>
-                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Supervisor Name : </a><?php echo $user_db['svname'] ?></span>
-                                            </div>
-                                        </div>
-                                        <div class="p-2 d-flex flex-row mb-2 gap-5" style="color: black;">
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Co-Supervisor Name : </a><?php echo strtoupper($user_db['cosv']) ?></span>
-                                            </div>
-                                        </div>
-                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                                        <div class="p-2 d-flex"style="font-weight: bold; color: black;">
-                                            <div class="p-2 flex-fill w-25">Date</div>
-                                            <div class="p-2 flex-fill w-25">Activity</div>
-                                            <div class="p-2 flex-fill w-25">Duration</div>
-                                        </div>
-                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                                        <?php foreach($calculate_total as $logbook): ?>
-                                            <div class="p-2 d-flex"style="color: black;">
-                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['date']?></div>
-                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['activity']?></div>
-                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['totaltime']?></div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                                        <div class="p-2 d-flex"style="color: black;">
-                                            <div class="p-2 flex-fill"></div>
-                                            <div class="p-2 flex-fill"></div>
-                                            <div class="p-2 flex-fill"><a style="font-weight: bold;">Total Hours : </a><?php echo $display." "."Hours" ?></div>
-                                        </div>
-                                        <hr class="mb-3" style="height:2px;border-width:0;color:gray;background-color:gray">
-                                        <div class="d-flex mb-3">
-                                            <div class="p-2"></div>
-                                            <div class="p-2"></div>
-                                            <div class="ms-auto p-2">
-                                                <a href="report2.php" type="button" class="m-2 btn btn-primary">Print</a>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -337,7 +272,7 @@ session_start();
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->

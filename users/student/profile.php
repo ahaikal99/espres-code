@@ -252,7 +252,15 @@ session_start();
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Supervisor</th>
-                                                            <td><?php echo strtoupper($user_db['svname']) ?></td>
+                                                            <td><?php echo strtoupper($user_db['svname']) ?> <a href="add-supervisor.php" style="margin-left: 8px; padding:8px" class="label bg-success text-white f-12 rounded">Change</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Co-Supervisor</th>
+                                                            <?php if(empty($user_db['cosv'])): ?>
+                                                                <td><a href="add-cosupervisor.php" style="margin-left: 8px; padding:8px" class="label bg-success text-white f-12 rounded">Add</a></td>
+                                                            <?php else: ?>
+                                                                <td><?php echo strtoupper($user_db['cosv']) ?><a href="add-cosupervisor.php" style="margin-left: 8px; padding:8px" class="label bg-success text-white f-12 rounded">Change</a></td>
+                                                            <?php endif; ?>
                                                         </tr>
                                                     </tbody>
                                                     <a href="edit-profile.php" class="btn btn-primary" style="position: absolute; right:0; bottom: 0;">Edit</a>
