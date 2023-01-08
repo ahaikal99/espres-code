@@ -4,7 +4,7 @@ include 'connection.php';
 session_start();
 
     if(isset($_SESSION["userid"])){
-        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='admin'){
+        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='supervisor'){
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
@@ -18,7 +18,7 @@ $error = "";
 
     if($_POST){
         $email = $_POST['email'];
-        $check_email = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
+        $check_email = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
         $check_email->execute();
         $result = $check_email -> fetch(PDO::FETCH_ASSOC);
 

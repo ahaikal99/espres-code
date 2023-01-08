@@ -74,7 +74,7 @@ $error = "";
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     <?php endif; ?>
-                    <h3 class="mb-4">Reset Password</h3>
+                    <h3 class="mb-4">Change Password</h3>
                     <div class="input-group mb-3">
                         <input type="password" class="form-control" placeholder="New Password" name="password" id="password">
                     </div>
@@ -94,6 +94,7 @@ $error = "";
                         </div>
                     </div>
                     <button class="btn btn-primary mb-4 shadow-2">Confirm</button>
+                    <a href="dashboard.php" class="btn btn-danger mb-4 shadow-2" style="color: white;">Cancel</a>
                 </div>
                 </form>
             </div>

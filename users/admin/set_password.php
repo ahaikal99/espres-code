@@ -17,15 +17,20 @@ session_start();
 $error = "";
 
     if($_POST){
-        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $cpassword = $_POST['cpassword'];
+
         $check_email = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
         $check_email->execute();
         $result = $check_email -> fetch(PDO::FETCH_ASSOC);
 
-        if($result['email'] == $email){
-            header('Location: set_password.php');
+        if($password == $cpassword){
+            $update = $pdo->prepare("UPDATE admin SET password = '$password' WHERE userid = '$userid'");
+            $update->execute();
+            
+            header('Location: dashboard.php');
         } else{
-            $error = "Invalid Email";
+            $error = "Password not match";
         }
     }
 
@@ -65,15 +70,31 @@ $error = "";
                     </div>
                     <?php if(!empty($error)): ?>
                         <div class="alert alert-danger alert-dismissible fade show" role="alert" style="height: 55px;">
-                            <p>Invlid Email</p>
+                            <p><?php echo $error ?></p>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     <?php endif; ?>
-                    <h3 class="mb-4">Reset Password</h3>
+                    <h3 class="mb-4">Change Password</h3>
                     <div class="input-group mb-3">
-                        <input type="email" class="form-control" placeholder="Email" name="email">
+                        <input type="password" class="form-control" placeholder="New Password" name="password" id="password">
                     </div>
-                    <button class="btn btn-primary mb-4 shadow-2">Reset Password</button>
+                    <div class="form-group text-left">
+                        <div class="checkbox checkbox-fill d-inline">
+                            <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-1" onclick="showPassword()">
+                            <label for="checkbox-fill-1" class="cr"> Show Password</label>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="password" class="form-control" placeholder="Confirm Password" name="cpassword" id="cpassword">
+                    </div>
+                    <div class="form-group text-left">
+                        <div class="checkbox checkbox-fill d-inline">
+                            <input type="checkbox" name="checkbox-fill-2" id="checkbox-fill-2" onclick="showcPassword()">
+                            <label for="checkbox-fill-2" class="cr"> Show Password</label>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mb-4 shadow-2">Confirm</button>
+                    <a href="dashboard.php" class="btn btn-danger mb-4 shadow-2" style="color: white;">Cancel</a>
                 </div>
                 </form>
             </div>
@@ -84,6 +105,26 @@ $error = "";
 	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="\espres-code\public\assets/js/pcoded.min.js"></script>
     <script src="\espres-code\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
+    <script>
+        
+        function showPassword() {
+            var x = document.getElementById("password");
+            if (x.type === "password") {
+            x.type = "text";
+            } else {
+            x.type = "password";
+            }
+        }
+
+        function showcPassword() {
+            var x = document.getElementById("cpassword");
+            if (x.type === "password") {
+            x.type = "text";
+            } else {
+            x.type = "password";
+            }
+        }
+    </script>
 
     
 
