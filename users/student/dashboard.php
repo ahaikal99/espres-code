@@ -1,8 +1,6 @@
 <?php
 include 'connection.php';
 
-$date = date("l j F Y");
-
 session_start();
 
     if(isset($_SESSION["userid"])){
@@ -15,6 +13,39 @@ session_start();
     }else{
         header("location: ../login.php");
     }
+
+    $now = new DateTime();
+    $date = $now->format('l j F Y');
+    $parsedDate = date_parse_from_format('l j F Y', $date);
+    $month = $parsedDate['month'];
+    $year = $parsedDate['year'];
+
+    $logbook_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' AND MONTH(date) = '$month' AND YEAR(date) = '$year' ");
+    $logbook_sql->execute();
+    $this_month = $logbook_sql -> fetchAll();
+
+    $totalthis = 0;
+    // ------calculate hour------------------------------
+    // Loop the data items
+    foreach( $this_month as $element):
+        
+        // Explode by separator :
+        $temp = explode(":", $element['totaltime']);
+        
+        // Convert the hours into seconds
+        // and add to total
+        $totalthis+= (int) $temp[0] * 3600;
+        
+        // Convert the minutes to seconds
+        // and add to total
+        $totalthis+= (int) $temp[1] * 60;
+        
+        // Add the seconds to total
+        $totalthis+= (int) $temp[2];
+    endforeach;
+    
+    // Format the seconds back into HH:MM:SS
+    $totalmonth = sprintf('%02d:%02d',($totalthis / 3600),($totalthis / 60 % 60),$totalthis % 60);
 
     $sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid'");
     $sql_stmnt->execute();
@@ -286,10 +317,10 @@ session_start();
                                 <div class="col-md-12 col-xl-4">
                                     <div class="card yearly-sales">
                                         <div class="card-block">
-                                            <h6 class="mb-4">Today</h6>
+                                            <h6 class="mb-4">Total Hour This Month</h6>
                                             <div class="row d-flex align-items-center">
                                                 <div class="col-9">
-                                                    <h5 class="f-w-300 d-flex align-items-center  m-b-0"><?php echo $date ?></h5>
+                                                    <h5 class="f-w-300 d-flex align-items-center  m-b-0"><?php echo $totalmonth." "."Hour" ?></h5>
                                                 </div>
                                             </div>
                                             <div class="progress m-t-30" style="height: 7px;">
