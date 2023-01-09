@@ -14,13 +14,18 @@ session_start();
         header("location: ../login.php");
     }
 
+    if($_POST){
+        $studentid = $_POST['id'];
+
+        $student_report = $pdo->prepare("SELECT DISTINCT MONTH(date) as month, YEAR(date) as year, userid FROM logbook WHERE userid = '$studentid'");
+        $student_report->execute();
+        $list_logbook = $student_report->fetchAll();
+
+    }
+
     $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
-
-    $db_list = $pdo->prepare("SELECT * FROM student");
-    $db_list->execute();
-    $student_list = $db_list -> fetchAll();
 
 ?>
 <!DOCTYPE html>
@@ -204,7 +209,7 @@ session_start();
                                         <div class="card-header">
                                             <h5>Logbook</h5>
                                         </div>
-                                        <?php if(!$student_list): ?>
+                                        <?php if(!$list_logbook): ?>
                                             <div class="text-center" style="padding: 20px;">
                                                 <h4><?php echo "No Data"?></h4>
                                             </div>
@@ -215,22 +220,50 @@ session_start();
                                                     <thead>
                                                         <tr>
                                                             <th>No</th>
-                                                            <th>ID</th>
-                                                            <th>Name</th>
-                                                            <th>Email</th>
+                                                            <th>Year</th>
+                                                            <th>Month</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <?php foreach($student_list as $i => $data): ?>
+                                                    <?php foreach($list_logbook as $i => $data): ?>
                                                         <tr>
                                                             <td scope="row"><?php echo $i + 1 ?></td>
-                                                            <td><?php echo $data['userid'] ?></td>
-                                                            <td><?php echo strtoupper($data['uname']) ?></td>
-                                                            <td><?php echo $data['email'] ?></td>
+                                                            <td><?php echo $data['year'] ?></td>
+                                                            <td>
+                                                                <?php 
+                                                                if($data['month']==1){
+                                                                    echo "January";
+                                                                } elseif($data['month']==2){
+                                                                    echo "February";
+                                                                } elseif($data['month']==3){
+                                                                    echo "March";
+                                                                } elseif($data['month']==4){
+                                                                    echo "April";
+                                                                } elseif($data['month']==5){
+                                                                    echo "May";
+                                                                } elseif($data['month']==6){
+                                                                    echo "June";
+                                                                } elseif($data['month']==7){
+                                                                    echo "July";
+                                                                } elseif($data['month']==8){
+                                                                    echo "August";
+                                                                } elseif($data['month']==9){
+                                                                    echo "September";
+                                                                } elseif($data['month']==10){
+                                                                    echo "October";
+                                                                } elseif($data['month']==11){
+                                                                    echo "November";
+                                                                } else{
+                                                                    echo "December";
+                                                                }
+                                                                ?>
+                                                            </td>
                                                             <td>
                                                                 <form action="view-logbook.php" method="post">
                                                                     <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
+                                                                    <input type="hidden" name="year" value="<?php echo $data['year'] ?>">
+                                                                    <input type="hidden" name="month" value="<?php echo $data['month'] ?>">
                                                                     <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
                                                                 </form>
                                                             </td>

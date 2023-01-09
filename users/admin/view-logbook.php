@@ -14,13 +14,45 @@ session_start();
         header("location: ../login.php");
     }
 
+    $id = $_POST['id'];
+    $month = $_POST['month'];
+    $year = $_POST['year'];
+
+    $db_list = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = '$month' AND YEAR(date) = '$year' AND userid = '$id'");
+    $db_list->execute();
+    $logbook_list = $db_list -> fetchAll();
+
+    $detail = $pdo->prepare("SELECT * FROM student WHERE userid = '$id'");
+    $detail->execute();
+    $detail_logbook = $detail -> fetch(PDO::FETCH_ASSOC);
+
+
     $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $db_list = $pdo->prepare("SELECT * FROM logbook");
-    $db_list->execute();
-    $logbook_list = $db_list -> fetchAll();
+    $total = 0;
+        // ------calculate total hour------------------------------
+        // Loop the data items
+        foreach( $logbook_list as $element):
+            
+            // Explode by separator :
+            $temp = explode(":", $element['totaltime']);
+            
+            // Convert the hours into seconds
+            // and add to total
+            $total+= (int) $temp[0] * 3600;
+            
+            // Convert the minutes to seconds
+            // and add to total
+            $total+= (int) $temp[1] * 60;
+            
+            // Add the seconds to total
+            $total+= (int) $temp[2];
+        endforeach;
+        
+        // Format the seconds back into HH:MM:SS
+        $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
 
 ?>
 <!DOCTYPE html>
@@ -274,8 +306,86 @@ session_start();
                                                 <?php endif; ?>
                                             </div>
                                             <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                                                <p class="mb-0">Ad pariatur nostrud pariatur exercitation ipsum ipsum culpa mollit commodo mollit ex. Aute sunt incididunt amet commodo est sint nisi deserunt pariatur do. Aliquip ex eiusmod voluptate exercitation cillum id incididunt elit sunt. Qui minim sit magna Lorem id et dolore velit Lorem amet exercitation duis deserunt. Anim id labore elit adipisicing ut in id occaecat pariatur ut ullamco ea tempor duis.
-                                                </p>
+                                                <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                                    <div class="p-2">
+                                                        <span> <a style="font-weight: bold;">Student Name : </a><?php echo $detail_logbook['uname'] ?></span>
+                                                    </div>
+                                                    <div class="p-2">
+                                                        <span> <a style="font-weight: bold;">Student ID : </a><?php echo $detail_logbook['userid'] ?></span>
+                                                    </div>
+                                                    <div class="p-2">
+                                                        <span> <a style="font-weight: bold;">Month : </a>
+                                                            <?php
+                                                                if($month==1){
+                                                                    echo "January";
+                                                                } elseif($month==2){
+                                                                    echo "February";
+                                                                } elseif($month==3){
+                                                                    echo "March";
+                                                                } elseif($month==4){
+                                                                    echo "April";
+                                                                } elseif($month==5){
+                                                                    echo "May";
+                                                                } elseif($month==6){
+                                                                    echo "June";
+                                                                } elseif($month==7){
+                                                                    echo "July";
+                                                                } elseif($month==8){
+                                                                    echo "August";
+                                                                } elseif($month==9){
+                                                                    echo "September";
+                                                                } elseif($month==10){
+                                                                    echo "October";
+                                                                } elseif($month==11){
+                                                                    echo "November";
+                                                                } else{
+                                                                    echo "December";
+                                                                }
+                                                            ?>
+                                                        </span>
+                                                    </div>
+                                                    <div class="p-2">
+                                                        <span> <a style="font-weight: bold;">Year : </a><?php echo $year ?></span>
+                                                    </div>
+                                                </div>
+                                                <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                                    <div class="p-2">
+                                                        <span> <a style="font-weight: bold;">Supervisor Name : </a><?php echo $detail_logbook['svname'] ?></span>
+                                                    </div>
+                                                </div>
+                                                <div class="p-2 d-flex flex-row mb-2 gap-5" style="color: black;">
+                                                    <div class="p-2">
+                                                        <span> <a style="font-weight: bold;">Co-Supervisor Name : </a><?php echo strtoupper($detail_logbook['cosv']) ?></span>
+                                                    </div>
+                                                </div>
+                                                <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                                <div class="p-2 d-flex"style="font-weight: bold; color: black;">
+                                                    <div class="p-2 flex-fill w-25">Date</div>
+                                                    <div class="p-2 flex-fill w-25">Activity</div>
+                                                    <div class="p-2 flex-fill w-25">Duration</div>
+                                                </div>
+                                                <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                                <?php foreach($logbook_list as $logbook): ?>
+                                                    <div class="p-2 d-flex"style="color: black;">
+                                                        <div class="p-2 flex-fill w-25"><?php echo $logbook['date']?></div>
+                                                        <div class="p-2 flex-fill w-25"><?php echo $logbook['activity']?></div>
+                                                        <div class="p-2 flex-fill w-25"><?php echo $logbook['totaltime']?></div>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                                <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                                <div class="p-2 d-flex"style="color: black;">
+                                                    <div class="p-2 flex-fill"></div>
+                                                    <div class="p-2 flex-fill"></div>
+                                                    <div class="p-2 flex-fill"><a style="font-weight: bold;">Total Hours : </a><?php echo $display." "."Hours" ?></div>
+                                                </div>
+                                                <hr class="mb-3" style="height:2px;border-width:0;color:gray;background-color:gray">
+                                                <div class="d-flex mb-3">
+                                                    <div class="p-2"></div>
+                                                    <div class="p-2"></div>
+                                                    <div class="ms-auto p-2">
+                                                        <a href="report2.php" type="button" class="m-2 btn btn-primary">Print</a>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
