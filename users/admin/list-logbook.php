@@ -229,7 +229,7 @@ session_start();
                                                             <td><?php echo strtoupper($data['uname']) ?></td>
                                                             <td><?php echo $data['email'] ?></td>
                                                             <td>
-                                                                <form action="list-logbook.php" method="post">
+                                                                <form action="view-logbook.php" method="post">
                                                                     <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
                                                                     <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
                                                                 </form>

@@ -204,58 +204,80 @@ session_start();
                                         <div class="card-header">
                                             <h5>Logbook</h5>
                                         </div>
-                                        <?php if(!$logbook_list): ?>
-                                            <div class="text-center" style="padding: 20px;">
-                                                <h4><?php echo "No Data"?></h4>
+                                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home">List of Logbook</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile">Report</a>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content" id="pills-tabContent">
+                                            <div class="tab-pane fade show active" id="pills-home" >
+                                            <form action="" method="get">
+                                                <div class="input-group mb-3 m-auto" style="max-width: 600px;">
+                                                    <input type="text" class="form-control" placeholder="Search" name="search">
+                                                    <button class="btn bg-primary" type="submit" id="button-addon2"><i style="color: white; font-size: 20px; margin: auto" class="feather icon-search"></i></button>
+                                                </div>
+                                            </form>
+                                                <?php if(!$logbook_list): ?>
+                                                    <div class="text-center" style="padding: 20px;">
+                                                        <h4><?php echo "No Data"?></h4>
+                                                    </div>
+                                                <?php else: ?>
+                                                <div class="card-block table-border-style">
+                                                    <div class="table-responsive text-center">
+                                                        <table class="table table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>No</th>
+                                                                    <th>Date</th>
+                                                                    <th>Activity</th>
+                                                                    <th>Status</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php foreach($logbook_list as $i => $data): ?>
+                                                                    <tr>
+                                                                    <td scope="row"><?php echo $i + 1 ?></td>
+                                                                    <td><?php echo $data['date'] ?></td>
+                                                                    <td><?php echo strtoupper($data['activity']) ?></td>
+                                                                    <td><?php echo $data['status'] ?></td>
+                                                                    <td>
+                                                                        <form action="view-logbook-detail.php" method="post">
+                                                                            <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
+                                                                            <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
+                                                                        </form>
+                                                                    </td>
+                                                                    </tr>
+                                                                <?php endforeach; ?>
+                                                            </tbody>
+                                                        </table>
+                                                        <nav aria-label="..." style="width: 245px; height: 60px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;">
+                                                            <ul class="pagination">
+                                                                <li class="page-item disabled">
+                                                                    <a class="page-link">Previous</a>
+                                                                </li>
+                                                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                                <li class="page-item" aria-current="page">
+                                                                    <a class="page-link" href="#">2</a>
+                                                                </li>
+                                                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                                <li class="page-item">
+                                                                    <a class="page-link" href="#">Next</a>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </div>
+                                                <?php endif; ?>
                                             </div>
-                                        <?php else: ?>
-                                            <div class="card-block table-border-style">
-                                            <div class="table-responsive text-center">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>No</th>
-                                                            <th>Date</th>
-                                                            <th>Activity</th>
-                                                            <th>Status</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <?php foreach($logbook_list as $i => $data): ?>
-                                                        <tr>
-                                                            <td scope="row"><?php echo $i + 1 ?></td>
-                                                            <td><?php echo $data['date'] ?></td>
-                                                            <td><?php echo strtoupper($data['activity']) ?></td>
-                                                            <td><?php echo $data['status'] ?></td>
-                                                            <td>
-                                                                <form action="view-logbook-detail.php" method="post">
-                                                                    <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
-                                                                    <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                        <?php endforeach; ?>
-                                                    </tbody>
-                                                </table>
-                                                <nav aria-label="..." style="width: 245px; height: 60px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;">
-                                                    <ul class="pagination">
-                                                        <li class="page-item disabled">
-                                                            <a class="page-link">Previous</a>
-                                                        </li>
-                                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                                        <li class="page-item" aria-current="page">
-                                                            <a class="page-link" href="#">2</a>
-                                                        </li>
-                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                        <li class="page-item">
-                                                            <a class="page-link" href="#">Next</a>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
+                                            <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                                                <p class="mb-0">Ad pariatur nostrud pariatur exercitation ipsum ipsum culpa mollit commodo mollit ex. Aute sunt incididunt amet commodo est sint nisi deserunt pariatur do. Aliquip ex eiusmod voluptate exercitation cillum id incididunt elit sunt. Qui minim sit magna Lorem id et dolore velit Lorem amet exercitation duis deserunt. Anim id labore elit adipisicing ut in id occaecat pariatur ut ullamco ea tempor duis.
+                                                </p>
                                             </div>
                                         </div>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
                                 <!-- [ Hover-table ] end -->
