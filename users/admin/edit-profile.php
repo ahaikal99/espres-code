@@ -1,3 +1,19 @@
+<?php
+include 'connection.php';
+
+session_start();
+
+    if(isset($_SESSION["userid"])){
+        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='admin'){
+            header("location: ../login.php");
+        }else{
+            $userid=$_SESSION["userid"];
+        }
+
+    }else{
+        header("location: ../login.php");
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -142,7 +158,6 @@
                             <ul class="pro-body">
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
                                 <li><a href="profile.php" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
-                                <li><a href="message.php" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a></li>
                                 <li><a href="\espres-code\logout.php" class="dropdown-item"><i class="feather icon-log-out"></i> Log Out</a></li>
                             </ul>
                         </div>

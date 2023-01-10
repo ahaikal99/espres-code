@@ -1,3 +1,24 @@
+<?php
+include 'connection.php';
+
+session_start();
+
+    if(isset($_SESSION["userid"])){
+        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='admin'){
+            header("location: ../login.php");
+        }else{
+            $userid=$_SESSION["userid"];
+        }
+
+    }else{
+        header("location: ../login.php");
+    }
+
+    $sql = $pdo->prepare("SELECT * FROM admin WHERE userid ='$userid'");
+    $sql->execute();
+    $admin_data = $sql->fetch(PDO::FETCH_ASSOC);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -104,7 +125,7 @@
                 </li>
                 <li class="nav-item">
                     <div>
-                        <h6><?php echo "Welcome"." ".$userfetch['fname'] ?></h6>
+                        <h6></h6>
                     </div>
                 </li>
             </ul>
@@ -135,14 +156,13 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
                             <div class="pro-head">
-                                <img src="<?php echo $userfetch['pic'] ?>" class="img-radius">
-                                <span><?php echo $userfetch['fname'] ?></span>
+                                <img src="<?php echo $admin_data['pic'] ?>" class="img-radius">
+                                <span><?php echo $admin_data['uname'] ?></span>
                                 
                             </div>
                             <ul class="pro-body">
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
                                 <li><a href="profile.php" class="dropdown-item"><i class="feather icon-user"></i> Profile</a></li>
-                                <li><a href="message.php" class="dropdown-item"><i class="feather icon-mail"></i> My Messages</a></li>
                                 <li><a href="\espres-code\logout.php" class="dropdown-item"><i class="feather icon-log-out"></i> Log Out</a></li>
                             </ul>
                         </div>
@@ -154,7 +174,81 @@
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <div class="row">
+                                <!-- [ basic-table ] start -->
+                                <div class="col-xl-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Profile</h5>
+                                        </div>
+                                        <div class="card-block table-border-style">
+                                            <?php if(empty($admin_data['pic'])): ?>
+                                                <div class="mb-5"><img src="profile.png" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
+                                            <?php else: ?>
+                                                <div class="mb-5"><img src="<?php echo $admin_data['pic'] ?>" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
+                                            <?php endif; ?>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row">ID</th>
+                                                            <td><?php echo $admin_data['userid'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Name</th>
+                                                            <td><?php echo strtoupper($admin_data['uname']) ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">No. Tel</th>
+                                                            <td><?php echo $admin_data['phone'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Email</th>
+                                                            <td><?php echo $admin_data['email'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Address</th>
+                                                            <td><?php echo $admin_data['address'] ?></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                                <form style="display: inline-block;" action="edit-profile.php" method="POST">
+                                                    <input type="hidden" name="id" value="<?php echo $admin_data['userid'] ?>">
+                                                    <button type="submit" class="btn btn-primary" style="position: absolute; right:0; bottom: 0;">Edit</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- [ basic-table ] end -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- [ Main Content ] end -->
 
     <!-- Required Js -->
