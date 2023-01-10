@@ -45,21 +45,24 @@
                     <li class="nav-item pcoded-menu-caption">
                         <label>Navigation</label>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
+                    <li class="nav-item">
+                        <a href="profile.php.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Dashboard</span></a>
+                    </li>
                     <li  class="nav-item pcoded-hasmenu">
-                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">User</span></a>
+                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Supervisor</span></a>
                         <ul class="pcoded-submenu">
-                            <li class=""><a href="supervisor-profile.php" class="">Supervisor</a></li>
-                            <li class=""><a href="student-profile.php" class="">Student</a></li>
+                            <li class=""><a href="supervisor-profile.php" class="">Profile</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
-                        <a href="logbook.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">Logbook</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="report.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file"></i></span><span class="pcoded-mtext">Report</span></a>
+                    <li  class="nav-item pcoded-hasmenu active">
+                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="bi bi-mortarboard-fill"></i></span><span class="pcoded-mtext">Student</span></a>
+                        <ul class="pcoded-submenu">
+                            <li class=""><a href="student-profile.php" class="">Profile</a></li>
+                            <li class=" active"><a href="logbook.php" class="">Logbook</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
