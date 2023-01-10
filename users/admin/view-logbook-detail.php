@@ -1,3 +1,34 @@
+<?php
+
+include 'connection.php';
+
+session_start();
+
+    if(isset($_SESSION["userid"])){
+        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='admin'){
+            header("location: ../login.php");
+        }else{
+            $userid=$_SESSION["userid"];
+        }
+
+    }else{
+        header("location: ../login.php");
+    }
+
+    $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
+    $sql_stmnt->execute();
+    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+
+if($_POST){
+    $id = $_POST['id'];
+    $uid = $_POST['uid'];
+
+    $sql = $pdo->prepare("SELECT * FROM logbook WHERE id = '$id' AND userid = '$uid'");
+    $sql->execute();
+    $logbok_data = $sql->fetch(PDO::FETCH_ASSOC);
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -99,7 +130,7 @@
                 </li>
                 <li class="nav-item">
                     <div>
-                        <h6><?php echo "Welcome"." ".$userfetch['fname'] ?></h6>
+                        <h6></h6>
                     </div>
                 </li>
             </ul>
@@ -130,8 +161,8 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
                             <div class="pro-head">
-                                <img src="<?php echo $userfetch['pic'] ?>" class="img-radius">
-                                <span><?php echo $userfetch['fname'] ?></span>
+                                <img src="" class="img-radius">
+                                <span><?php echo $user_db['uname'] ?></span>
                                 
                             </div>
                             <ul class="pro-body">

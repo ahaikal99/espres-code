@@ -278,7 +278,8 @@ session_start();
                                                                     <td><?php echo $data['status'] ?></td>
                                                                     <td>
                                                                         <form action="view-logbook-detail.php" method="post">
-                                                                            <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
+                                                                            <input type="hidden" name="uid" value="<?php echo $data['userid'] ?>">
+                                                                            <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
                                                                             <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
                                                                         </form>
                                                                     </td>
