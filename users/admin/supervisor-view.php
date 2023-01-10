@@ -18,9 +18,19 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $db_sql = $pdo->prepare("SELECT * FROM supervisor");
-    $db_sql->execute();
-    $sv_list = $db_sql -> fetchAll();
+    if($_POST){
+        $id = $_POST['id'];
+
+        $db_sql = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$id'");
+        $db_sql->execute();
+        $sv_list = $db_sql -> fetch(PDO::FETCH_ASSOC);
+
+        $db_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$id'");
+        $db_list->execute();
+        $student_list = $db_list -> fetchAll();
+    }
+
+    
 
 ?>
 <!DOCTYPE html>
@@ -205,7 +215,6 @@ session_start();
                                         <div class="card-header">
                                             <h5>Profile</h5>
                                         </div>
-                                        <?php foreach($sv_list as $i => $data):?>
                                         <div class="card-block table-border-style">
                                             <?php if(empty($sv_list['pic'])): ?>
                                                 <div class="mb-5"><img src="profile.png" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
@@ -217,33 +226,40 @@ session_start();
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row">ID</th>
-                                                            <td><?php echo $data['userid'] ?></td>
+                                                            <td><?php echo $sv_list['userid'] ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Name</th>
-                                                            <td><?php echo strtoupper($data['uname']) ?></td>
+                                                            <td><?php echo strtoupper($sv_list['uname']) ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">No. Tel</th>
-                                                            <td><?php echo $data['phone'] ?></td>
+                                                            <td><?php echo $sv_list['phone'] ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Email</th>
-                                                            <td><?php echo $data['email'] ?></td>
+                                                            <td><?php echo $sv_list['email'] ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Address</th>
-                                                            <td><?php echo strtoupper($data['address']) ?></td>
+                                                            <td><?php echo strtoupper($sv_list['address']) ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Student</th>
+                                                            <td>
+                                                            <button type="button" class="btn bg-primary" style="padding: 2px; color:white; width: 60px; border-radius: 10px" data-bs-toggle="modal" data-bs-target="#exampleModal">View</button>
+                                                            </td>
                                                         </tr>
                                                     </tbody>
-                                                    <form style="display: inline-block;" action="delete-sv.php" method="POST">
-                                                        <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
-                                                        <button type="submit" class="btn btn-danger" style="position: absolute; right:0; bottom: 0;">Delete</button>
-                                                    </form>
                                                 </table>
                                             </div>
+                                            <div>
+                                                <form style="display: inline-block; margin-top: 10px" action="delete-sv.php" method="POST">
+                                                    <input type="hidden" name="id" value="<?php echo $sv_list['userid'] ?>">
+                                                    <button type="submit" class="btn btn-danger" style="margin:5px; position: absolute; right:0; bottom: 0;">Delete</button>
+                                                </form>
+                                            </div>
                                         </div>
-                                        <?php endforeach; ?>
                                     </div>
                                 </div>
                                 <!-- [ Hover-table ] end -->
@@ -255,6 +271,49 @@ session_start();
         </div>
     </section>
     <!-- [ Main Content ] end -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div >
+                    <div class="table-responsive text-center">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Program Code</th>
+                                    <th>Profile</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach($student_list as $i => $data): ?>
+                                <tr>
+                                    <td><?php echo $data['userid'] ?></td>
+                                    <td><?php echo strtoupper($data['uname']) ?></td>
+                                    <td><?php echo $data['pcode'] ?></td>
+                                    <td>
+                                        <form action="student-view.php" method="post">
+                                            <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
+                                            <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Required Js -->
     <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>

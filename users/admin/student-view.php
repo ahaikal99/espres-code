@@ -18,9 +18,12 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
     
-    $db_list = $pdo->prepare("SELECT * FROM student");
-    $db_list->execute();
-    $student_list = $db_list -> fetchAll();
+    if($_POST){
+        $id = $_POST['id'];
+        $db_list = $pdo->prepare("SELECT * FROM student WHERE userid = '$id'");
+        $db_list->execute();
+        $student_list = $db_list -> fetch(PDO::FETCH_ASSOC);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -204,49 +207,53 @@ session_start();
                                         <div class="card-header">
                                             <h5>Profile</h5>
                                         </div>
-                                        <?php foreach($student_list as $i => $data):?>
                                         <div class="card-block table-border-style">
-                                            <div class="mb-5"><img src="\espres-code\users\student\<?php echo $data['pic'] ?>" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
+                                            <div class="mb-5"><img src="\espres-code\users\student\<?php 
+                                            if(empty($student_list['pic'])){
+                                                echo "profile.png";
+                                            } else{
+                                                echo $student_list['pic'];
+                                            }
+                                            ?>" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
                                             <div class="table-responsive">
                                                 <table class="table">
                                                     <tbody>
                                                         <tr>
                                                             <th scope="row">ID</th>
-                                                            <td><?php echo $data['userid'] ?></td>
+                                                            <td><?php echo $student_list['userid'] ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Faculty</th>
-                                                            <td><?php echo $data['faculty'] ?></td>
+                                                            <td><?php echo $student_list['faculty'] ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Name</th>
-                                                            <td><?php echo strtoupper($data['uname']) ?></td>
+                                                            <td><?php echo strtoupper($student_list['uname']) ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">No. Tel</th>
-                                                            <td><?php echo $data['phone'] ?></td>
+                                                            <td><?php echo $student_list['phone'] ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Email</th>
-                                                            <td><?php echo $data['email'] ?></td>
+                                                            <td><?php echo $student_list['email'] ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Address</th>
-                                                            <td><?php echo strtoupper($data['address']) ?></td>
+                                                            <td><?php echo strtoupper($student_list['address']) ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Supervisor</th>
-                                                            <td><?php echo strtoupper($data['svname']) ?></td>
+                                                            <td><?php echo strtoupper($student_list['svname']) ?></td>
                                                         </tr>
                                                     </tbody>
-                                                    <form style="display: inline-block;" action="delete-student.php" method="POST">
-                                                        <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
-                                                        <button type="submit" class="btn btn-danger" style="position: absolute; right:0; bottom: 0;">Delete</button>
-                                                    </form>
                                                 </table>
+                                                <form style="display: inline-block;" action="delete-student.php" method="POST">
+                                                    <input type="hidden" name="id" value="<?php echo $student_list['userid'] ?>">
+                                                    <button type="submit" class="btn btn-danger" style="position: absolute; right:0; bottom: 0;">Delete</button>
+                                                </form>
                                             </div>
                                         </div>
-                                        <?php endforeach; ?>
                                     </div>
                                 </div>
                                 <!-- [ Hover-table ] end -->

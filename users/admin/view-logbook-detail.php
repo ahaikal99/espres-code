@@ -180,8 +180,99 @@ if($_POST){
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-
-    <!-- [ Main Content ] end -->
+    <section class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                        
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="history.php">History</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                            <div class="col">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>History</h5>
+                                        </div>
+                                        <div class="card-block table-border-style">
+                                            <div class="">
+                                                <div class="row mb-5">
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 220px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">DATE</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" style="background-color: white" value="<?php echo $logbok_data['date'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 230px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">START TIME</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" style="background-color: white" value="<?php echo $logbok_data['starttime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 210px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">END TIME</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" style="background-color: white" value="<?php echo $logbok_data['endtime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 230px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">TOTAL HOUR</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" style="background-color: white" value="<?php echo $logbok_data['totaltime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">ACTIVITY</span>
+                                                    </div>
+                                                    <input type="text" class="form-control" style="background-color: white" value="<?php echo $logbok_data['activity'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 1000px;">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text" style="width: 1000px;">DISCUSSION</span>
+                                                    </div>
+                                                    <span type="text" class="form-control" value="" style="height: 300px;  background-color: white" disabled><?php echo $logbok_data['discuss'] ?></span>
+                                                </div>
+                                                <?php if($logbok_data['doc']): ?>
+                                                    <iframe src="\espres-code\users\student\<?php echo $logbok_data['doc'] ?>" width="100%" height="1000px"></iframe>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- [ Main Content ] start -->
 
     <!-- Required Js -->
     <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>
