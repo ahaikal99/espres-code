@@ -78,8 +78,8 @@ session_start();
                     <li  class="nav-item pcoded-hasmenu">
                         <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="bi bi-mortarboard-fill"></i></span><span class="pcoded-mtext">Student</span></a>
                         <ul class="pcoded-submenu">
-                            <li class=""><a href="profile.php" class="">Profile</a></li>
-                            <li class=""><a href="student-profile.php" class="">Logbook</a></li>
+                            <li class=""><a href="student-profile.php" class="">Profile</a></li>
+                            <li class=""><a href="logbook.php" class="">Logbook</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
