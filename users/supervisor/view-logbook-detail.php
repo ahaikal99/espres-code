@@ -261,6 +261,9 @@ session_start();
                                                 </span>
                                             </div>
                                         </div>
+                                        <?php if($logbook_detail['doc']): ?>
+                                            <iframe src="\espres-code\users\student\<?php echo $logbook['doc'] ?>" width="100%" height="1000px"></iframe>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                                 <!-- [ Hover-table ] end -->

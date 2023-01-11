@@ -3,27 +3,56 @@ include 'connection.php';
 
 session_start();
 
-    if(isset($_SESSION["userid"])){
-        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='supervisor'){
-            header("location: ../signin.php");
-        }else{
-            $userid=$_SESSION["userid"];
-        }
-
-    }else{
-        header("location: ../login.php");
+if (isset($_SESSION["userid"])) {
+    if (($_SESSION["userid"]) == "" or $_SESSION['usertype'] != 'supervisor') {
+        header("location: ../signin.php");
+    } else {
+        $userid = $_SESSION["userid"];
     }
+} else {
+    header("location: ../login.php");
+}
 
-    $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
-    $sql_stmnt->execute();
-    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+$sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
+$sql_stmnt->execute();
+$user_db = $sql_stmnt->fetch(PDO::FETCH_ASSOC);
 
-    if($_POST){
-        $id = $_POST['id'];
-        $display = $pdo->prepare("SELECT * FROM report WHERE userid = '$id'");
-        $display->execute();
-        $list_logbook = $display -> fetchAll();
-    }
+$student = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
+$student->execute();
+$detail_logbook = $student->fetch(PDO::FETCH_ASSOC);
+
+if ($_POST) {
+    $id = $_POST['id'];
+    $month = $_POST['month'];
+    $year = $_POST['year'];
+
+    $db_list = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = '$month' AND YEAR(date) = '$year' AND userid = '$id'");
+    $db_list->execute();
+    $logbook_list = $db_list->fetchAll();
+
+    $total = 0;
+    // ------calculate total hour------------------------------
+    // Loop the data items
+    foreach ($logbook_list as $element) :
+
+        // Explode by separator :
+        $temp = explode(":", $element['totaltime']);
+
+        // Convert the hours into seconds
+        // and add to total
+        $total += (int) $temp[0] * 3600;
+
+        // Convert the minutes to seconds
+        // and add to total
+        $total += (int) $temp[1] * 60;
+
+        // Add the seconds to total
+        $total += (int) $temp[2];
+    endforeach;
+
+    // Format the seconds back into HH:MM:SS
+    $display = sprintf('%02d:%02d', ($total / 3600), ($total / 60 % 60), $total % 60);
+}
 
 ?>
 <!DOCTYPE html>
@@ -31,7 +60,7 @@ session_start();
 
 <head>
     <title>ESPRES</title>
-    
+
     <!-- Meta -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
@@ -81,7 +110,7 @@ session_start();
                     <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
                     </li>
-                    <li  class="nav-item pcoded-hasmenu">
+                    <li class="nav-item pcoded-hasmenu">
                         <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="bi bi-mortarboard-fill"></i></span><span class="pcoded-mtext">Student</span></a>
                         <ul class="pcoded-submenu">
                             <li class=""><a href="student-profile.php" class="">Profile</a></li>
@@ -162,7 +191,7 @@ session_start();
                             <div class="pro-head">
                                 <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
                                 <span><?php echo $user_db['uname'] ?></span>
-                                
+
                             </div>
                             <ul class="pro-body">
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
@@ -188,7 +217,7 @@ session_start();
                             <div class="row align-items-center">
                                 <div class="col-md-12">
                                     <div class="page-header-title">
-                                        
+
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
@@ -208,86 +237,73 @@ session_start();
                                         <div class="card-header">
                                             <h5>Logbook</h5>
                                         </div>
-                                        <?php if(!$list_logbook): ?>
-                                            <div class="text-center" style="padding: 20px;">
-                                                <h4><?php echo "No Data"?></h4>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Student Name : </a><?php echo $detail_logbook['uname'] ?></span>
                                             </div>
-                                        <?php else: ?>
-                                            <div class="card-block table-border-style">
-                                            <div class="table-responsive text-center">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>No</th>
-                                                            <th>Year</th>
-                                                            <th>Month</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <?php foreach($list_logbook as $i => $data): ?>
-                                                        <tr>
-                                                            <td scope="row"><?php echo $i + 1 ?></td>
-                                                            <td><?php echo $data['year'] ?></td>
-                                                            <td>
-                                                                <?php 
-                                                                if($data['month']==1){
-                                                                    echo "January";
-                                                                } elseif($data['month']==2){
-                                                                    echo "February";
-                                                                } elseif($data['month']==3){
-                                                                    echo "March";
-                                                                } elseif($data['month']==4){
-                                                                    echo "April";
-                                                                } elseif($data['month']==5){
-                                                                    echo "May";
-                                                                } elseif($data['month']==6){
-                                                                    echo "June";
-                                                                } elseif($data['month']==7){
-                                                                    echo "July";
-                                                                } elseif($data['month']==8){
-                                                                    echo "August";
-                                                                } elseif($data['month']==9){
-                                                                    echo "September";
-                                                                } elseif($data['month']==10){
-                                                                    echo "October";
-                                                                } elseif($data['month']==11){
-                                                                    echo "November";
-                                                                } else{
-                                                                    echo "December";
-                                                                }
-                                                                ?>
-                                                            </td>
-                                                            <td>
-                                                                <form action="view-report-detail.php" method="post">
-                                                                    <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
-                                                                    <input type="hidden" name="year" value="<?php echo $data['year'] ?>">
-                                                                    <input type="hidden" name="month" value="<?php echo $data['month'] ?>">
-                                                                    <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                        <?php endforeach; ?>
-                                                    </tbody>
-                                                </table>
-                                                <nav aria-label="..." style="width: 245px; height: 60px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;">
-                                                    <ul class="pagination">
-                                                        <li class="page-item disabled">
-                                                            <a class="page-link">Previous</a>
-                                                        </li>
-                                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                                        <li class="page-item" aria-current="page">
-                                                            <a class="page-link" href="#">2</a>
-                                                        </li>
-                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                        <li class="page-item">
-                                                            <a class="page-link" href="#">Next</a>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Student ID : </a><?php echo $detail_logbook['userid'] ?></span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Month : </a>
+                                                    <?php
+                                                    if ($month == 1) {
+                                                        echo "January";
+                                                    } elseif ($month == 2) {
+                                                        echo "February";
+                                                    } elseif ($month == 3) {
+                                                        echo "March";
+                                                    } elseif ($month == 4) {
+                                                        echo "April";
+                                                    } elseif ($month == 5) {
+                                                        echo "May";
+                                                    } elseif ($month == 6) {
+                                                        echo "June";
+                                                    } elseif ($month == 7) {
+                                                        echo "July";
+                                                    } elseif ($month == 8) {
+                                                        echo "August";
+                                                    } elseif ($month == 9) {
+                                                        echo "September";
+                                                    } elseif ($month == 10) {
+                                                        echo "October";
+                                                    } elseif ($month == 11) {
+                                                        echo "November";
+                                                    } else {
+                                                        echo "December";
+                                                    }
+                                                    ?>
+                                                </span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Year : </a><?php echo $year ?></span>
                                             </div>
                                         </div>
-                                        <?php endif; ?>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Supervisor Name : </a><?php echo $detail_logbook['svname'] ?></span>
+                                            </div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="p-2 d-flex" style="font-weight: bold; color: black;">
+                                            <div class="p-2 flex-fill w-25">Date</div>
+                                            <div class="p-2 flex-fill w-25">Activity</div>
+                                            <div class="p-2 flex-fill w-25">Duration</div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <?php foreach ($logbook_list as $logbook) : ?>
+                                            <div class="p-2 d-flex" style="color: black;">
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['date'] ?></div>
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['activity'] ?></div>
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['totaltime'] ?></div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="p-2 d-flex" style="color: black;">
+                                            <div class="p-2 flex-fill"></div>
+                                            <div class="p-2 flex-fill"></div>
+                                            <div class="p-2 flex-fill"><a style="font-weight: bold;">Total Hours : </a><?php echo $display . " " . "Hours" ?></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- [ Hover-table ] end -->
@@ -302,9 +318,10 @@ session_start();
 
     <!-- Required Js -->
     <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>
-	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="\espres-code\public\assets/js/pcoded.min.js"></script>
     <script src="\espres-code\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
 
 </body>
+
 </html>

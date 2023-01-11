@@ -152,7 +152,7 @@ session_start();
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
                             <div class="pro-head">
-                                <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
+                                <img src="profile.png" class="img-radius">
                                 <span><?php echo strtoupper($user_db['uname']) ?></span>
                                 
                             </div>
