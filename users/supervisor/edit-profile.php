@@ -119,15 +119,15 @@ session_start();
                     <li class="nav-item active">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
-                    <li  class="nav-item pcoded-hasmenu">
-                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
-                        <ul class="pcoded-submenu">
-                            <li class=""><a href="profile.php" class="">My Profile</a></li>
-                            <li class=""><a href="student-profile.php" class="">Student</a></li>
-                        </ul>
-                    </li>
                     <li class="nav-item">
-                        <a href="logbook.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">Logbook</span></a>
+                        <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
+                    </li>
+                    <li  class="nav-item pcoded-hasmenu">
+                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="bi bi-mortarboard-fill"></i></span><span class="pcoded-mtext">Student</span></a>
+                        <ul class="pcoded-submenu">
+                            <li class=""><a href="profile.php" class="">Profile</a></li>
+                            <li class=""><a href="student-profile.php" class="">Logbook</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a href="report.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file"></i></span><span class="pcoded-mtext">Report</span></a>
