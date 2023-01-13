@@ -218,7 +218,7 @@ session_start();
                                         <div class="card-header">
                                             <h5>History</h5>
                                         </div>
-                                        <div class="card-block table-border-style">
+                                        <div class="card-block table-border-style mb-4">
                                             <div class="">
                                                 <div class="row mb-5">
                                                     <div class="col-3">
@@ -226,7 +226,7 @@ session_start();
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">DATE</span>
                                                             </div>
-                                                            <input type="text" class="form-control" value="<?php echo $logbook['date'] ?>" disabled>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['date'] ?>" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-3">
@@ -234,7 +234,7 @@ session_start();
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">START TIME</span>
                                                             </div>
-                                                            <input type="text" class="form-control" value="<?php echo $logbook['starttime'] ?>" disabled>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['starttime'] ?>" disabled>
                                                         </div>
                                                     </div>
                                                     <div class="col-3">
@@ -242,7 +242,7 @@ session_start();
                                                             <div class="input-group-prepend">
                                                                 <span class="input-group-text">END TIME</span>
                                                             </div>
-                                                            <input type="text" class="form-control" value="<?php echo $logbook['endtime'] ?>" disabled>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['endtime'] ?>" disabled>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -250,19 +250,23 @@ session_start();
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">ACTIVITY</span>
                                                     </div>
-                                                    <input type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
                                                 </div>
                                                 <div class="input-group mb-5" style="width: 1000px;">
                                                     <div class="input-group">
                                                         <span class="input-group-text" style="width: 1000px;">DISCUSSION</span>
                                                     </div>
-                                                    <span type="text" class="form-control" value="" style="height: 300px;" disabled><?php echo $logbook['discuss'] ?></span>
+                                                    <span type="text" class="form-control" value="" style="height: 300px; background-color: white;" disabled><?php echo $logbook['discuss'] ?></span>
                                                 </div>
                                                 <?php if($logbook['doc']): ?>
                                                     <iframe src="<?php echo $logbook['doc'] ?>" width="100%" height="1000px"></iframe>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
+                                        <form action="edit-logbook.php" method="post">
+                                            <input type="text" value="<?php echo $logbook['id']; ?>" name="id">
+                                            <button class="btn btn-primary m-2" style="position: absolute; right:0; bottom: 0;">Edit</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

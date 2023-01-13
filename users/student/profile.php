@@ -214,7 +214,7 @@ session_start();
                                             <?php else: ?>
                                                 <div class="mb-5"><img src="<?php echo $user_db['pic'] ?>" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
                                             <?php endif; ?>
-                                            <div class="table-responsive">
+                                            <div class="table-responsive mb-3">
                                                 <table class="table">
                                                     <tbody>
                                                         <tr>
@@ -262,9 +262,9 @@ session_start();
                                                             <?php endif; ?>
                                                         </tr>
                                                     </tbody>
-                                                    <a href="edit-profile.php" class="btn btn-primary" style="position: absolute; right:0; bottom: 0;">Edit</a>
                                                 </table>
                                             </div>
+                                            <a href="edit-profile.php" class="btn btn-primary m-2" style="position: absolute; right:0; bottom: 0;">Edit</a>
                                         </div>
                                     </div>
                                 </div>

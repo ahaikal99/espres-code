@@ -180,43 +180,45 @@ session_start();
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li>
+                <span class="badge text-bg-success">Student</span>
+                </li>
+                <li>
                     <div class="dropdown">
-                        
-                            <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
-                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['svname'] )): ?>
-                                <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
-                                <div class="dropdown-menu dropdown-menu-right notification">
-                                    <div class="noti-head">
-                                        <h6 class="d-inline-block m-b-0">Notifications</h6>
-                                    </div>
-                                    <ul class="noti-body">
-                                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address'])):?>
-                                        <li class="notification">
-                                            <div class="media">
-                                                <a class="media-body" href="profile.php">
-                                                    <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Complete Your Profile</strong></p>
-                                                </a>
-                                            </div>
-                                        </li>
-                                            <?php endif; ?>
-                                            <?php if(empty($user_db['supervisor'])):?>
-                                        <li class="notification">
-                                            <div class="media">
-                                                <a class="media-body" href="logbook.php">
-                                                    <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Add Your Supervisor</strong></p>
-                                                </a>
-                                            </div>
-                                        </li>
-                                            <?php endif; ?>
-                                    </ul>
+                        <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
+                        <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['svname'] )): ?>
+                            <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
+                            <div class="dropdown-menu dropdown-menu-right notification">
+                                <div class="noti-head">
+                                    <h6 class="d-inline-block m-b-0">Notifications</h6>
                                 </div>
-                            <?php else: ?>
-                                <div class="dropdown-menu dropdown-menu-right notification">
-                                    <div class="noti-head">
-                                        <h6 class="d-inline-block m-b-0">You have no new notification</h6>
-                                    </div>
+                                <ul class="noti-body">
+                                        <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address'])):?>
+                                    <li class="notification">
+                                        <div class="media">
+                                            <a class="media-body" href="profile.php">
+                                                <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Complete Your Profile</strong></p>
+                                            </a>
+                                        </div>
+                                    </li>
+                                        <?php endif; ?>
+                                        <?php if(empty($user_db['svname'])):?>
+                                    <li class="notification">
+                                        <div class="media">
+                                            <a class="media-body" href="logbook.php">
+                                                <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Add Your Supervisor</strong></p>
+                                            </a>
+                                        </div>
+                                    </li>
+                                        <?php endif; ?>
+                                </ul>
+                            </div>
+                        <?php else: ?>
+                            <div class="dropdown-menu dropdown-menu-right notification">
+                                <div class="noti-head">
+                                    <h6 class="d-inline-block m-b-0">You have no new notification</h6>
                                 </div>
-                            <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </li>
                 <li>
@@ -284,31 +286,31 @@ session_start();
                                                     <div class="col">
                                                         <div class="form-group">
                                                             <label for="date">Date</label>
-                                                            <input type="date" class="form-control w-50" id="date" name="date">
+                                                            <input type="date" class="form-control w-50" id="date" name="date" required>
                                                         </div>
                                                         <div class="form-group d-flex">
                                                             <div>
                                                                 <label for="startTime">Start Time</label>
-                                                                <input type="time" class="form-control" id="startTime" name="startTime">
+                                                                <input type="time" class="form-control" id="startTime" name="startTime" required>
                                                             </div>
                                                             <div style="margin-left: 10px;">
                                                                 <label for="endTime">End Time</label>
-                                                                <input type="time" class="form-control" id="endTime" name="endTime">
+                                                                <input type="time" class="form-control" id="endTime" name="endTime" required>
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="activity">Activity</label>
                                                             <input type="text" class="form-control" id="activity" name="activity">
                                                         </div>
+                                                        <div class="form-group">
+                                                            <label>File</label>
+                                                            <input type="file" class="form-control" style="width: 230px;" name="file">
+                                                        </div>
                                                     </div>
                                                     <div class="col">
                                                         <div class="form-group">
                                                             <label for="discussion">Discussion</label>
                                                             <textarea class="form-control" id="discussion" rows="5" name="discuss"></textarea>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>File</label>
-                                                            <input type="file" class="form-control" style="width: 230px;" name="file">
                                                         </div>
                                                     </div>
                                                 </div>

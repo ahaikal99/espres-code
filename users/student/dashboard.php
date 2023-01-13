@@ -205,7 +205,7 @@ session_start();
                                             </div>
                                         </li>
                                             <?php endif; ?>
-                                            <?php if(empty($user_db['supervisor'])):?>
+                                            <?php if(empty($user_db['svname'])):?>
                                         <li class="notification">
                                             <div class="media">
                                                 <a class="media-body" href="logbook.php">
