@@ -35,7 +35,7 @@ session_start();
         $minutes=($difference / 60 % 60);
         $seconds=($difference % 60);  
         $hours=($hours % 24);
-        $total =   sprintf("%02d",$hours).":".sprintf("%02d",$minutes).":".sprintf("%02d",$seconds);
+        $total =   sprintf("%02d",$hours).":".sprintf("%02d",$minutes);
 
 
         

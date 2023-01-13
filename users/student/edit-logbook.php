@@ -18,6 +18,14 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
+    if($_POST){
+        $id = $_POST['id'];
+
+        $sql_logbook = $pdo->prepare("SELECT * FROM logbook WHERE id = '$id'");
+        $sql_logbook->execute();
+        $logbook = $sql_logbook -> fetch(PDO::FETCH_ASSOC);
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,10 +76,10 @@ session_start();
                     <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a href="logbook.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-book"></i></span><span class="pcoded-mtext">Logbook</span></a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a href="history.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-clock"></i></span><span class="pcoded-mtext">History</span></a>
                     </li>
                     <li class="nav-item">
@@ -116,43 +124,45 @@ session_start();
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li>
+                <span class="badge text-bg-success">Student</span>
+                </li>
+                <li>
                     <div class="dropdown">
-                        
-                            <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
-                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['supervisor'] )): ?>
-                                <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
-                                <div class="dropdown-menu dropdown-menu-right notification">
-                                    <div class="noti-head">
-                                        <h6 class="d-inline-block m-b-0">Notifications</h6>
-                                    </div>
-                                    <ul class="noti-body">
-                                            <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address'])):?>
-                                        <li class="notification">
-                                            <div class="media">
-                                                <a class="media-body" href="profile.php">
-                                                    <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Complete Your Profile</strong></p>
-                                                </a>
-                                            </div>
-                                        </li>
-                                            <?php endif; ?>
-                                            <?php if(empty($user_db['supervisor'])):?>
-                                        <li class="notification">
-                                            <div class="media">
-                                                <a class="media-body" href="logbook.php">
-                                                    <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Add Your Supervisor</strong></p>
-                                                </a>
-                                            </div>
-                                        </li>
-                                            <?php endif; ?>
-                                    </ul>
+                        <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
+                        <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['svname'] )): ?>
+                            <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
+                            <div class="dropdown-menu dropdown-menu-right notification">
+                                <div class="noti-head">
+                                    <h6 class="d-inline-block m-b-0">Notifications</h6>
                                 </div>
-                            <?php else: ?>
-                                <div class="dropdown-menu dropdown-menu-right notification">
-                                    <div class="noti-head">
-                                        <h6 class="d-inline-block m-b-0">You have no new notification</h6>
-                                    </div>
+                                <ul class="noti-body">
+                                        <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address'])):?>
+                                    <li class="notification">
+                                        <div class="media">
+                                            <a class="media-body" href="profile.php">
+                                                <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Complete Your Profile</strong></p>
+                                            </a>
+                                        </div>
+                                    </li>
+                                        <?php endif; ?>
+                                        <?php if(empty($user_db['svname'])):?>
+                                    <li class="notification">
+                                        <div class="media">
+                                            <a class="media-body" href="logbook.php">
+                                                <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Add Your Supervisor</strong></p>
+                                            </a>
+                                        </div>
+                                    </li>
+                                        <?php endif; ?>
+                                </ul>
+                            </div>
+                        <?php else: ?>
+                            <div class="dropdown-menu dropdown-menu-right notification">
+                                <div class="noti-head">
+                                    <h6 class="d-inline-block m-b-0">You have no new notification</h6>
                                 </div>
-                            <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </li>
                 <li>
@@ -180,7 +190,88 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-    
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Logbook</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <?php if(empty($user_db['svname'])):?>
+                                                <div class="text-center">
+                                                    <h4>Please add supervisor first</h4>
+                                                    <a href="add-supervisor.php" class="btn label bg-success text-white f-12" style="border-radius: 10px; border-width: 0px; cursor:pointer">Add</a>
+                                                </div>
+                                            <?php else: ?>
+                                                <form action="for-edit-logbook.php" method="POST" enctype="multipart/form-data">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <label for="date">Date</label>
+                                                            <input type="date" value="<?php echo $logbook['date'] ?>" class="form-control w-50" id="date" name="date" required>
+                                                        </div>
+                                                        <div class="form-group d-flex">
+                                                            <div>
+                                                                <label for="startTime">Start Time</label>
+                                                                <input type="time" value="<?php echo $logbook['starttime'] ?>" class="form-control" id="startTime" name="startTime" required>
+                                                            </div>
+                                                            <div style="margin-left: 10px;">
+                                                                <label for="endTime">End Time</label>
+                                                                <input type="time" value="<?php echo $logbook['endtime'] ?>" class="form-control" id="endTime" name="endTime" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="activity">Activity</label>
+                                                            <input type="text" value="<?php echo $logbook['activity'] ?>" class="form-control" id="activity" name="activity">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label>File</label>
+                                                            <input type="file"  class="form-control" style="width: 230px;" name="file">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-group">
+                                                            <label for="discussion">Discussion</label>
+                                                            <textarea class="form-control" id="discussion" rows="5" name="discuss"><?php echo $logbook['discuss'] ?></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <input type="text" value="<?php echo $logbook['id'] ?>" name="id" hidden>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                                </form>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->
@@ -188,6 +279,12 @@ session_start();
 	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="\espres-code\public\assets/js/pcoded.min.js"></script>
     <script src="\espres-code\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
+    <script src="\espres-code\node_modules\tinymce\tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#discussion'
+        });
+    </script>
 
 </body>
 </html>

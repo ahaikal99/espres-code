@@ -264,7 +264,7 @@ session_start();
                                             </div>
                                         </div>
                                         <form action="edit-logbook.php" method="post">
-                                            <input type="text" value="<?php echo $logbook['id']; ?>" name="id">
+                                            <input type="hidden" value="<?php echo $logbook['id']; ?>" name="id">
                                             <button class="btn btn-primary m-2" style="position: absolute; right:0; bottom: 0;">Edit</button>
                                         </form>
                                     </div>

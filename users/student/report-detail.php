@@ -47,8 +47,6 @@ session_start();
             // and add to total
             $total+= (int) $temp[1] * 60;
             
-            // Add the seconds to total
-            $total+= (int) $temp[2];
         endforeach;
         
         // Format the seconds back into HH:MM:SS

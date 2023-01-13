@@ -35,8 +35,28 @@ session_start();
                 header('Location: report.php');
             } 
         } else{
-            $insert_db = $pdo->prepare("INSERT INTO report(userid,year,month) VALUES('$id','$year','$month')");
-            $insert_db->execute();
+
+            $check_report = $pdo->prepare("SELECT * FROM logbook WHERE YEAR(date)='$year' AND MONTH(date)='$month' AND userid='$id'");
+            $check_report->execute();
+
+            if($check_report->rowCount() < 1){
+                echo "<script>alert('No data');</script>";
+
+            } else{
+                $report_check = $pdo->prepare("SELECT * FROM report WHERE year='$year' AND month='$month' AND userid='$id'");
+                $report_check->execute();
+
+                if($report_check->rowCount() >= 1){
+                    echo "<script>alert('Already generate');</script>";
+
+                } else{
+                    $insert_db = $pdo->prepare("INSERT INTO report(userid,year,month) VALUES('$id','$year','$month')");
+                    $insert_db->execute();
+
+                }
+
+            }
+
             }
     }
 
