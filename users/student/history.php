@@ -224,8 +224,7 @@ session_start();
                                                             <tr>
                                                                 <th>Date</th>
                                                                 <th>Activity</th>
-                                                                <th>Start Time</th>
-                                                                <th>End Time</th>
+                                                                <th>Duration</th>
                                                                 <th>Status</th>
                                                                 <th>Action</th>
                                                             </tr>
@@ -236,8 +235,7 @@ session_start();
                                                                 <tr>
                                                                 <td><?php echo $data['date'] ?></td>
                                                                 <td><?php echo $data['activity'] ?></td>
-                                                                <td><?php echo $data['starttime'] ?></td>
-                                                                <td><?php echo $data['endtime'] ?></td>
+                                                                <td><?php echo $data['totaltime'] ?></td>
                                                                 <td><?php echo $data['status'] ?></td>
                                                                 <td>
                                                                     <form style="display: inline-block;" action="view-history.php" method="post">

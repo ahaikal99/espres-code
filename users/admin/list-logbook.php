@@ -226,6 +226,7 @@ session_start();
                                                             <th>No</th>
                                                             <th>Year</th>
                                                             <th>Month</th>
+                                                            <th>Total Hour</th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
@@ -233,7 +234,7 @@ session_start();
                                                     <?php foreach($list_logbook as $i => $data): ?>
                                                         <tr>
                                                             <td scope="row"><?php echo $i + 1 ?></td>
-                                                            <td><?php echo $data['year'] ?></td>
+                                                            <td><?php echo $data['year']; $year=$data['year']; ?></td>
                                                             <td>
                                                                 <?php 
                                                                 if($data['month']==1){
@@ -261,6 +262,40 @@ session_start();
                                                                 } else{
                                                                     echo "December";
                                                                 }
+
+                                                                $month = $data['month'];
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                    $sql = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = '$month' && YEAR(date) = '$year'");
+                                                                    $sql -> execute();
+                                                                    $logbook_record = $sql->fetchAll();
+
+                                                                    $total = 0;
+                                                                    // ------calculate total hour------------------------------
+                                                                    // Loop the data items
+                                                                    foreach( $logbook_record as $element):
+                                                                        
+                                                                        // Explode by separator :
+                                                                        $temp = explode(":", $element['totaltime']);
+                                                                        
+                                                                        // Convert the hours into seconds
+                                                                        // and add to total
+                                                                        $total+= (int) $temp[0] * 3600;
+                                                                        
+                                                                        // Convert the minutes to seconds
+                                                                        // and add to total
+                                                                        $total+= (int) $temp[1] * 60;
+                                                                        
+                                                                        // Add the seconds to total
+                                                                        $total+= (int) $temp[2];
+                                                                    endforeach;
+                                                                    
+                                                                    // Format the seconds back into HH:MM:SS
+                                                                    $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
+
+                                                                    echo $display;
                                                                 ?>
                                                             </td>
                                                             <td>

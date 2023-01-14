@@ -242,9 +242,9 @@ session_start();
                             <div class="row">
                                 <!-- [ Hover-table ] start -->
                                 <div class="col">
-                                    <div class="card">
+                                    <div class="card" id="printableArea">
                                         <div class="card-header mb-3">
-                                            <h5>History</h5>
+                                            <h5>Report</h5>
                                         </div>
                                         <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
                                             <div class="p-2">
@@ -319,14 +319,8 @@ session_start();
                                             <div class="p-2 flex-fill"><a style="font-weight: bold;">Total Hours : </a><?php echo $display." "."Hours" ?></div>
                                         </div>
                                         <hr class="mb-3" style="height:2px;border-width:0;color:gray;background-color:gray">
-                                        <div class="d-flex mb-3">
-                                            <div class="p-2"></div>
-                                            <div class="p-2"></div>
-                                            <div class="ms-auto p-2">
-                                                <a href="report2.php" type="button" class="m-2 btn btn-primary">Print</a>
-                                            </div>
-                                        </div>
                                     </div>
+                                    <a href="javascript:void(0);" class="m-2 btn btn-primary" onclick="printPageArea('printableArea')">Print</a>
                                 </div>
                             </div>
                         </div>
@@ -338,6 +332,16 @@ session_start();
     <!-- [ Main Content ] start -->
 
     <!-- Required Js -->
+
+    <script>
+        function printPageArea(printableArea){
+    var printContent = document.getElementById(printableArea).innerHTML;
+    var originalContent = document.body.innerHTML;
+    document.body.innerHTML = printContent;
+    window.print();
+    document.body.innerHTML = originalContent;
+}
+    </script>
     <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>
 	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="\espres-code\public\assets/js/pcoded.min.js"></script>

@@ -55,7 +55,7 @@ session_start();
     $db_sql->execute();
     $logbook = $db_sql -> fetchAll();
    
-    $report = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' ");
+    $report = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' LIMIT 5");
     $report->execute();
     $display_report = $report -> fetchAll();
 
@@ -335,7 +335,7 @@ session_start();
                                         <div class="card-header">
                                             <h5>Logbook</h5>
                                         </div>
-                                        <div class="card-block px-0 py-3 text-center">
+                                        <div class="card-block text-center p-0">
                                             <div class="table-responsive">
                                                 <table class="table table-hover">
                                                     <thead>

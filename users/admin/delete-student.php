@@ -17,7 +17,7 @@ if(isset($_SESSION["userid"])){
 $delete = $_POST['id'];
 
 if(!$delete){
-    header('Location: supervisor-profile.php');
+    header('Location: student-profile.php');
     exit;
 }
 
@@ -25,7 +25,7 @@ $sql= $pdo->prepare("delete from student where userid='$delete';");
 $sql->execute();
 $sql= $pdo->prepare("delete from users where userid='$delete';");
 $sql->execute();
-header('Location: supervisor-profile.php');
+header('Location: student-profile.php');
 
 
 ?>

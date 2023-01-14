@@ -400,7 +400,3 @@ session_start();
 
 </body>
 </html>
-SELECT COUNT(ProductID)
-FROM Products;
-$count = $conn->query("SELECT (quantity) as items from `cart` where client_id =".$_settings->userdata('id'))->fetch_assoc()['items'];
-echo ($count > 0 ? $count : 0);

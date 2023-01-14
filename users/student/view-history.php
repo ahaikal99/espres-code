@@ -232,7 +232,7 @@ session_start();
                                                     <div class="col-3">
                                                         <div class="input-group" style="width: 230px;">
                                                             <div class="input-group-prepend">
-                                                                <span class="input-group-text">START TIME</span>
+                                                                <span class="input-group-text">Start Time</span>
                                                             </div>
                                                             <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['starttime'] ?>" disabled>
                                                         </div>
@@ -240,23 +240,31 @@ session_start();
                                                     <div class="col-3">
                                                         <div class="input-group" style="width: 210px;">
                                                             <div class="input-group-prepend">
-                                                                <span class="input-group-text">END TIME</span>
+                                                                <span class="input-group-text">End Time</span>
                                                             </div>
                                                             <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['endtime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 210px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Duration</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['totaltime'] ?>" disabled>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="input-group mb-5" style="width: 600px;">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text">ACTIVITY</span>
+                                                        <span class="input-group-text">Activity</span>
                                                     </div>
                                                     <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
                                                 </div>
                                                 <div class="input-group mb-5" style="width: 1000px;">
                                                     <div class="input-group">
-                                                        <span class="input-group-text" style="width: 1000px;">DISCUSSION</span>
+                                                        <span class="input-group-text" style="width: 1000px;">Discussion</span>
                                                     </div>
-                                                    <span type="text" class="form-control" value="" style="height: 300px; background-color: white;" disabled><?php echo $logbook['discuss'] ?></span>
+                                                    <div class="form-control" style="height: 300px; background-color: white;"><?php echo $logbook['discuss'] ?></div>
                                                 </div>
                                                 <?php if($logbook['doc']): ?>
                                                     <iframe src="<?php echo $logbook['doc'] ?>" width="100%" height="1000px"></iframe>
