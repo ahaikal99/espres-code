@@ -233,10 +233,7 @@ session_start();
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                                <form style="display: inline-block;" action="edit-profile.php" method="POST">
-                                                    <input type="hidden" name="id" value="<?php echo $admin_data['userid'] ?>">
-                                                    <button type="submit" class="btn btn-primary" style="position: absolute; right:0; bottom: 0;">Edit</button>
-                                                </form>
+                                                    <a href="edit-profile.php" type="button" class="btn btn-primary" style="position: absolute; right:0; bottom: 0;">Edit</a>
                                             </div>
                                         </div>
                                     </div>

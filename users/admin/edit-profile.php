@@ -13,6 +13,61 @@ session_start();
     }else{
         header("location: ../login.php");
     }
+
+    $admin = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
+    $admin->execute();
+    $userfetch = $admin->fetch(PDO::FETCH_ASSOC);
+
+    if($_POST){
+        $pic = $_POST['pic']?? '';
+        $name = $_POST['uname']?? '';
+        $phone = $_POST['phone']?? '';
+        $email = $_POST['email']?? '';
+        $address = $_POST['address']?? '';
+
+        if(!is_dir('image')){
+            mkdir('image');
+        }
+    
+            $file_path = $userfetch['pic'];
+            $char_file = $_FILES['pic']?? '';
+            if($char_file && $char_file['tmp_name'])
+            {
+    
+                if($userfetch['pic']){
+                    unlink($userfetch['pic']);
+                }
+    
+                $file_path = 'image/' . randomString(9) .'/' . $char_file['name'];
+                mkdir(dirname($file_path));
+    
+                move_uploaded_file($char_file['tmp_name'], $file_path);
+    
+            }
+
+            $sql="UPDATE admin SET uname='$name', email='$email', phone='$phone', address='$address', pic='$file_path' WHERE userid='$userid'";
+            $result=$pdo->prepare($sql);
+            $result->execute();
+
+            header("location: profile.php");
+
+    }
+
+    function randomString($n) {
+
+        $character = '1234567890qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM';
+        $str = '';
+        
+        for($i = 0; $i < $n; $i++){
+        
+            $index = rand(0, strlen($character) -1);
+            $str .= $character[$index];
+        
+        }
+        
+        return $str;
+        
+        }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -120,7 +175,7 @@ session_start();
                 </li>
                 <li class="nav-item">
                     <div>
-                        <h6><?php echo "Welcome"." ".$userfetch['fname'] ?></h6>
+                        <h6></h6>
                     </div>
                 </li>
             </ul>
@@ -152,7 +207,7 @@ session_start();
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
                             <div class="pro-head">
                                 <img src="<?php echo $userfetch['pic'] ?>" class="img-radius">
-                                <span><?php echo $userfetch['fname'] ?></span>
+                                <span><?php echo $userfetch['uname'] ?></span>
                                 
                             </div>
                             <ul class="pro-body">
@@ -169,7 +224,83 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <!-- [ breadcrumb ] start -->
+                    <div class="page-header">
+                        <div class="page-block">
+                            <div class="row align-items-center">
+                                <div class="col-md-12">
+                                    <div class="page-header-title">
+                                    </div>
+                                    <ul class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="profile.php">Profile</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- [ breadcrumb ] end -->
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Profile</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <form action="" method="post" enctype="multipart/form-data">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        
+                                                        <?php if(empty($userfetch['pic'])): ?>
+                                                            <div class="mb-5"><img src="profile.png" style="width: 100px; height: 100px;  object-fit: fill; border-radius: 100px;"></div>
+                                                        <?php else: ?>
+                                                            <div class="mb-5"><img src="<?php echo $userfetch['pic'] ?>" style="width: 100px; height: 100px;  object-fit: fill; border-radius: 100px;"></div>
+                                                        <?php endif; ?>
+                                                        <div class="form-group">
+                                                            <label for="id">Picture</label>
+                                                            <input type="File" class="form-control w-25" id="id" name="pic">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="name">ID</label>
+                                                            <input type="text" class="form-control w-50" id="name" value="<?php echo $userfetch['userid'] ?>" name="userid">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="name">Name</label>
+                                                            <input type="text" class="form-control w-50" id="name" value="<?php echo $userfetch['uname'] ?>" name="uname">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="no-tel">No. Tel</label>
+                                                            <input type="text" class="form-control w-50" id="no-tel" value="<?php echo $userfetch['phone'] ?>" name="phone">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="email">Email</label>
+                                                            <input type="text" class="form-control w-50" id="email"value="<?php echo $userfetch['email'] ?>" name="email">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="address">Address</label>
+                                                            <input type="text" class="form-control w-50" id="address"value="<?php echo $userfetch['address'] ?>" name="address">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- [ Main Content ] end -->
 
     <!-- Required Js -->
