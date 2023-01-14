@@ -3,40 +3,37 @@ include 'connection.php';
 
 session_start();
 
-    if(isset($_SESSION["userid"])){
-        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='supervisor'){
-            header("location: ../signin.php");
-        }else{
-            $userid=$_SESSION["userid"];
-        }
-
-    }else{
-        header("location: ../login.php");
+if (isset($_SESSION["userid"])) {
+    if (($_SESSION["userid"]) == "" or $_SESSION['usertype'] != 'supervisor') {
+        header("location: ../signin.php");
+    } else {
+        $userid = $_SESSION["userid"];
     }
+} else {
+    header("location: ../login.php");
+}
 
-    $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
-    $sql_stmnt->execute();
-    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+$sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
+$sql_stmnt->execute();
+$user_db = $sql_stmnt->fetch(PDO::FETCH_ASSOC);
 
-    $db_list = $pdo->prepare("SELECT * FROM logbook WHERE svid = '$userid'");
-    $db_list->execute();
-    $logbook_list = $db_list -> fetchAll();
+if ($_POST) {
+    $id = $_POST['id'];
 
-    if($_POST){
-        $id = $_POST['id'];
+    $sql = "SELECT * FROM logbook WHERE id ='$id'";
+    $check = $pdo->prepare($sql);
+    $check->execute();
+    $logbook = $check->fetch();
+}
 
-        $logbook = $pdo->prepare("SELECT * FROM logbook WHERE id = '$id'");
-        $logbook->execute();
-        $logbook_detail = $logbook -> fetch(PDO::FETCH_ASSOC);
-
-    }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>ESPRES</title>
-    
+    <title>Home</title>
+
     <!-- Meta -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
@@ -86,7 +83,7 @@ session_start();
                     <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
                     </li>
-                    <li  class="nav-item pcoded-hasmenu active">
+                    <li class="nav-item pcoded-hasmenu active">
                         <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="bi bi-mortarboard-fill"></i></span><span class="pcoded-mtext">Student</span></a>
                         <ul class="pcoded-submenu">
                             <li class=""><a href="student-profile.php" class="">Profile</a></li>
@@ -134,7 +131,7 @@ session_start();
                 </li>
                 <li>
                     <div>
-                        <h6></h6>
+                        <h6><?php echo "Welcome" . " " . strtoupper($user_db['uname']) ?></h6>
                     </div>
                 </li>
             </ul>
@@ -167,7 +164,7 @@ session_start();
                             <div class="pro-head">
                                 <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
                                 <span><?php echo strtoupper($user_db['uname']) ?></span>
-                                
+
                             </div>
                             <ul class="pro-body">
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
@@ -193,10 +190,11 @@ session_start();
                             <div class="row align-items-center">
                                 <div class="col-md-12">
                                     <div class="page-header-title">
-                                        
+
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="history.php">History</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -207,66 +205,70 @@ session_start();
                         <div class="page-wrapper">
                             <!-- [ Main Content ] start -->
                             <div class="row">
-                                <!-- [ Hover-table ] start -->
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Report</h5>
+                                            <h5>History</h5>
                                         </div>
-                                        <div class="p-2 d-flex flex-row mb-3" style="color:black; font-size: 20px;">
-                                            <div class="p-2 w-25">
-                                                <span>
-                                                    Date : <?php echo $logbook_detail['date'] ?>
-                                                </span>
-                                            </div>
-                                            <div class="p-2 w-25">
-                                                <span>
-                                                    Start Time : <?php echo $logbook_detail['starttime'] ?>
-                                                </span>
-                                            </div>
-                                            <div class="p-2 w-25">
-                                                <span>
-                                                    End Time : <?php echo $logbook_detail['endtime'] ?>
-                                                </span>
-                                            </div>
-                                            <div class="p-2 w-25">
-                                                <span>
-                                                    Duration : <?php echo $logbook_detail['totaltime']." "."Hours" ?>
-                                                </span>
+                                        <div class="card-block table-border-style mb-4">
+                                            <div class="">
+                                                <div class="row mb-5">
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 220px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">DATE</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['date'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 230px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Start Time</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['starttime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 210px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">End Time</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['endtime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 210px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Duration</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['totaltime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Activity</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 1000px;">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text" style="width: 1000px;">Discussion</span>
+                                                    </div>
+                                                    <div class="form-control" style="height: 300px; background-color: white;"><?php echo $logbook['discuss'] ?></div>
+                                                </div>
+                                                <?php if (!empty($logbook['doc'])) : ?>
+                                                    <iframe src="\espres-code\users\student\<?php echo $logbook['doc'] ?>" width="100%" height="1000px"></iframe>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
-                                        <div class="p-2 d-flex" style="color:black">
-                                            <div class="p-2 d-flex justify-content-start">
-                                                <span style="font-size: 20px; min-width: 100px">
-                                                    Activity :
-                                                </span>
-                                            </div>
-                                            <div class="p-2 d-flex justify-content-start">
-                                                <span style="color:black; font-size: 20px">
-                                                    <?php echo $logbook_detail['activity'] ?>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="p-2 d-flex text-center" style="color:black">
-                                            <div class="p-2 d-flex justify-content-start">
-                                                <span style="font-size: 20px;">
-                                                    Discussion :
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="p-2 d-flex">
-                                            <div class="p-2 flex-fill" style="min-height: 300px;">
-                                                <span>
-                                                    <?php echo $logbook_detail['discuss'] ?>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <?php if($logbook_detail['doc']): ?>
-                                            <iframe src="\espres-code\users\student\<?php echo $logbook['doc'] ?>" width="100%" height="1000px"></iframe>
-                                        <?php endif; ?>
+                                        <form action="verify.php" method="post">
+                                            <input type="hidden" value="<?php echo $logbook['id']; ?>" name="id">
+                                            <button class="btn btn-success m-2" style="position: absolute; right:0; bottom: 0;">Verify</button>
+                                        </form>
                                     </div>
                                 </div>
-                                <!-- [ Hover-table ] end -->
                             </div>
                         </div>
                     </div>
@@ -274,13 +276,15 @@ session_start();
             </div>
         </div>
     </section>
-    <!-- [ Main Content ] end -->
+    <!-- [ Main Content ] start -->
+
 
     <!-- Required Js -->
     <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>
-	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="\espres-code\public\assets/js/pcoded.min.js"></script>
     <script src="\espres-code\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
 
 </body>
+
 </html>

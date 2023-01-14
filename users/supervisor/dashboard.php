@@ -18,7 +18,7 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $sudent_list = $pdo->prepare("SELECT * FROM logbook WHERE svid = '$userid'");
+    $sudent_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
     $sudent_list->execute();
     $student = $sudent_list -> fetchAll();
 ?>
@@ -233,18 +233,15 @@ session_start();
                                                         <?php foreach($student as $i => $data): ?>
                                                             <tr class="unread">
                                                                 <td> 
+                                                                    <h6 class="mb-1"><?php echo $i +1 ?></h6>
+                                                                </td>
+                                                                <td> 
                                                                     <h6 class="mb-1"><?php echo $data['uname'] ?></h6>
                                                                 </td>
                                                                 <td> 
-                                                                    <h6 class="mb-1"><?php echo $data['date'] ?></h6>
+                                                                    <h6 class="mb-1"><?php echo $data['userid'] ?></h6>
                                                                 </td>
-                                                                <td> 
-                                                                    <h6 class="mb-1"><?php echo $data['activity'] ?></h6>
-                                                                </td>
-                                                                <td>
-                                                                    <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i><?php echo $data['date'] ?></h6>
-                                                                </td>
-                                                                <td><a href="logbook.php" class="label theme-bg2 text-white f-12">View</a></td>
+                                                                <td><a href="student-profile.php" class="label theme-bg2 text-white f-12">View</a></td>
                                                             </tr>
                                                         <?php endforeach; ?>
                                                     </tbody>
