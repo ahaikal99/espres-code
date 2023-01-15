@@ -281,6 +281,7 @@ session_start();
                                 </div>
                                 <!-- [ Hover-table ] end -->
                             </div>
+                            <a class="btn bg-primary" style="color: white;" href="add-student.php" type="button">Add</a>
                         </div>
                     </div>
                 </div>
