@@ -51,7 +51,7 @@ session_start();
             <div class="navbar-brand header-logo">
                 <a href="dashboard.php" class="b-brand">
                     <div>
-                        <img class="rounded-circle" style="width:40px;" src="assets/images/favicon.ico">
+                        <img class="rounded-circle" style="width:40px;" src="log.jpg">
                     </div>
                     <span class="b-title">ESPRES</span>
                 </a>
@@ -251,7 +251,11 @@ session_start();
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Supervisor</th>
-                                                            <td><?php echo strtoupper($user_db['svname']) ?> <a href="add-supervisor.php" style="margin-left: 8px; padding:8px" class="label bg-success text-white f-12 rounded">Change</a></td>
+                                                            <?php if(empty($user_db['svid'])): ?>
+                                                                <td><a href="add-supervisor.php" style="margin-left: 8px; padding:8px" class="label bg-success text-white f-12 rounded">Add</a></td>
+                                                            <?php else: ?>
+                                                                <td><?php echo strtoupper($user_db['svname']) ?> <a href="add-supervisor.php" style="margin-left: 8px; padding:8px" class="label bg-success text-white f-12 rounded">Change</a></td>
+                                                            <?php endif; ?>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Co-Supervisor</th>

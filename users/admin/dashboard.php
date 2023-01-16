@@ -26,10 +26,13 @@ session_start();
     $COUNT->execute();
     $total_student = $COUNT->rowCount();
 
-    $sv_list = $pdo->prepare("SELECT * FROM supervisor");
+    $sv_list = $pdo->prepare("SELECT * FROM supervisor LIMIT 5");
     $sv_list->execute();
     $supervisor = $sv_list -> fetchAll();
-    $total_sv = $sv_list->rowCount();
+
+    $sv_list2 = $pdo->prepare("SELECT * FROM supervisor");
+    $sv_list2->execute();
+    $total_sv = $sv_list2->rowCount();
 
 ?>
 <!DOCTYPE html>
@@ -70,7 +73,7 @@ session_start();
             <div class="navbar-brand header-logo">
                 <a href="dashboard.php" class="b-brand">
                     <div>
-                        <img class="rounded-circle" style="width:40px;" src="assets/images/favicon.ico">
+                        <img class="rounded-circle" style="width:40px;" src="log.jpg">
                     </div>
                     <span class="b-title">ESPRES</span>
                 </a>
@@ -253,7 +256,7 @@ session_start();
                                 <div class="col-xl-8 col-md-6">
                                     <div class="card Recent-Users">
                                         <div class="card-header">
-                                            <h5>Recent Supervisor</h5>
+                                            <h5>Supervisor</h5>
                                         </div>
                                         <div class="card-block px-0 py-3">
                                             <div class="table-responsive">
@@ -281,7 +284,7 @@ session_start();
                                 <div class="col-xl-8 col-md-6">
                                     <div class="card Recent-Users">
                                         <div class="card-header">
-                                            <h5>Recent Student</h5>
+                                            <h5>Student</h5>
                                         </div>
                                         <div class="card-block px-0 py-3">
                                             <div class="table-responsive">

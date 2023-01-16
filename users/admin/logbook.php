@@ -18,9 +18,37 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $db_list = $pdo->prepare("SELECT * FROM student");
-    $db_list->execute();
-    $student_list = $db_list -> fetchAll();
+    // $db_list = $pdo->prepare("SELECT * FROM student");
+    // $db_list->execute();
+    // $student_list = $db_list -> fetchAll();
+// ----------------------------------
+    $per_page = 10; // number of results per page
+    $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1; // current page number
+    $start = ($page-1) * $per_page; // starting limit for query
+
+        $search = $_GET['search']?? "";
+
+        if($search){
+            $query = $pdo->prepare("SELECT * FROM student WHERE email LIKE '%$search%' OR uname LIKE '%$search%' OR pcode LIKE '%$search%' OR userid LIKE '%$search%' ORDER BY uname DESC");
+            $total_results = $pdo->query("SELECT COUNT(*) FROM student WHERE email LIKE '%$search%' OR uname LIKE '%$search%' OR pcode LIKE '%$search%' OR userid LIKE '%$search%'")->fetchColumn();
+        } else{
+            $query = $pdo->prepare("SELECT * FROM student LIMIT :start, :per_page");
+            $query->bindValue(':start', $start, PDO::PARAM_INT);
+            $query->bindValue(':per_page', $per_page, PDO::PARAM_INT);
+            $total_results = $pdo->query("SELECT COUNT(*) FROM student")->fetchColumn();
+        }
+
+        $per_page = 10; // number of results per page
+        $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1; // current page number
+        $start = ($page-1) * $per_page; // starting limit for query
+
+        $query->execute();
+        $student_list = $query->fetchAll();
+
+        // number of pages
+        $num_pages = ceil($total_results / $per_page);
+
+        $count = ($page-1) * $per_page + 1; // current number
 
 ?>
 <!DOCTYPE html>
@@ -61,7 +89,7 @@ session_start();
             <div class="navbar-brand header-logo">
                 <a href="dashboard.php" class="b-brand">
                     <div>
-                        <img class="rounded-circle" style="width:40px;" src="assets/images/favicon.ico">
+                        <img class="rounded-circle" style="width:40px;" src="log.jpg">
                     </div>
                     <span class="b-title">ESPRES</span>
                 </a>
@@ -208,6 +236,12 @@ session_start();
                                         <div class="card-header">
                                             <h5>Logbook</h5>
                                         </div>
+                                        <form action="" method="get">
+                                            <div class="input-group mb-3 m-auto" style="max-width: 600px;">
+                                                <input type="text" class="form-control" placeholder="Search" name="search">
+                                                <button class="btn bg-primary" type="submit" id="button-addon2"><i style="color: white; font-size: 20px; margin: auto" class="feather icon-search"></i></button>
+                                            </div>
+                                        </form>
                                         <?php if(!$student_list): ?>
                                             <div class="text-center" style="padding: 20px;">
                                                 <h4><?php echo "No Data"?></h4>
@@ -226,9 +260,9 @@ session_start();
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <?php foreach($student_list as $i => $data): ?>
+                                                    <?php foreach($student_list as $data): ?>
                                                         <tr>
-                                                            <td scope="row"><?php echo $i + 1 ?></td>
+                                                            <td scope="row"><?php echo $count++ ?></td>
                                                             <td><?php echo $data['userid'] ?></td>
                                                             <td><?php echo strtoupper($data['uname']) ?></td>
                                                             <td><?php echo $data['email'] ?></td>
@@ -242,21 +276,21 @@ session_start();
                                                         <?php endforeach; ?>
                                                     </tbody>
                                                 </table>
-                                                <nav aria-label="..." style="width: 245px; height: 60px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;">
-                                                    <ul class="pagination">
-                                                        <li class="page-item disabled">
-                                                            <a class="page-link">Previous</a>
-                                                        </li>
-                                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                                        <li class="page-item" aria-current="page">
-                                                            <a class="page-link" href="#">2</a>
-                                                        </li>
-                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                        <li class="page-item">
-                                                            <a class="page-link" href="#">Next</a>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
+                                                <?php if($total_results>10): ?>
+                                                    <nav>
+                                                        <ul class="pagination">
+                                                            <li class="<?php echo ($page <= 1) ? 'page-item disabled':'page-item' ?>"><a class="page-link" href="?page=<?php echo $page-1; ?>" >Previous</a></li>
+                                                            <?php for($i = 1; $i <= $num_pages; $i++): ?>
+                                                            <li class="<?php echo ($i == $page) ? 'active' : ''; ?>">
+                                                                <a class="page-link" href="?page=<?php echo $i; ?>">
+                                                                    <?php echo $i; ?>
+                                                                </a>
+                                                            </li>
+                                                            <?php endfor; ?>
+                                                            <li class="<?php echo ($page >= $num_pages) ? 'page-item disabled' : 'page-item'; ?>"><a class="page-link" href="?page=<?php echo $page+1; ?>">Next</a></li>
+                                                        </ul>
+                                                    </nav>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         <?php endif; ?>

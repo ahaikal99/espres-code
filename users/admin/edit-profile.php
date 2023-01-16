@@ -107,7 +107,7 @@ session_start();
             <div class="navbar-brand header-logo">
                 <a href="dashboard.php" class="b-brand">
                     <div>
-                        <img class="rounded-circle" style="width:40px;" src="assets/images/favicon.ico">
+                        <img class="rounded-circle" style="width:40px;" src="log.jpg">
                     </div>
                     <span class="b-title">ESPRES</span>
                 </a>

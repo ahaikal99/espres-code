@@ -48,7 +48,7 @@ session_start();
     
             }
 
-            $sql="UPDATE student SET uname='$name', email='$email', faculty='$faculty', phone='$phone', address='$address' , title='$title', pic='$file_path' WHERE userid='$userid'";
+            $sql="UPDATE student SET uname='$name', email='$email', pcode = '$pcode', faculty='$faculty', phone='$phone', address='$address' , title='$title', pic='$file_path' WHERE userid='$userid'";
             $result=$pdo->prepare($sql);
             $result->execute();
 
@@ -105,7 +105,7 @@ session_start();
             <div class="navbar-brand header-logo">
                 <a href="dashboard.php" class="b-brand">
                     <div>
-                        <img class="rounded-circle" style="width:40px;" src="assets/images/favicon.ico">
+                        <img class="rounded-circle" style="width:40px;" src="log.jpg">
                     </div>
                     <span class="b-title">ESPRES</span>
                 </a>

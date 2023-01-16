@@ -39,9 +39,7 @@ session_start();
         // Convert the minutes to seconds
         // and add to total
         $totalthis+= (int) $temp[1] * 60;
-        
-        // Add the seconds to total
-        $totalthis+= (int) $temp[2];
+
     endforeach;
     
     // Format the seconds back into HH:MM:SS
@@ -77,8 +75,6 @@ session_start();
         // and add to total
         $total+= (int) $temp[1] * 60;
         
-        // Add the seconds to total
-        $total+= (int) $temp[2];
     endforeach;
     
     // Format the seconds back into HH:MM:SS
@@ -116,7 +112,7 @@ session_start();
             <div class="navbar-brand header-logo">
                 <a href="dashboard.php" class="b-brand">
                     <div>
-                        <img class="rounded-circle" style="width:40px;" src="assets/images/favicon.ico">
+                        <img class="rounded-circle" style="width:40px;"src="log.jpg">
                     </div>
                     <span class="b-title">ESPRES</span>
                 </a>

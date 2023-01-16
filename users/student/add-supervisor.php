@@ -39,6 +39,34 @@ session_start();
     
     }
 
+    $per_page = 10; // number of results per page
+    $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1; // current page number
+    $start = ($page-1) * $per_page; // starting limit for query
+
+        $search = $_GET['search']?? "";
+
+        if($search){
+            $query = $pdo->prepare("SELECT * FROM supervisor WHERE email LIKE '%$search%' OR uname LIKE '%$search%' ORDER BY uname DESC");
+            $total_results = $pdo->query("SELECT COUNT(*) FROM supervisor WHERE email LIKE '%$search%' OR uname LIKE '%$search%'")->fetchColumn();
+        } else{
+            $query = $pdo->prepare("SELECT * FROM supervisor LIMIT :start, :per_page");
+            $query->bindValue(':start', $start, PDO::PARAM_INT);
+            $query->bindValue(':per_page', $per_page, PDO::PARAM_INT);
+            $total_results = $pdo->query("SELECT COUNT(*) FROM supervisor")->fetchColumn();
+        }
+
+        $per_page = 10; // number of results per page
+        $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1; // current page number
+        $start = ($page-1) * $per_page; // starting limit for query
+
+        $query->execute();
+        $list_sv = $query->fetchAll();
+
+        // number of pages
+        $num_pages = ceil($total_results / $per_page);
+
+        $count = ($page-1) * $per_page + 1; // current number
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,7 +100,7 @@ session_start();
             <div class="navbar-brand header-logo">
                 <a href="dashboard.php" class="b-brand">
                     <div>
-                        <img class="rounded-circle" style="width:40px;" src="assets/images/favicon.ico">
+                        <img class="rounded-circle" style="width:40px;" src="log.jpg">
                     </div>
                     <span class="b-title">ESPRES</span>
                 </a>
@@ -230,10 +258,10 @@ session_start();
                                             <h5>Supervisor</h5>
                                         </div>
                                         <div class="card-body">
-                                        <form class="row justify-content-center ">
-                                            <div class="input-group mb-3 w-50">
-                                                <input type="text" class="form-control" placeholder="Search" style="background-color: white">
-                                                <button class="btn bg-primary" type="submit" style="color: white;"><i class="feather icon-search m-0"></i></button>
+                                        <form action="" method="get">
+                                            <div class="input-group mb-3 m-auto" style="max-width: 600px;">
+                                                <input type="text" class="form-control" placeholder="Search" name="search">
+                                                <button class="btn bg-primary" type="submit" id="button-addon2"><i style="color: white; font-size: 20px; margin: auto" class="feather icon-search"></i></button>
                                             </div>
                                         </form>
                                         <div class="card-block table-border-style">
@@ -241,17 +269,19 @@ session_start();
                                                 <table class="table text-center">
                                                     <thead>
                                                         <tr>
+                                                            <th>No.</th>
                                                             <th>Name</th>
-                                                            <th>ID</th>
+                                                            <th>Email</th>
                                                             <th></th>
                                                         </tr>
                                                     </thead>
-                                                    <?php foreach($list_sv as $i=>$data): ?>
+                                                    <?php foreach($list_sv as $data): ?>
                                                         <tbody>
                                                             <form action="" method="post">
                                                             <tr>
+                                                                <td><?php echo $count++ ?></td>
                                                                 <td><?php echo strtoupper($data['uname']) ?></td>
-                                                                <td><?php echo strtoupper($data['userid']) ?></td>
+                                                                <td><?php echo strtoupper($data['email']) ?></td>
                                                                 <input type="text" value="<?php echo $data['uname'] ?>" name="svname" hidden>
                                                                 <input type="text" value="<?php echo $data['userid'] ?>" name="svid" hidden>
                                                                 <td><button type="submit" class="label bg-success text-white f-12" style="border-radius: 10px; border-width: 0px; cursor:pointer">Add</button></td>
@@ -260,6 +290,21 @@ session_start();
                                                         </tbody>
                                                     <?php endforeach; ?>
                                                 </table>
+                                                <?php if($total_results>10): ?>
+                                                    <nav>
+                                                        <ul class="pagination">
+                                                            <li class="<?php echo ($page <= 1) ? 'page-item disabled':'page-item' ?>"><a class="page-link" href="?page=<?php echo $page-1; ?>" >Previous</a></li>
+                                                            <?php for($i = 1; $i <= $num_pages; $i++): ?>
+                                                            <li class="<?php echo ($i == $page) ? 'active' : ''; ?>">
+                                                                <a class="page-link" href="?page=<?php echo $i; ?>">
+                                                                    <?php echo $i; ?>
+                                                                </a>
+                                                            </li>
+                                                            <?php endfor; ?>
+                                                            <li class="<?php echo ($page >= $num_pages) ? 'page-item disabled' : 'page-item'; ?>"><a class="page-link" href="?page=<?php echo $page+1; ?>">Next</a></li>
+                                                        </ul>
+                                                    </nav>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         </div>
