@@ -32,7 +32,7 @@ session_start();
 
         // Insert the data into the database
         foreach ($rows as $row) {
-            $stmt = $pdo->prepare("INSERT INTO student (uname, address, userid, password, phone, email) VALUES (:column1, :column2, :column3, :column4, :column5, :column6)");
+            $stmt = $pdo->prepare("INSERT INTO supervisor (uname, address, userid, password, phone, email) VALUES (:column1, :column2, :column3, :column4, :column5, :column6)");
             $stmt->bindValue(':column1', $row['A']);
             $stmt->bindValue(':column6', $row['B']);
             $stmt->bindValue(':column2', $row['C']);
@@ -44,11 +44,11 @@ session_start();
             $stmt2 = $pdo->prepare("INSERT INTO users (userid, email, usertype) VALUES (:column3, :column6, :column2)");
             $stmt2->bindValue(':column6', $row['B']);
             $stmt2->bindValue(':column3', $row['F']);
-            $stmt2->bindValue(':column2', 'student');
+            $stmt2->bindValue(':column2', 'supervisor');
             $stmt2->execute();
         }
 
-        header('Location: student-profile.php');
+        header('Location: supervisor-profile.php');
     }
 
 

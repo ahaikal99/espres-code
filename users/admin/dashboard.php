@@ -18,10 +18,13 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $student_list = $pdo->prepare("SELECT * FROM student");
+    $student_list = $pdo->prepare("SELECT * FROM student LIMIT 5");
     $student_list->execute();
     $student = $student_list -> fetchAll();
-    $total_student = $student_list->rowCount();
+
+    $COUNT = $pdo->prepare("SELECT * FROM student");
+    $COUNT->execute();
+    $total_student = $COUNT->rowCount();
 
     $sv_list = $pdo->prepare("SELECT * FROM supervisor");
     $sv_list->execute();

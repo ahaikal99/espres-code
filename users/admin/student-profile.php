@@ -15,21 +15,37 @@ session_start();
     }
 
     
+    $per_page = 10; // number of results per page
+    $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1; // current page number
+    $start = ($page-1) * $per_page; // starting limit for query
+
         $search = $_GET['search']?? "";
 
         if($search){
-            $db_list = $pdo->prepare("SELECT * FROM student WHERE email LIKE '%$search%' OR uname LIKE '%$search%' OR pcode LIKE '%$search%' OR userid LIKE '%$search%' ORDER BY uname DESC");
+            $query = $pdo->prepare("SELECT * FROM student WHERE email LIKE '%$search%' OR uname LIKE '%$search%' OR pcode LIKE '%$search%' OR userid LIKE '%$search%' ORDER BY uname DESC");
+            $total_results = $pdo->query("SELECT COUNT(*) FROM student WHERE email LIKE '%$search%' OR uname LIKE '%$search%' OR pcode LIKE '%$search%' OR userid LIKE '%$search%'")->fetchColumn();
         } else{
-            $db_list = $pdo->prepare("SELECT * FROM student");
+            $query = $pdo->prepare("SELECT * FROM student LIMIT :start, :per_page");
+            $query->bindValue(':start', $start, PDO::PARAM_INT);
+            $query->bindValue(':per_page', $per_page, PDO::PARAM_INT);
+            $total_results = $pdo->query("SELECT COUNT(*) FROM student")->fetchColumn();
         }
-        $db_list->execute();
-        $student_list = $db_list -> fetchAll();
-    
+
+        $per_page = 10; // number of results per page
+        $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1; // current page number
+        $start = ($page-1) * $per_page; // starting limit for query
+
+        $query->execute();
+        $student_list = $query->fetchAll();
+
+        // number of pages
+        $num_pages = ceil($total_results / $per_page);
+
+        $count = ($page-1) * $per_page + 1; // current number
 
     $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
-    
     
 ?>
 <!DOCTYPE html>
@@ -242,9 +258,9 @@ session_start();
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <?php foreach($student_list as $i => $data): ?>
+                                                    <?php foreach($student_list as $data): ?>
                                                         <tr>
-                                                            <td scope="row"><?php echo $i + 1 ?></td>
+                                                            <td scope="row"><?php echo $count++ ?></td>
                                                             <td><?php echo $data['userid'] ?></td>
                                                             <td><?php echo strtoupper($data['uname']) ?></td>
                                                             <td><?php echo $data['pcode'] ?></td>
@@ -259,21 +275,21 @@ session_start();
                                                         <?php endforeach; ?>
                                                     </tbody>
                                                 </table>
-                                                <nav aria-label="..." style="width: 245px; height: 60px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;">
-                                                    <ul class="pagination">
-                                                        <li class="page-item disabled">
-                                                            <a class="page-link">Previous</a>
-                                                        </li>
-                                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                                        <li class="page-item" aria-current="page">
-                                                            <a class="page-link" href="#">2</a>
-                                                        </li>
-                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                        <li class="page-item">
-                                                            <a class="page-link" href="#">Next</a>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
+                                                <?php if($total_results>10): ?>
+                                                    <nav>
+                                                        <ul class="pagination">
+                                                            <li class="<?php echo ($page <= 1) ? 'page-item disabled':'page-item' ?>"><a class="page-link" href="?page=<?php echo $page-1; ?>" >Previous</a></li>
+                                                            <?php for($i = 1; $i <= $num_pages; $i++): ?>
+                                                            <li class="<?php echo ($i == $page) ? 'active' : ''; ?>">
+                                                                <a class="page-link" href="?page=<?php echo $i; ?>">
+                                                                    <?php echo $i; ?>
+                                                                </a>
+                                                            </li>
+                                                            <?php endfor; ?>
+                                                            <li class="<?php echo ($page >= $num_pages) ? 'page-item disabled' : 'page-item'; ?>"><a class="page-link" href="?page=<?php echo $page+1; ?>">Next</a></li>
+                                                        </ul>
+                                                    </nav>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         <?php endif; ?>
@@ -281,7 +297,31 @@ session_start();
                                 </div>
                                 <!-- [ Hover-table ] end -->
                             </div>
-                            <a class="btn bg-primary" style="color: white;" href="add-student.php" type="button">Add</a>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add</button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Add New Student</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="add-student.php" method="post" enctype="multipart/form-data">
+                                        <div class="modal-body">
+                                        <div class="input-group mb-3">
+                                            <input type="file" class="form-control" name="file">
+                                        </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" name="submit" value="upload" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
