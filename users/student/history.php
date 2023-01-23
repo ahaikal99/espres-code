@@ -18,9 +18,30 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $sql_check = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid'");
-    $sql_check->execute();
-    $list_logbook = $sql_check -> fetchAll();
+    
+
+    if(isset($_POST)){
+        $mnth = $_POST['month'];
+        $yr = $_POST['year'];
+        $query = "SELECT * FROM logbook WHERE userid = :userid ";
+        $params = [':userid' => $userid];
+        if ($mnth != 'All'){
+            $query .= "AND MONTH(date) = :mnth ";
+            $params[':mnth'] = $mnth;
+        }
+        if ($yr != 'All'){
+            $query .= "AND YEAR(date) = :yr ";
+            $params[':yr'] = $yr;
+        }
+        $sql_check = $pdo->prepare($query);
+        $sql_check->execute($params);
+        $list_logbook = $sql_check -> fetchAll();
+    
+    } else{
+        $sql_check = $pdo->prepare("SELECT * FROM logbook WHERE userid = :userid");
+        $sql_check->execute([':userid' => $userid]);
+        $list_logbook = $sql_check -> fetchAll();
+    }
 
 ?>
 <!DOCTYPE html>
@@ -213,6 +234,55 @@ session_start();
                                     <div class="card">
                                         <div class="card-header mb-3">
                                             <h5>History</h5>
+                                        </div>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-primary p-1" style="max-width: 100px; margin-left: 20px" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="feather icon-filter" style="color:white"></i>Filter</button>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form action="" method="post">
+                                                        <div class="modal-body">
+                                                            <div class="input-group mb-4">
+                                                                <label class="input-group-text" for="year">Year</label>
+                                                                <select class="form-select" id="year" name="year">
+                                                                    <option selected value="All" >All</option>
+                                                                    <option value="2022">2022</option>
+                                                                    <option value="2023">2023</option>
+                                                                    <option value="2024">2024</option>
+                                                                    <option value="2025">2025</option>
+                                                                    <option value="2026">2026</option>
+                                                                    <option value="2027">2027</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="input-group mb-3">
+                                                                <label class="input-group-text" for="month">Month</label>
+                                                                <select class="form-select" id="month" name="month">
+                                                                    <option selected value="All" >All</option>
+                                                                    <option value="1">January</option>
+                                                                    <option value="2">February</option>
+                                                                    <option value="3">March</option>
+                                                                    <option value="4">April</option>
+                                                                    <option value="5">May</option>
+                                                                    <option value="6">June</option>
+                                                                    <option value="7">July</option>
+                                                                    <option value="8">August</option>
+                                                                    <option value="9">September</option>
+                                                                    <option value="10">October</option>
+                                                                    <option value="11">November</option>
+                                                                    <option value="12">December</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="submit" class="btn btn-primary">Filter</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="card-block table-border-style">
                                             <div class="table-responsive text-center">

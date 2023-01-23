@@ -254,7 +254,7 @@ session_start();
                                                             <?php if(empty($user_db['svid'])): ?>
                                                                 <td><a href="add-supervisor.php" style="margin-left: 8px; padding:8px" class="label bg-success text-white f-12 rounded">Add</a></td>
                                                             <?php else: ?>
-                                                                <td><?php echo strtoupper($user_db['svname']) ?> <a href="add-supervisor.php" style="margin-left: 8px; padding:8px" class="label bg-success text-white f-12 rounded">Change</a></td>
+                                                                <td><?php echo strtoupper($user_db['svname']) ?></td>
                                                             <?php endif; ?>
                                                         </tr>
                                                         <tr>
@@ -262,7 +262,7 @@ session_start();
                                                             <?php if(empty($user_db['cosv'])): ?>
                                                                 <td><a href="add-cosupervisor.php" style="margin-left: 8px; padding:8px" class="label bg-success text-white f-12 rounded">Add</a></td>
                                                             <?php else: ?>
-                                                                <td><?php echo strtoupper($user_db['cosv']) ?><a href="add-cosupervisor.php" style="margin-left: 8px; padding:8px" class="label bg-success text-white f-12 rounded">Change</a></td>
+                                                                <td><?php echo strtoupper($user_db['cosv']) ?></td>
                                                             <?php endif; ?>
                                                         </tr>
                                                     </tbody>

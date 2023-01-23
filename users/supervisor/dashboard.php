@@ -193,7 +193,12 @@ session_start();
                                             <h6 class="mb-4">Total Student</h6>
                                             <div class="row d-flex align-items-center">
                                                 <div class="col-9">
-                                                    <h4 class="f-w-300 d-flex align-items-center m-b-0">2</h4>
+                                                    <h4 class="f-w-300 d-flex align-items-center m-b-0">
+                                                        <?php 
+                                                        $row_count = $sudent_list->rowCount();
+                                                        echo $row_count;
+                                                        ?>
+                                                    </h4>
                                                 </div>
                                             </div>
                                             <div class="progress m-t-30" style="height: 7px;">

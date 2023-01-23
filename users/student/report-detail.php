@@ -248,7 +248,7 @@ session_start();
                                         </div>
                                         <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
                                             <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Student Name : </a><?php echo $user_db['uname'] ?></span>
+                                                <span> <a style="font-weight: bold;">Student Name : </a><?php echo strtoupper($user_db['uname']) ?></span>
                                             </div>
                                             <div class="p-2">
                                                 <span> <a style="font-weight: bold;">Student ID : </a><?php echo $user_db['userid'] ?></span>
@@ -290,7 +290,12 @@ session_start();
                                         </div>
                                         <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
                                             <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Supervisor Name : </a><?php echo $user_db['svname'] ?></span>
+                                                <span> <a style="font-weight: bold;">Research Title : </a><?php echo $user_db['title'] ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Supervisor Name : </a><?php echo strtoupper($user_db['svname']) ?></span>
                                             </div>
                                         </div>
                                         <div class="p-2 d-flex flex-row mb-2 gap-5" style="color: black;">
