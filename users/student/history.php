@@ -18,11 +18,9 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    
-
-    if(isset($_POST)){
-        $mnth = $_POST['month'];
-        $yr = $_POST['year'];
+    if($_POST){
+        $mnth = $_POST['month'] ?? '';
+        $yr = $_POST['year'] ?? '';
         $query = "SELECT * FROM logbook WHERE userid = :userid ";
         $params = [':userid' => $userid];
         if ($mnth != 'All'){
@@ -286,7 +284,7 @@ session_start();
                                         </div>
                                         <div class="card-block table-border-style">
                                             <div class="table-responsive text-center">
-                                                <?php if(!$list_logbook): ?>
+                                                <?php if(empty($list_logbook)): ?>
                                                     <h4>No Data</h4>
                                                 <?php else: ?>
                                                     <table class="table table-hover">

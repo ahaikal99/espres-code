@@ -19,90 +19,14 @@ session_start();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
     if($_POST){
-        $id = $_POST['id'];
-        $month = $_POST['month'];
-        $year = $_POST['year'];
+        $check = $_POST['id'];
 
-        $db_report = $pdo->prepare("SELECT * FROM report WHERE id = '$id'");
-        $db_report->execute();
-        $report_list = $db_report -> fetch(PDO::FETCH_ASSOC);
-
-        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' && MONTH(date) = '$month' && YEAR(date) = '$year' ");
+        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE id = '$check'");
         $db_sql->execute();
-        $calculate_total = $db_sql -> fetchAll();
-
-        $total = 0;
-        // ------calculate total hour------------------------------
-        // Loop the data items
-        foreach( $calculate_total as $element):
-            
-            // Explode by separator :
-            $temp = explode(":", $element['totaltime']);
-            
-            // Convert the hours into seconds
-            // and add to total
-            $total+= (int) $temp[0] * 3600;
-            
-            // Convert the minutes to seconds
-            // and add to total
-            $total+= (int) $temp[1] * 60;
-            
-        endforeach;
-        
-        // Format the seconds back into HH:MM:SS
-        $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
-
+        $logbook = $db_sql -> fetch(PDO::FETCH_ASSOC);
     }
 
-    if ($display < 90) {
-        $receiver = 'ariflegend182@gmail.com';
-        $subject = "Total Hour Less Than 10";
-        $message = "The total hours worked is less than 10 hours.";
-        $headers = 'From: arifhaikal228@gmail.com';
-        if(mail($receiver, $subject, $message, $headers)){
-            echo "Email sent successfully!";
-        } else {
-            echo "Total hours worked is greater than or equal to 10 hours, no email sent.";
-        }
-        
-    } 
-    // use PHPMailer\PHPMailer\PHPMailer;
-    // use PHPMailer\PHPMailer\Exception;
-
-    // require 'PHPMailer-master\src\Exception.php';
-    // require 'PHPMailer-master\src\PHPMailer.php';
-    // require 'PHPMailer-master\src\SMTP.php';
-    // if ($display < 90) {
-    //     $mail = new PHPMailer(true);
-
-    //     $mail -> isSMTP();
-    //     $mail -> Host = 'smtp@gmail.com';
-    //     $mail -> SMTPAuth = true;
-    //     $mail -> Username = 'arifhaikal228@gmail.com';
-    //     $mail -> Password = 'mkhxbemnsmmvfsld';
-    //     $mail -> SMTPSecure = 'ssl';
-    //     $mail -> Port = 587;
-    //     $mail->SMTPOptions = array(
-    //         'ssl' => array(
-    //             'verify_peer' => false,
-    //             'verify_peer_name' => false,
-    //             'allow_self_signed' => true
-    //         )
-    //     );
-
-    //     $mail -> setFrom('arifhaikal228@gmail.com');
-    //     $mail -> addAddress('ariflegend182@gmail.com');
-    //     $mail -> isHTML(true);
-    //     $mail -> Subject = "Total Hour Less Than 10";
-    //     $mail -> Body = "The total hours worked is less than 10 hours.";
-    //     $mail -> send();
-    //     echo 'Message has been sent';
-    // } else{
-    //     echo "Message could not be sent. Mailer Error";
-    // }
-
-    ?>
-    
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -290,97 +214,70 @@ session_start();
                             <div class="row">
                                 <!-- [ Hover-table ] start -->
                                 <div class="col">
-                                    <div class="card" id="printableArea">
-                                        <div class="card-header mb-3">
-                                            <h5>Report</h5>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>History</h5>
                                         </div>
-                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Student Name : </a><?php echo strtoupper($user_db['uname']) ?></span>
-                                            </div>
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Student ID : </a><?php echo $user_db['userid'] ?></span>
-                                            </div>
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Month : </a>
-                                                    <?php
-                                                        if($report_list['month']==1){
-                                                            echo "January";
-                                                        } elseif($report_list['month']==2){
-                                                            echo "February";
-                                                        } elseif($report_list['month']==3){
-                                                            echo "March";
-                                                        } elseif($report_list['month']==4){
-                                                            echo "April";
-                                                        } elseif($report_list['month']==5){
-                                                            echo "May";
-                                                        } elseif($report_list['month']==6){
-                                                            echo "June";
-                                                        } elseif($report_list['month']==7){
-                                                            echo "July";
-                                                        } elseif($report_list['month']==8){
-                                                            echo "August";
-                                                        } elseif($report_list['month']==9){
-                                                            echo "September";
-                                                        } elseif($report_list['month']==10){
-                                                            echo "October";
-                                                        } elseif($report_list['month']==11){
-                                                            echo "November";
-                                                        } else{
-                                                            echo "December";
-                                                        }
-                                                    ?>
-                                                </span>
-                                            </div>
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Year : </a><?php echo $report_list['year'] ?></span>
-                                            </div>
-                                        </div>
-                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Research Title : </a><?php echo $user_db['title'] ?></span>
-                                            </div>
-                                        </div>
-                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Supervisor Name : </a><?php echo strtoupper($user_db['svname']) ?></span>
-                                            </div>
-                                        </div>
-                                        <div class="p-2 d-flex flex-row mb-2 gap-5" style="color: black;">
-                                            <div class="p-2">
-                                                <span> <a style="font-weight: bold;">Co-Supervisor Name : </a><?php echo strtoupper($user_db['cosv']) ?></span>
-                                            </div>
-                                        </div>
-                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                                        <div class="p-2 d-flex"style="font-weight: bold; color: black;">
-                                            <div class="p-2 flex-fill w-25">Date</div>
-                                            <div class="p-2 flex-fill w-25">Activity</div>
-                                            <div class="p-2 flex-fill w-25">Duration</div>
-                                            <div class="p-2 flex-fill w-25"></div>
-                                        </div>
-                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                                        <?php foreach($calculate_total as $logbook): ?>
-                                            <div class="p-2 d-flex"style="color: black;">
-                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['date']?></div>
-                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['activity']?></div>
-                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['totaltime']?></div>
-                                                <div class="p-2 flex-fill w-25">
-                                                    <form action="view-report.php" method="post">
-                                                        <input type="text" name="id" value="<?php echo $logbook['id'] ?>" hidden>
-                                                        <button class="btn btn-primary" style="padding: 3px 15px 3px 15px;" type="submit">View</button>
-                                                    </form>
+                                        <div class="card-block table-border-style mb-4">
+                                            <div class="">
+                                                <div class="row mb-5">
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 220px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">DATE</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['date'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 230px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Start Time</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['starttime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 210px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">End Time</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['endtime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 210px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Duration</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['totaltime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Activity</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 1000px;">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text" style="width: 1000px;">Discussion</span>
+                                                    </div>
+                                                    <div class="form-control" style="height: 300px; background-color: white;"><?php echo $logbook['discuss'] ?></div>
+                                                </div>
+                                                <?php if($logbook['doc']): ?>
+                                                    <iframe src="<?php echo $logbook['doc'] ?>" width="100%" height="1000px"></iframe>
+                                                <?php endif; ?>
                                             </div>
-                                        <?php endforeach; ?>
-                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                                        <div class="p-2 d-flex"style="color: black;">
-                                            <div class="p-2 flex-fill"></div>
-                                            <div class="p-2 flex-fill"></div>
-                                            <div class="p-2 flex-fill"><a style="font-weight: bold;">Total Hours : </a><?php echo $display." "."Hours" ?></div>
                                         </div>
-                                        <hr class="mb-3" style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <!-- <form action="edit-logbook.php" method="post">
+                                            <input type="" value="<?php  ?>" name="month">
+                                            <input type="" value="<?php  ?>" name="year">
+                                            <input type="" value="<?php  ?>" name="month">
+                                            <button class="btn btn-primary m-2" style="position: absolute; right:0; bottom: 0;">Edit</button>
+                                        </form> -->
                                     </div>
-                                    <a href="javascript:void(0);" class="m-2 btn btn-primary" onclick="printPageArea('printableArea')">Print</a>
                                 </div>
                             </div>
                         </div>

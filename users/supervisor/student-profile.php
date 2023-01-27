@@ -21,6 +21,28 @@ session_start();
     $db_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
     $db_list->execute();
     $student_list = $db_list -> fetchAll();
+
+    $db_list2 = $pdo->prepare("SELECT DISTINCT pcode as pcode FROM student WHERE svid = '$userid'");
+    $db_list2->execute();
+    $student_list2 = $db_list2 -> fetchAll();
+
+    if($_POST){
+        $code = $_POST['pcode'] ?? '';
+        $query = "SELECT * FROM student WHERE svid = :svid ";
+        $params = [':svid' => $userid];
+        if ($code != 'All'){
+            $query .= "AND pcode = :code ";
+            $params[':code'] = $code;
+        }
+        $sql_check = $pdo->prepare($query);
+        $sql_check->execute($params);
+        $list_logbook = $sql_check -> fetchAll();
+    
+    } else{
+        $sql_check = $pdo->prepare("SELECT * FROM student WHERE svid = :svid");
+        $sql_check->execute([':svid' => $userid]);
+        $list_logbook = $sql_check -> fetchAll();
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -202,8 +224,11 @@ session_start();
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Supervisor</h5>
+                                            <h5>Student</h5>
                                         </div>
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-primary p-1" style="max-width: 100px; margin-left: 20px" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="feather icon-filter" style="color:white"></i>Filter</button>
+                                        
                                         <?php if(!$student_list): ?>
                                             <div class="text-center" style="padding: 20px;">
                                                 <h4><?php echo "No Data"?></h4>
@@ -269,7 +294,31 @@ session_start();
         </div>
     </section>
     <!-- [ Main Content ] end -->
-
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="post">
+                <div class="modal-body">
+                    <div class="input-group mb-4">
+                        <label class="input-group-text" for="pcode">Program Code</label>
+                        <select class="form-select" id="pcode" name="pcode">
+                            <option selected value="All" >All</option>
+                            <?php foreach($student_list2 as $st): ?>
+                                <option value="<?php echo $st['pcode'] ?>"><?php echo $st['pcode'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <div class="modal-footer">
+                    <button name="submit" type="submit" class="btn btn-primary">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
     <!-- Required Js -->
     <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>
 	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
