@@ -174,9 +174,104 @@ session_start();
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-<div>
-    <div class=""></div>
-</div>
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Report</h5>
+                                        </div>
+                                        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                                            <div class="container-fluid">
+                                                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                                    <form action="" method="post">
+                                                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                                            <li class="nav-item">
+                                                                <select class="form-select" aria-label="Disabled select example">
+                                                                    <option value="1">All</option>
+                                                                    <option value="2">Student</option>
+                                                                    <option value="3">Supervisor</option>
+                                                                </select>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <p class="nav-link active">Sort by :</p>
+                                                            </li>
+                                                            <li class="nav-item" style="padding: 12px;">
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" value="" id="flexCheckDefault">
+                                                                    <label for="flexCheckDefault" style="color: black;">Total Hour</label>
+                                                                </div>
+                                                            </li>
+                                                            <li class="nav-item" style="padding: 12px;">
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" value="" id="flexCheckDefault">
+                                                                    <label for="flexCheckDefault" style="color: black;">Complete</label>
+                                                                </div>
+                                                            </li>
+                                                            <li class="nav-item" style="padding: 12px;">
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" value="" id="flexCheckDefault">
+                                                                    <label for="flexCheckDefault" style="color: black;">Not Complete</label>
+                                                                </div>
+                                                            </li>
+                                                            <li class="nav-item" style="padding: 12px;">
+                                                                <div class="form-check">
+                                                                    <input type="checkbox" value="" id="flexCheckDefault">
+                                                                    <label for="flexCheckDefault" style="color: black;">Total Logbook</label>
+                                                                </div>
+                                                            </li>
+                                                            <li class="nav-item" style="padding: 12px;">
+                                                                <button type="button" class="btn btn-primary btn-sm" style="padding: 5px; width: 55px">Sort</button>
+                                                            </li>
+                                                        </ul>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </nav>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">First</th>
+                                                <th scope="col">Last</th>
+                                                <th scope="col">Handle</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                <th scope="row">1</th>
+                                                <td>Mark</td>
+                                                <td>Otto</td>
+                                                <td>@mdo</td>
+                                                </tr>
+                                                <tr>
+                                                <th scope="row">2</th>
+                                                <td>Jacob</td>
+                                                <td>Thornton</td>
+                                                <td>@fat</td>
+                                                </tr>
+                                                <tr>
+                                                <th scope="row">3</th>
+                                                <td colspan="2">Larry the Bird</td>
+                                                <td>@twitter</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- [ Main Content ] end -->
 
     <!-- Required Js -->
