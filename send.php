@@ -54,7 +54,7 @@ $mail->Password = 'tdrjxzbncjdkfobi';// SMTP password
 
 $mail->setFrom('arifhaikal228@gmail.com', 'arifhaikal228@gmail.com');//Your application NAME and EMAIL
 $mail->Subject = 'Test';//Message subject
-$mail->MsgHTML('HTML code');// Message body
+$mail->MsgHTML('Good Job');// Message body
 $mail->addAddress('ariflegend182@gmail.com', 'john');// Target email
 
 

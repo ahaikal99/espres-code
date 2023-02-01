@@ -31,7 +31,7 @@ session_start();
         $result=$pdo->prepare($sql);
         $result->execute();
         $_SESSION["user"]=$userid;
-        header("location: logbook.php");
+        header("Location: logbook.php");
     
     
     }else{

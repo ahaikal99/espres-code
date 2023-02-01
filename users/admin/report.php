@@ -1,3 +1,24 @@
+<?php
+include 'connection.php';
+
+session_start();
+
+    if(isset($_SESSION["userid"])){
+        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='admin'){
+            header("location: ../login.php");
+        }else{
+            $userid=$_SESSION["userid"];
+        }
+
+    }else{
+        header("location: ../login.php");
+    }
+
+    $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
+    $sql_stmnt->execute();
+    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+    ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -47,24 +68,24 @@
                     <li class="nav-item pcoded-menu-caption">
                         <label>Navigation</label>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
                     <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
                     </li>
-                    <li  class="nav-item pcoded-hasmenu">
-                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Supervisor</span></a>
-                        <ul class="pcoded-submenu">
-                            <li class=""><a href="supervisor-profile.php" class="">Profile</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a href="supervisor-profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Supervisor</span></a>
                     </li>
-                    <li  class="nav-item pcoded-hasmenu active">
+                    <li  class="nav-item pcoded-hasmenu">
                         <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="bi bi-mortarboard-fill"></i></span><span class="pcoded-mtext">Student</span></a>
                         <ul class="pcoded-submenu">
                             <li class=""><a href="student-profile.php" class="">Profile</a></li>
-                            <li class=" active"><a href="logbook.php" class="">Logbook</a></li>
+                            <li class=""><a href="logbook.php" class="">Logbook</a></li>
                         </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="report.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Report</span></a>
                     </li>
                 </ul>
             </div>
@@ -104,7 +125,7 @@
                 </li>
                 <li class="nav-item">
                     <div>
-                        <h6><?php echo "Welcome"." ".$userfetch['fname'] ?></h6>
+                        <h6></h6>
                     </div>
                 </li>
             </ul>
@@ -135,8 +156,8 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
                             <div class="pro-head">
-                                <img src="<?php echo $userfetch['pic'] ?>" class="img-radius">
-                                <span><?php echo $userfetch['fname'] ?></span>
+                                <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
+                                <span><?php echo $user_db['uname'] ?></span>
                                 
                             </div>
                             <ul class="pro-body">
@@ -153,7 +174,9 @@
     <!-- [ Header ] end -->
 
     <!-- [ Main Content ] start -->
-
+<div>
+    <div class=""></div>
+</div>
     <!-- [ Main Content ] end -->
 
     <!-- Required Js -->
