@@ -54,53 +54,6 @@ session_start();
 
     }
 
-    if ($display < 90) {
-        $receiver = 'ariflegend182@gmail.com';
-        $subject = "Total Hour Less Than 10";
-        $message = "The total hours worked is less than 10 hours.";
-        $headers = 'From: arifhaikal228@gmail.com';
-        if(mail($receiver, $subject, $message, $headers)){
-            echo "Email sent successfully!";
-        } else {
-            echo "Total hours worked is greater than or equal to 10 hours, no email sent.";
-        }
-        
-    } 
-    // use PHPMailer\PHPMailer\PHPMailer;
-    // use PHPMailer\PHPMailer\Exception;
-
-    // require 'PHPMailer-master\src\Exception.php';
-    // require 'PHPMailer-master\src\PHPMailer.php';
-    // require 'PHPMailer-master\src\SMTP.php';
-    // if ($display < 90) {
-    //     $mail = new PHPMailer(true);
-
-    //     $mail -> isSMTP();
-    //     $mail -> Host = 'smtp@gmail.com';
-    //     $mail -> SMTPAuth = true;
-    //     $mail -> Username = 'arifhaikal228@gmail.com';
-    //     $mail -> Password = 'mkhxbemnsmmvfsld';
-    //     $mail -> SMTPSecure = 'ssl';
-    //     $mail -> Port = 587;
-    //     $mail->SMTPOptions = array(
-    //         'ssl' => array(
-    //             'verify_peer' => false,
-    //             'verify_peer_name' => false,
-    //             'allow_self_signed' => true
-    //         )
-    //     );
-
-    //     $mail -> setFrom('arifhaikal228@gmail.com');
-    //     $mail -> addAddress('ariflegend182@gmail.com');
-    //     $mail -> isHTML(true);
-    //     $mail -> Subject = "Total Hour Less Than 10";
-    //     $mail -> Body = "The total hours worked is less than 10 hours.";
-    //     $mail -> send();
-    //     echo 'Message has been sent';
-    // } else{
-    //     echo "Message could not be sent. Mailer Error";
-    // }
-
     ?>
     
 <!DOCTYPE html>
