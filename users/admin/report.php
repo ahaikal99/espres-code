@@ -205,12 +205,6 @@ session_start();
                                                             <li class="nav-item" style="padding: 12px;">
                                                                 <div class="form-check">
                                                                     <input type="checkbox" value="" id="flexCheckDefault">
-                                                                    <label for="flexCheckDefault" style="color: black;">Total Hour</label>
-                                                                </div>
-                                                            </li>
-                                                            <li class="nav-item" style="padding: 12px;">
-                                                                <div class="form-check">
-                                                                    <input type="checkbox" value="" id="flexCheckDefault">
                                                                     <label for="flexCheckDefault" style="color: black;">Complete</label>
                                                                 </div>
                                                             </li>
@@ -223,43 +217,123 @@ session_start();
                                                             <li class="nav-item" style="padding: 12px;">
                                                                 <div class="form-check">
                                                                     <input type="checkbox" value="" id="flexCheckDefault">
-                                                                    <label for="flexCheckDefault" style="color: black;">Total Logbook</label>
+                                                                    <label for="flexCheckDefault" style="color: black;">Total Hour</label>
                                                                 </div>
                                                             </li>
                                                             <li class="nav-item" style="padding: 12px;">
-                                                                <button type="button" class="btn btn-primary btn-sm" style="padding: 5px; width: 55px">Sort</button>
+                                                                <button type="submit" class="btn btn-primary btn-sm" style="padding: 5px; width: 55px">Sort</button>
                                                             </li>
                                                         </ul>
                                                     </form>
                                                 </div>
                                             </div>
                                         </nav>
-                                        <table class="table">
+                                        <?php
+
+                                        $sql = $pdo->prepare("SELECT * FROM student INNER JOIN users ON student.userid = users.userid ");
+                                        $sql->execute();
+                                        $result = $sql -> fetchAll();
+
+
+                                        ?>
+                                        <table class="table text-center">
                                             <thead>
                                                 <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">First</th>
-                                                <th scope="col">Last</th>
-                                                <th scope="col">Handle</th>
+                                                <th scope="col">ID</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Email</th>
+                                                <th scope="col">Program Code</th>
+                                                <th scope="col">Phone</th>
+                                                <th scope="col">Address</th>
+                                                <th scope="col">Supervisor</th>
+                                                <th scope="col">Co-Supervisor</th>
+                                                <th scope="col">Research Title</th>
+                                                <th scope="col">Total Hour</th>
+                                                <th scope="col">Total Logbook</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                <th scope="row">1</th>
-                                                <td>Mark</td>
-                                                <td>Otto</td>
-                                                <td>@mdo</td>
-                                                </tr>
-                                                <tr>
-                                                <th scope="row">2</th>
-                                                <td>Jacob</td>
-                                                <td>Thornton</td>
-                                                <td>@fat</td>
-                                                </tr>
-                                                <tr>
-                                                <th scope="row">3</th>
-                                                <td colspan="2">Larry the Bird</td>
-                                                <td>@twitter</td>
+                                                    <?php foreach($result as $i): ?>
+
+                                                        <?php
+                                    
+                                                        $userid = $i['userid'];
+                                                        $month = date("m");
+                                                        $year = date("Y");
+
+                                                        $logbook_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' AND MONTH(date) = '$month' AND YEAR(date) = '$year' ");
+                                                        $logbook_sql->execute();
+                                                        $this_month = $logbook_sql -> fetchAll();
+
+                                                        $totalthis = 0;
+                                                        // ------calculate hour------------------------------
+                                                        // Loop the data items
+                                                        foreach( $this_month as $element):
+                                                            
+                                                            // Explode by separator :
+                                                            $temp = explode(":", $element['totaltime']);
+                                                            
+                                                            // Convert the hours into seconds
+                                                            // and add to total
+                                                            $totalthis+= (int) $temp[0] * 3600;
+                                                            
+                                                            // Convert the minutes to seconds
+                                                            // and add to total
+                                                            $totalthis+= (int) $temp[1] * 60;
+
+                                                        endforeach;
+
+                                                        // Format the seconds back into HH:MM:SS
+                                                        $totalmonth = sprintf('%02d:%02d',($totalthis / 3600),($totalthis / 60 % 60),$totalthis % 60);
+
+                                                        $sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid'");
+                                                        $sql_stmnt->execute();
+                                                        $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+
+                                                        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' ");
+                                                        $db_sql->execute();
+                                                        $logbook = $db_sql -> fetchAll();
+
+                                                        $report = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' LIMIT 5");
+                                                        $report->execute();
+                                                        $display_report = $report -> fetchAll();
+
+                                                        $total_logbook = $db_sql->rowCount();
+
+                                                        $total = 0;
+                                                        // ------calculate total hour------------------------------
+                                                        // Loop the data items
+                                                        foreach( $logbook as $element):
+                                                            
+                                                            // Explode by separator :
+                                                            $temp = explode(":", $element['totaltime']);
+                                                            
+                                                            // Convert the hours into seconds
+                                                            // and add to total
+                                                            $total+= (int) $temp[0] * 3600;
+                                                            
+                                                            // Convert the minutes to seconds
+                                                            // and add to total
+                                                            $total+= (int) $temp[1] * 60;
+                                                            
+                                                        endforeach;
+                                                        // Format the seconds back into HH:MM:SS
+                                                        $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
+
+                                                        ?>
+
+                                                        <td><?php echo $i['userid'] ?></td>
+                                                        <td><?php echo $i['uname'] ?></td>
+                                                        <td><?php echo $i['email'] ?></td>
+                                                        <td><?php echo $i['pcode'] ?></td>
+                                                        <td><?php echo $i['phone'] ?></td>
+                                                        <td><?php echo $i['address'] ?></td>
+                                                        <td><?php echo $i['svname'] ?></td>
+                                                        <td><?php echo $i['cosv'] ?></td>
+                                                        <td><?php echo $i['title'] ?></td>
+                                                        <td><?php echo $display ?></td>
+                                                    <?php endforeach; ?>
                                                 </tr>
                                             </tbody>
                                         </table>

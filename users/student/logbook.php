@@ -38,7 +38,6 @@ if ($_POST) {
     $total =   sprintf("%02d", $hours) . ":" . sprintf("%02d", $minutes);
 
 
-
     if (!is_dir('file')) {
         mkdir('file');
     }

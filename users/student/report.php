@@ -14,6 +14,7 @@ session_start();
         header("location: ../login.php");
     }
 
+    
     $sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
