@@ -3,88 +3,84 @@ include 'connection.php';
 
 session_start();
 
-    if(isset($_SESSION["userid"])){
-        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='student'){
-            header("location: ../login.php");
-        }else{
-            $userid=$_SESSION["userid"];
-        }
-
-    }else{
+if (isset($_SESSION["userid"])) {
+    if (($_SESSION["userid"]) == "" or $_SESSION['usertype'] != 'student') {
         header("location: ../login.php");
+    } else {
+        $userid = $_SESSION["userid"];
+    }
+} else {
+    header("location: ../login.php");
+}
+
+$sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid'");
+$sql_stmnt->execute();
+$user_db = $sql_stmnt->fetch(PDO::FETCH_ASSOC);
+
+if ($_POST) {
+
+    $date = $_POST['date'];
+    $startTime = $_POST['startTime'];
+    $endTime = $_POST['endTime'];
+    $activity = $_POST['activity'];
+    $discuss = $_POST['discuss'];
+    $svname = $_POST['svname'];
+    $svid = $_POST['svid'];
+    $method = $_POST['method'];
+
+    $current_date_time_sec = strtotime($startTime);
+    $future_date_time_sec = strtotime($endTime);
+    $difference = $future_date_time_sec - $current_date_time_sec;
+    $hours = ($difference / 3600);
+    $minutes = ($difference / 60 % 60);
+    $seconds = ($difference % 60);
+    $hours = ($hours % 24);
+    $total =   sprintf("%02d", $hours) . ":" . sprintf("%02d", $minutes);
+
+
+
+    if (!is_dir('file')) {
+        mkdir('file');
     }
 
-    $sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid'");
-    $sql_stmnt->execute();
-    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+    $file_path = "";
+    $char_file = $_FILES['file'];
+    if ($char_file && $char_file['tmp_name']) {
 
-    if($_POST){
-
-        $date=$_POST['date'];
-        $startTime=$_POST['startTime'];
-        $endTime=$_POST['endTime'];
-        $activity=$_POST['activity'];
-        $discuss=$_POST['discuss'];
-        $svname=$_POST['svname'];
-        $svid=$_POST['svid'];
-
-        $current_date_time_sec=strtotime($startTime);
-        $future_date_time_sec=strtotime($endTime);
-        $difference=$future_date_time_sec-$current_date_time_sec;
-        $hours=($difference / 3600);
-        $minutes=($difference / 60 % 60);
-        $seconds=($difference % 60);  
-        $hours=($hours % 24);
-        $total =   sprintf("%02d",$hours).":".sprintf("%02d",$minutes);
-
-
-        
-        if(!is_dir('file')){
-            mkdir('file');
-        }
-        
-        $file_path="";
-        $char_file = $_FILES['file'];
-        if($char_file && $char_file['tmp_name'])
-        {
-    
-            $file_path = 'file/' . randomString(9) .'/' . $char_file['name'];
-            mkdir(dirname($file_path));
-            move_uploaded_file($char_file['tmp_name'], $file_path);
-    
-        }
-
-        $sql="INSERT INTO logbook(date,starttime,endtime,activity,discuss,doc,userid,svname,svid,status,totaltime) values ('$date','$startTime','$endTime','$activity','$discuss','$file_path','$userid','$svname','$svid','submitted', '$total')";
-        $result= $pdo->prepare($sql);
-        $result->execute();
-        echo '<script type="text/javascript">';
-        echo ' alert("Information has been successfully saved.")';  //not showing an alert box.
-        echo '</script>';
-        $_SESSION["user"]=$userid;
-    
-    }else{
-        $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Error!</label>';
-    
+        $file_path = 'file/' . randomString(9) . '/' . $char_file['name'];
+        mkdir(dirname($file_path));
+        move_uploaded_file($char_file['tmp_name'], $file_path);
     }
-    function randomString($n) {
-    
-        $character = '1234567890qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM';
-        $str = '';
-    
-    for($i = 0; $i < $n; $i++){
-    
-        $index = rand(0, strlen($character) -1);
+
+    $sql = "INSERT INTO logbook(date,starttime,endtime,activity,discuss,doc,userid,svname,svid,status,totaltime,method) values ('$date','$startTime','$endTime','$activity','$discuss','$file_path','$userid','$svname','$svid','submitted', '$total','$method')";
+    $result = $pdo->prepare($sql);
+    $result->execute();
+    echo '<script type="text/javascript">';
+    echo ' alert("Information has been successfully saved.")';  //not showing an alert box.
+    echo '</script>';
+    $_SESSION["user"] = $userid;
+} else {
+    $error = '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Error!</label>';
+}
+function randomString($n)
+{
+
+    $character = '1234567890qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM';
+    $str = '';
+
+    for ($i = 0; $i < $n; $i++) {
+
+        $index = rand(0, strlen($character) - 1);
         $str .= $character[$index];
-    
     }
-    
+
     return $str;
-    
-    }
+}
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -101,6 +97,7 @@ session_start();
 
     <title>ESPRES</title>
 </head>
+
 <body>
     <!-- [ Pre-loader ] start -->
     <div class="loader-bg">
@@ -180,39 +177,39 @@ session_start();
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li>
-                <span class="badge text-bg-success">Student</span>
+                    <span class="badge text-bg-success">Student</span>
                 </li>
                 <li>
                     <div class="dropdown">
                         <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i class="icon feather icon-bell"></i></a>
-                        <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address']&& $user_db['svname'] )): ?>
+                        <?php if (empty($user_db['faculty'] && $user_db['phone'] && $user_db['address'] && $user_db['svname'])) : ?>
                             <a style="position: absolute; right:20px; bottom: 6px; font-size:30px; color:red">&#x2022;</a>
                             <div class="dropdown-menu dropdown-menu-right notification">
                                 <div class="noti-head">
                                     <h6 class="d-inline-block m-b-0">Notifications</h6>
                                 </div>
                                 <ul class="noti-body">
-                                        <?php if(empty($user_db['faculty'] && $user_db['phone'] && $user_db['address'])):?>
-                                    <li class="notification">
-                                        <div class="media">
-                                            <a class="media-body" href="profile.php">
-                                                <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Complete Your Profile</strong></p>
-                                            </a>
-                                        </div>
-                                    </li>
-                                        <?php endif; ?>
-                                        <?php if(empty($user_db['svname'])):?>
-                                    <li class="notification">
-                                        <div class="media">
-                                            <a class="media-body" href="logbook.php">
-                                                <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Add Your Supervisor</strong></p>
-                                            </a>
-                                        </div>
-                                    </li>
-                                        <?php endif; ?>
+                                    <?php if (empty($user_db['faculty'] && $user_db['phone'] && $user_db['address'])) : ?>
+                                        <li class="notification">
+                                            <div class="media">
+                                                <a class="media-body" href="profile.php">
+                                                    <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Complete Your Profile</strong></p>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    <?php endif; ?>
+                                    <?php if (empty($user_db['svname'])) : ?>
+                                        <li class="notification">
+                                            <div class="media">
+                                                <a class="media-body" href="logbook.php">
+                                                    <p><strong><i class="icon feather icon-user" style="font-size: 15px;"></i>&nbsp;&nbsp;&nbsp;Please Add Your Supervisor</strong></p>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    <?php endif; ?>
                                 </ul>
                             </div>
-                        <?php else: ?>
+                        <?php else : ?>
                             <div class="dropdown-menu dropdown-menu-right notification">
                                 <div class="noti-head">
                                     <h6 class="d-inline-block m-b-0">You have no new notification</h6>
@@ -230,7 +227,7 @@ session_start();
                             <div class="pro-head">
                                 <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
                                 <span><?php echo $user_db['uname'] ?></span>
-                                
+
                             </div>
                             <ul class="pro-body">
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
@@ -275,48 +272,60 @@ session_start();
                                             <h5>Logbook</h5>
                                         </div>
                                         <div class="card-body">
-                                            <?php if(empty($user_db['svname'])):?>
+                                            <?php if (empty($user_db['svname'])) : ?>
                                                 <div class="text-center">
                                                     <h4>Please add supervisor first</h4>
                                                     <a href="add-supervisor.php" class="btn label bg-success text-white f-12" style="border-radius: 10px; border-width: 0px; cursor:pointer">Add</a>
                                                 </div>
-                                            <?php else: ?>
+                                            <?php else : ?>
                                                 <form action="" method="POST" enctype="multipart/form-data">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <div class="form-group">
-                                                            <label for="date">Date</label>
-                                                            <input type="date" class="form-control w-50" id="date" name="date" required>
-                                                        </div>
-                                                        <div class="form-group d-flex">
-                                                            <div>
-                                                                <label for="startTime">Start Time</label>
-                                                                <input type="time" class="form-control" id="startTime" name="startTime" required>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label for="date">Research Title</label>
+                                                                <input class="form-control" style="font-weight: 900;" value="<?php echo $user_db['title'] ?>" disabled>
                                                             </div>
-                                                            <div style="margin-left: 10px;">
-                                                                <label for="endTime">End Time</label>
-                                                                <input type="time" class="form-control" id="endTime" name="endTime" required>
+                                                            <div class="form-group">
+                                                                <label for="date">Date</label>
+                                                                <input type="date" class="form-control w-50" id="date" name="date" required>
+                                                            </div>
+                                                            <div class="form-group d-flex">
+                                                                <div>
+                                                                    <label for="startTime">Start Time</label>
+                                                                    <input type="time" class="form-control" id="startTime" name="startTime" required>
+                                                                </div>
+                                                                <div style="margin-left: 10px;">
+                                                                    <label for="endTime">End Time</label>
+                                                                    <input type="time" class="form-control" id="endTime" name="endTime" required>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="method">Method</label>
+                                                                <select class="form-control w-50" id="method" name="method">
+                                                                    <option selected>Please Select</option>
+                                                                    <option value="online">Online</option>
+                                                                    <option value="Physical">Physical</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="activity">Activity</label>
+                                                                <input type="text" class="form-control" id="activity" name="activity">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>File</label>
+                                                                <input type="file" class="form-control" style="width: 230px;" name="file">
                                                             </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                            <label for="activity">Activity</label>
-                                                            <input type="text" class="form-control" id="activity" name="activity">
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>File</label>
-                                                            <input type="file" class="form-control" style="width: 230px;" name="file">
+                                                        <div class="col">
+                                                            <div class="form-group">
+                                                                <label for="discussion">Discussion</label>
+                                                                <textarea class="form-control" id="discussion" rows="5" name="discuss"></textarea>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col">
-                                                        <div class="form-group">
-                                                            <label for="discussion">Discussion</label>
-                                                            <textarea class="form-control" id="discussion" rows="5" name="discuss"></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <input type="text" value="<?php echo $user_db['svname'] ?>" name="svname" hidden>
-                                                <input type="text" value="<?php echo $user_db['svid'] ?>" name="svid" hidden>
-                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                                    <input type="text" value="<?php echo $user_db['svname'] ?>" name="svname" hidden>
+                                                    <input type="text" value="<?php echo $user_db['svid'] ?>" name="svid" hidden>
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
                                                 </form>
                                             <?php endif; ?>
                                         </div>
@@ -333,7 +342,7 @@ session_start();
 
     <!-- Required Js -->
     <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>
-	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="\espres-code\public\assets/js/pcoded.min.js"></script>
     <script src="\espres-code\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
     <script src="\espres-code\node_modules\tinymce\tinymce.min.js" referrerpolicy="origin"></script>
@@ -344,4 +353,5 @@ session_start();
     </script>
 
 </body>
+
 </html>

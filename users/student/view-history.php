@@ -256,6 +256,18 @@ session_start();
                                                 </div>
                                                 <div class="input-group mb-5" style="width: 600px;">
                                                     <div class="input-group-prepend">
+                                                        <span class="input-group-text">Research Title</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $user_db['title'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Method</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['method'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
                                                         <span class="input-group-text">Activity</span>
                                                     </div>
                                                     <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
