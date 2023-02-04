@@ -183,7 +183,7 @@ session_start();
                         <div class="page-wrapper">
                             <div class="row">
                                 <div class="col-xl-12">
-                                    <div class="card">
+                                    <div class="card"> 
                                         <div class="card-header">
                                             <h5>Report</h5>
                                         </div>
@@ -237,104 +237,78 @@ session_start();
 
                                         ?>
                                         <table class="table text-center">
-                                            <thead>
+                                        <thead>
+                                            <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Program Code</th>
+                                            <th scope="col">Phone</th>
+                                            <th scope="col">Address</th>
+                                            <th scope="col">Supervisor</th>
+                                            <th scope="col">Co-Supervisor</th>
+                                            <th scope="col">Research Title</th>
+                                            <th scope="col">Total Hour</th>
+                                            <th scope="col">Total Logbook</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php 
+                                                foreach ($result as $student): 
+                                                $user_id = $student['userid'];
+                                                $current_month = date("m");
+                                                $current_year = date("Y");
+
+                                                $logbook_query = $pdo->prepare("SELECT * FROM logbook WHERE userid = ? AND MONTH(date) = ? AND YEAR(date) = ?");
+                                                $logbook_query->execute([$user_id, $current_month, $current_year]);
+                                                $logbook_this_month = $logbook_query->fetchAll();
+
+                                                $total_seconds_this_month = 0;
+                                                foreach ($logbook_this_month as $log):
+                                                    $time = explode(":", $log['totaltime']);
+                                                    $total_seconds_this_month += (int) $time[0] * 3600 + (int) $time[1] * 60;
+                                                endforeach;
+                                                $total_time_this_month = sprintf('%02d:%02d', ($total_seconds_this_month / 3600), ($total_seconds_this_month / 60 % 60));
+
+                                                $user_query = $pdo->prepare("SELECT * FROM student WHERE userid = ?");
+                                                $user_query->execute([$user_id]);
+                                                $user_info = $user_query->fetch(PDO::FETCH_ASSOC);
+                                                $time_to_achieve = $user_info['total_time'];
+
+                                                $logbook_query = $pdo->prepare("SELECT * FROM logbook WHERE userid = ?");
+                                                $logbook_query->execute([$user_id]);
+                                                $logbook = $logbook_query->fetchAll();
+
+                                                $total_seconds = 0;
+                                                foreach ($logbook as $log):
+                                                    $time = explode(":", $log['totaltime']);
+                                                    $total_seconds += (int) $time[0] * 3600 + (int) $time[1] * 60;
+                                                endforeach;
+                                                $total_time = sprintf('%02d:%02d', ($total_seconds / 3600), ($total_seconds / 60 % 60));
+
+                                                $total_logbook = $logbook_query->rowCount();
+
+                                                $report_query = $pdo->prepare("SELECT * FROM report WHERE userid = ? LIMIT 5");
+                                                $report_query->execute([$user_id]);
+                                                $reports = $report_query->fetchAll();?>
+
+                                                <?php if($total_seconds_this_month / 3600 >= $time_to_achieve):?>
                                                 <tr>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">Name</th>
-                                                <th scope="col">Email</th>
-                                                <th scope="col">Program Code</th>
-                                                <th scope="col">Phone</th>
-                                                <th scope="col">Address</th>
-                                                <th scope="col">Supervisor</th>
-                                                <th scope="col">Co-Supervisor</th>
-                                                <th scope="col">Research Title</th>
-                                                <th scope="col">Total Hour</th>
-                                                <th scope="col">Total Logbook</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <?php foreach($result as $i): ?>
-
-                                                        <?php
-                                    
-                                                        $userid = $i['userid'];
-                                                        $month = date("m");
-                                                        $year = date("Y");
-
-                                                        $logbook_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' AND MONTH(date) = '$month' AND YEAR(date) = '$year' ");
-                                                        $logbook_sql->execute();
-                                                        $this_month = $logbook_sql -> fetchAll();
-
-                                                        $totalthis = 0;
-                                                        // ------calculate hour------------------------------
-                                                        // Loop the data items
-                                                        foreach( $this_month as $element):
-                                                            
-                                                            // Explode by separator :
-                                                            $temp = explode(":", $element['totaltime']);
-                                                            
-                                                            // Convert the hours into seconds
-                                                            // and add to total
-                                                            $totalthis+= (int) $temp[0] * 3600;
-                                                            
-                                                            // Convert the minutes to seconds
-                                                            // and add to total
-                                                            $totalthis+= (int) $temp[1] * 60;
-
-                                                        endforeach;
-
-                                                        // Format the seconds back into HH:MM:SS
-                                                        $totalmonth = sprintf('%02d:%02d',($totalthis / 3600),($totalthis / 60 % 60),$totalthis % 60);
-
-                                                        $sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid'");
-                                                        $sql_stmnt->execute();
-                                                        $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
-
-                                                        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' ");
-                                                        $db_sql->execute();
-                                                        $logbook = $db_sql -> fetchAll();
-
-                                                        $report = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' LIMIT 5");
-                                                        $report->execute();
-                                                        $display_report = $report -> fetchAll();
-
-                                                        $total_logbook = $db_sql->rowCount();
-
-                                                        $total = 0;
-                                                        // ------calculate total hour------------------------------
-                                                        // Loop the data items
-                                                        foreach( $logbook as $element):
-                                                            
-                                                            // Explode by separator :
-                                                            $temp = explode(":", $element['totaltime']);
-                                                            
-                                                            // Convert the hours into seconds
-                                                            // and add to total
-                                                            $total+= (int) $temp[0] * 3600;
-                                                            
-                                                            // Convert the minutes to seconds
-                                                            // and add to total
-                                                            $total+= (int) $temp[1] * 60;
-                                                            
-                                                        endforeach;
-                                                        // Format the seconds back into HH:MM:SS
-                                                        $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
-
-                                                        ?>
-
-                                                        <td><?php echo $i['userid'] ?></td>
-                                                        <td><?php echo $i['uname'] ?></td>
-                                                        <td><?php echo $i['email'] ?></td>
-                                                        <td><?php echo $i['pcode'] ?></td>
-                                                        <td><?php echo $i['phone'] ?></td>
-                                                        <td><?php echo $i['address'] ?></td>
-                                                        <td><?php echo $i['svname'] ?></td>
-                                                        <td><?php echo $i['cosv'] ?></td>
-                                                        <td><?php echo $i['title'] ?></td>
-                                                        <td><?php echo $display ?></td>
-                                                    <?php endforeach; ?>
-                                                </tr>
+                                                <td><?php echo $student['userid']; ?></td>
+                                                <td><?php echo strtoupper($student['uname']) ?></td>
+                                                <td><?php echo $student['email']; ?></td>
+                                                <td><?php echo $student['pcode']; ?></td>
+                                                <td><?php echo $student['phone'] ?></td>
+                                                <td><?php echo strtoupper($student['address']) ?></td>
+                                                <td><?php echo $student['svname'] ?></td>
+                                                <td><?php echo $total_seconds ?></td>
+                                                <td><?php echo $student['title'] ?></td>
+                                                <td><?php echo $total_time_this_month?></td>
+                                                <td><?php echo $total_logbook?></td>
+                                                <?php endif;?>
+                                            
+                                        <?php endforeach; ?>
+                                        </tr>
                                             </tbody>
                                         </table>
                                     </div>
