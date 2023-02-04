@@ -210,7 +210,7 @@ session_start();
                                         <div class="card-header">
                                             <h5>Report</h5>
                                         </div>
-                                        <div class="col-sm-12 p-0">
+                                        <div class="col-sm-12 p-0"  style="overflow: scroll;">
                                             <hr>
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                 <li class="nav-item">
@@ -220,10 +220,10 @@ session_start();
                                                     <a class="nav-link text-uppercase" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Supervisor</a>
                                                 </li>
                                             </ul>
-                                            <div class="tab-content p-0" id="myTabContent">
+                                            <div class="tab-content p-0 shadow-none " id="myTabContent">
                                                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                                                    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-                                                        <div class="container-fluid">
+                                                    <nav class="navbar navbar-expand-lg ">
+                                                        <div class="container-fluid"  style="width: 100%;">
                                                             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                                                                 <form action="" method="post" style="padding-top: 20px;">
                                                                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
@@ -248,12 +248,6 @@ session_start();
                                                                             <input class="form-check-input" type="radio" name="filter" id="flexRadioDefault2" value="2">
                                                                             <label class="form-check-label" for="flexRadioDefault2">
                                                                                 Not Complete
-                                                                            </label>
-                                                                        </div>
-                                                                        <div class="form-check" style="padding-top: 10px; margin-left: 15px; color: black">
-                                                                            <input class="form-check-input" type="radio" name="filter" id="flexRadioDefault3" value="3">
-                                                                            <label class="form-check-label" for="flexRadioDefault3">
-                                                                                Total Hour
                                                                             </label>
                                                                         </div>  
                                                                         <li class="nav-item" style="padding: 12px;">
@@ -319,24 +313,78 @@ session_start();
                                                             $report_query = $pdo->prepare("SELECT * FROM report WHERE userid = ? LIMIT 5");
                                                             $report_query->execute([$user_id]);
                                                             $reports = $report_query->fetchAll();?>
+                                                            <?php if(isset($filter)):?>
+                                                            <?php if($filter == 1): ?>
 
-                                                            <?php if($total_seconds_this_month / 3600 >= $time_to_achieve):?>
-                                                            <tr>
-                                                            <td><?php echo $student['userid']; ?></td>
-                                                            <td><?php echo strtoupper($student['uname']) ?></td>
-                                                            <td><?php echo $student['email']; ?></td>
-                                                            <td><?php echo $student['pcode']; ?></td>
-                                                            <td><?php echo $student['phone'] ?></td>
-                                                            <td><?php echo strtoupper($student['address']) ?></td>
-                                                            <td><?php echo strtoupper($student['svname']) ?></td>
-                                                            <td><?php echo strtoupper($student['cosv']) ?></td>
-                                                            <td><?php echo $student['title'] ?></td>
-                                                            <td><?php echo $total_time_this_month?></td>
-                                                            <td><?php echo $total_logbook?></td>
+                                                                <?php if($total_seconds_this_month / 3600 >= $time_to_achieve):?>
+                                                                <tr>
+                                                                <td><?php echo $student['userid']; ?></td>
+                                                                <td><?php echo strtoupper($student['uname']) ?></td>
+                                                                <td><?php echo $student['email']; ?></td>
+                                                                <td><?php echo $student['pcode']; ?></td>
+                                                                <td><?php echo $student['phone'] ?></td>
+                                                                <td><?php echo strtoupper($student['address']) ?></td>
+                                                                <td><?php echo strtoupper($student['svname']) ?></td>
+                                                                <td><?php echo strtoupper($student['cosv']) ?></td>
+                                                                <td><?php echo $student['title'] ?></td>
+                                                                <td><?php echo $total_time_this_month?></td>
+                                                                <td><?php echo $total_logbook?></td>
+                                                                </tr>
+                                                                <?php endif;?>
+
+                                                            <?php elseif($filter == 2): ?>
+
+                                                                <?php if($total_seconds_this_month / 3600 < $time_to_achieve):?>
+                                                                <tr>
+                                                                <td><?php echo $student['userid']; ?></td>
+                                                                <td><?php echo strtoupper($student['uname']) ?></td>
+                                                                <td><?php echo $student['email']; ?></td>
+                                                                <td><?php echo $student['pcode']; ?></td>
+                                                                <td><?php echo $student['phone'] ?></td>
+                                                                <td><?php echo strtoupper($student['address']) ?></td>
+                                                                <td><?php echo strtoupper($student['svname']) ?></td>
+                                                                <td><?php echo strtoupper($student['cosv']) ?></td>
+                                                                <td><?php echo $student['title'] ?></td>
+                                                                <td><?php echo $total_time_this_month?></td>
+                                                                <td><?php echo $total_logbook?></td>
+                                                                </tr>
+                                                                <?php endif;?>
+
+                                                            <?php else : ?>
+
+                                                                <tr>
+                                                                <td><?php echo $student['userid']; ?></td>
+                                                                <td><?php echo strtoupper($student['uname']) ?></td>
+                                                                <td><?php echo $student['email']; ?></td>
+                                                                <td><?php echo $student['pcode']; ?></td>
+                                                                <td><?php echo $student['phone'] ?></td>
+                                                                <td><?php echo strtoupper($student['address']) ?></td>
+                                                                <td><?php echo strtoupper($student['svname']) ?></td>
+                                                                <td><?php echo strtoupper($student['cosv']) ?></td>
+                                                                <td><?php echo $student['title'] ?></td>
+                                                                <td><?php echo $total_time_this_month?></td>
+                                                                <td><?php echo $total_logbook?></td>
+                                                                </tr>
+
                                                             <?php endif;?>
+                                                            <?php else :?>
+                                                                <tr>
+                                                                <td><?php echo $student['userid']; ?></td>
+                                                                <td><?php echo strtoupper($student['uname']) ?></td>
+                                                                <td><?php echo $student['email']; ?></td>
+                                                                <td><?php echo $student['pcode']; ?></td>
+                                                                <td><?php echo $student['phone'] ?></td>
+                                                                <td><?php echo strtoupper($student['address']) ?></td>
+                                                                <td><?php echo strtoupper($student['svname']) ?></td>
+                                                                <td><?php echo strtoupper($student['cosv']) ?></td>
+                                                                <td><?php echo $student['title'] ?></td>
+                                                                <td><?php echo $total_time_this_month?></td>
+                                                                <td><?php echo $total_logbook?></td>
+                                                                </tr>
+                                                            <?php endif; ?>
                                                         
                                                     <?php endforeach; ?>
-                                                    </tr>
+                                                    
                                                         </tbody>
                                                     </table>
                                                 </div>
