@@ -3,43 +3,46 @@ include 'connection.php';
 
 session_start();
 
-    if(isset($_SESSION["userid"])){
-        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='admin'){
-            header("location: ../login.php");
-        }else{
-            $userid=$_SESSION["userid"];
-        }
-
-    }else{
+if (isset($_SESSION["userid"])) {
+    if (($_SESSION["userid"]) == "" or $_SESSION['usertype'] != 'admin') {
         header("location: ../login.php");
+    } else {
+        $userid = $_SESSION["userid"];
     }
+} else {
+    header("location: ../login.php");
+}
 
-    $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
-    $sql_stmnt->execute();
-    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+$sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
+$sql_stmnt->execute();
+$user_db = $sql_stmnt->fetch(PDO::FETCH_ASSOC);
 
-    $program = $pdo->prepare("SELECT DISTINCT pcode FROM student");
-    $program->execute();
-    $programlist = $program -> fetchAll();
+$sv_sql = $pdo->prepare("SELECT * FROM supervisor");
+$sv_sql->execute();
+$svlist = $sv_sql->fetchAll();
 
-    if($_POST){
-        $filter = $_POST['filter']?? '';
-        $user = $_POST['user'];
+$program = $pdo->prepare("SELECT DISTINCT pcode FROM student");
+$program->execute();
+$programlist = $program->fetchAll();
 
-        $sql = $pdo->prepare("SELECT * FROM student WHERE pcode = '$user'");
-        $sql->execute();
-        $result = $sql -> fetchAll();
+if ($_POST) {
+    $filter = $_POST['filter'] ?? '';
+    $user = $_POST['user'];
 
-        if($user == 1){
-            $sql = $pdo->prepare("SELECT * FROM student");
-            $sql->execute();
-            $result = $sql -> fetchAll();
-        }
-    } else{
+    $sql = $pdo->prepare("SELECT * FROM student WHERE pcode = '$user'");
+    $sql->execute();
+    $result = $sql->fetchAll();
+
+    if ($user == 1) {
         $sql = $pdo->prepare("SELECT * FROM student");
         $sql->execute();
-        $result = $sql -> fetchAll();
+        $result = $sql->fetchAll();
     }
+} else {
+    $sql = $pdo->prepare("SELECT * FROM student");
+    $sql->execute();
+    $result = $sql->fetchAll();
+}
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +50,7 @@ session_start();
 
 <head>
     <title>Home</title>
-    
+
     <!-- Meta -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
@@ -100,7 +103,7 @@ session_start();
                     <li class="nav-item">
                         <a href="supervisor-profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Supervisor</span></a>
                     </li>
-                    <li  class="nav-item pcoded-hasmenu">
+                    <li class="nav-item pcoded-hasmenu">
                         <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="bi bi-mortarboard-fill"></i></span><span class="pcoded-mtext">Student</span></a>
                         <ul class="pcoded-submenu">
                             <li class=""><a href="student-profile.php" class="">Profile</a></li>
@@ -181,7 +184,7 @@ session_start();
                             <div class="pro-head">
                                 <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
                                 <span><?php echo $user_db['uname'] ?></span>
-                                
+
                             </div>
                             <ul class="pro-body">
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
@@ -201,16 +204,16 @@ session_start();
         <div class="pcoded-wrapper">
             <div class="pcoded-content">
                 <div class="pcoded-inner-content">
-                    
+
                     <div class="main-body">
                         <div class="page-wrapper">
                             <div class="row">
                                 <div class="col-xl-12">
-                                    <div class="card"> 
+                                    <div class="card">
                                         <div class="card-header">
                                             <h5>Report</h5>
                                         </div>
-                                        <div class="col-sm-12 p-0"  style="overflow: scroll;">
+                                        <div class="col-sm-12 p-0" style="overflow: scroll;">
                                             <hr>
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                 <li class="nav-item">
@@ -223,16 +226,16 @@ session_start();
                                             <div class="tab-content p-0 shadow-none " id="myTabContent">
                                                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                                                     <nav class="navbar navbar-expand-lg ">
-                                                        <div class="container-fluid"  style="width: 100%;">
+                                                        <div class="container-fluid" style="width: 100%;">
                                                             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                                                                 <form action="" method="post" style="padding-top: 20px;">
                                                                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                                                         <li class="nav-item">
                                                                             <select class="form-select" aria-label="Disabled select example" name="user">
-                                                                            <option value="1">All</option>
-                                                                            <?php foreach($programlist as $p):?>    
-                                                                            <option value="<?php echo $p['pcode'] ?>"><?php echo $p['pcode'] ?></option>
-                                                                            <?php endforeach; ?>
+                                                                                <option value="1">All</option>
+                                                                                <?php foreach ($programlist as $p) : ?>
+                                                                                    <option value="<?php echo $p['pcode'] ?>"><?php echo $p['pcode'] ?></option>
+                                                                                <?php endforeach; ?>
                                                                             </select>
                                                                         </li>
                                                                         <li class="nav-item">
@@ -249,7 +252,7 @@ session_start();
                                                                             <label class="form-check-label" for="flexRadioDefault2">
                                                                                 Not Complete
                                                                             </label>
-                                                                        </div>  
+                                                                        </div>
                                                                         <li class="nav-item" style="padding: 12px;">
                                                                             <button type="submit" class="btn btn-primary btn-sm" style="padding: 5px; width: 55px">Sort</button>
                                                                         </li>
@@ -259,137 +262,204 @@ session_start();
                                                         </div>
                                                     </nav>
                                                     <table class="table text-center">
-                                                    <thead>
-                                                        <tr>
-                                                        <th scope="col">ID</th>
-                                                        <th scope="col">Name</th>
-                                                        <th scope="col">Email</th>
-                                                        <th scope="col">Program Code</th>
-                                                        <th scope="col">Phone</th>
-                                                        <th scope="col">Address</th>
-                                                        <th scope="col">Supervisor</th>
-                                                        <th scope="col">Co-Supervisor</th>
-                                                        <th scope="col">Research Title</th>
-                                                        <th scope="col">Total Hour</th>
-                                                        <th scope="col">Total Logbook</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <?php 
-                                                            foreach ($result as $student): 
-                                                            $user_id = $student['userid'];
-                                                            $current_month = date("m");
-                                                            $current_year = date("Y");
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">ID</th>
+                                                                <th scope="col">Name</th>
+                                                                <th scope="col">Email</th>
+                                                                <th scope="col">Program Code</th>
+                                                                <th scope="col">Phone</th>
+                                                                <th scope="col">Address</th>
+                                                                <th scope="col">Supervisor</th>
+                                                                <th scope="col">Co-Supervisor</th>
+                                                                <th scope="col">Research Title</th>
+                                                                <th scope="col">Total Hour</th>
+                                                                <th scope="col">Total Logbook</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php
+                                                            foreach ($result as $student) :
+                                                                $user_id = $student['userid'];
+                                                                $current_month = date("m");
+                                                                $current_year = date("Y");
 
-                                                            $logbook_query = $pdo->prepare("SELECT * FROM logbook WHERE userid = ? AND MONTH(date) = ? AND YEAR(date) = ?");
-                                                            $logbook_query->execute([$user_id, $current_month, $current_year]);
-                                                            $logbook_this_month = $logbook_query->fetchAll();
+                                                                $logbook_query = $pdo->prepare("SELECT * FROM logbook WHERE userid = ? AND MONTH(date) = ? AND YEAR(date) = ?");
+                                                                $logbook_query->execute([$user_id, $current_month, $current_year]);
+                                                                $logbook_this_month = $logbook_query->fetchAll();
 
-                                                            $total_seconds_this_month = 0;
-                                                            foreach ($logbook_this_month as $log):
-                                                                $time = explode(":", $log['totaltime']);
-                                                                $total_seconds_this_month += (int) $time[0] * 3600 + (int) $time[1] * 60;
-                                                            endforeach;
-                                                            $total_time_this_month = sprintf('%02d:%02d', ($total_seconds_this_month / 3600), ($total_seconds_this_month / 60 % 60));
+                                                                $total_seconds_this_month = 0;
+                                                                foreach ($logbook_this_month as $log) :
+                                                                    $time = explode(":", $log['totaltime']);
+                                                                    $total_seconds_this_month += (int) $time[0] * 3600 + (int) $time[1] * 60;
+                                                                endforeach;
+                                                                $total_time_this_month = sprintf('%02d:%02d', ($total_seconds_this_month / 3600), ($total_seconds_this_month / 60 % 60));
 
-                                                            $user_query = $pdo->prepare("SELECT * FROM student WHERE userid = ?");
-                                                            $user_query->execute([$user_id]);
-                                                            $user_info = $user_query->fetch(PDO::FETCH_ASSOC);
-                                                            $time_to_achieve = $user_info['total_time'];
+                                                                $user_query = $pdo->prepare("SELECT * FROM student WHERE userid = ?");
+                                                                $user_query->execute([$user_id]);
+                                                                $user_info = $user_query->fetch(PDO::FETCH_ASSOC);
+                                                                $time_to_achieve = $user_info['total_time'];
 
-                                                            $logbook_query = $pdo->prepare("SELECT * FROM logbook WHERE userid = ?");
-                                                            $logbook_query->execute([$user_id]);
-                                                            $logbook = $logbook_query->fetchAll();
+                                                                $logbook_query = $pdo->prepare("SELECT * FROM logbook WHERE userid = ?");
+                                                                $logbook_query->execute([$user_id]);
+                                                                $logbook = $logbook_query->fetchAll();
 
-                                                            $total_seconds = 0;
-                                                            foreach ($logbook as $log):
-                                                                $time = explode(":", $log['totaltime']);
-                                                                $total_seconds += (int) $time[0] * 3600 + (int) $time[1] * 60;
-                                                            endforeach;
-                                                            $total_time = sprintf('%02d:%02d', ($total_seconds / 3600), ($total_seconds / 60 % 60));
+                                                                $total_seconds = 0;
+                                                                foreach ($logbook as $log) :
+                                                                    $time = explode(":", $log['totaltime']);
+                                                                    $total_seconds += (int) $time[0] * 3600 + (int) $time[1] * 60;
+                                                                endforeach;
+                                                                $total_time = sprintf('%02d:%02d', ($total_seconds / 3600), ($total_seconds / 60 % 60));
 
-                                                            $total_logbook = $logbook_query->rowCount();
+                                                                $total_logbook = $logbook_query->rowCount();
 
-                                                            $report_query = $pdo->prepare("SELECT * FROM report WHERE userid = ? LIMIT 5");
-                                                            $report_query->execute([$user_id]);
-                                                            $reports = $report_query->fetchAll();?>
-                                                            <?php if(isset($filter)):?>
-                                                            <?php if($filter == 1): ?>
+                                                                $report_query = $pdo->prepare("SELECT * FROM report WHERE userid = ?");
+                                                                $report_query->execute([$user_id]);
+                                                                $reports = $report_query->fetchAll(); ?>
+                                                                <?php if (isset($filter)) : ?>
+                                                                    <?php if ($filter == 1) : ?>
 
-                                                                <?php if($total_seconds_this_month / 3600 >= $time_to_achieve):?>
-                                                                <tr>
-                                                                <td><?php echo $student['userid']; ?></td>
-                                                                <td><?php echo strtoupper($student['uname']) ?></td>
-                                                                <td><?php echo $student['email']; ?></td>
-                                                                <td><?php echo $student['pcode']; ?></td>
-                                                                <td><?php echo $student['phone'] ?></td>
-                                                                <td><?php echo strtoupper($student['address']) ?></td>
-                                                                <td><?php echo strtoupper($student['svname']) ?></td>
-                                                                <td><?php echo strtoupper($student['cosv']) ?></td>
-                                                                <td><?php echo $student['title'] ?></td>
-                                                                <td><?php echo $total_time_this_month?></td>
-                                                                <td><?php echo $total_logbook?></td>
-                                                                </tr>
-                                                                <?php endif;?>
+                                                                        <?php if ($total_seconds_this_month / 3600 >= $time_to_achieve) : ?>
+                                                                            <tr>
+                                                                                <td><?php echo $student['userid']; ?></td>
+                                                                                <td><?php echo strtoupper($student['uname']) ?></td>
+                                                                                <td><?php echo $student['email']; ?></td>
+                                                                                <td><?php echo $student['pcode']; ?></td>
+                                                                                <td><?php echo $student['phone'] ?></td>
+                                                                                <td><?php echo strtoupper($student['address']) ?></td>
+                                                                                <td><?php echo strtoupper($student['svname']) ?></td>
+                                                                                <td><?php echo strtoupper($student['cosv']) ?></td>
+                                                                                <td><?php echo $student['title'] ?></td>
+                                                                                <td><?php echo $total_time_this_month ?></td>
+                                                                                <td><?php echo $total_logbook ?></td>
+                                                                            </tr>
+                                                                        <?php endif; ?>
 
-                                                            <?php elseif($filter == 2): ?>
+                                                                    <?php elseif ($filter == 2) : ?>
 
-                                                                <?php if($total_seconds_this_month / 3600 < $time_to_achieve):?>
-                                                                <tr>
-                                                                <td><?php echo $student['userid']; ?></td>
-                                                                <td><?php echo strtoupper($student['uname']) ?></td>
-                                                                <td><?php echo $student['email']; ?></td>
-                                                                <td><?php echo $student['pcode']; ?></td>
-                                                                <td><?php echo $student['phone'] ?></td>
-                                                                <td><?php echo strtoupper($student['address']) ?></td>
-                                                                <td><?php echo strtoupper($student['svname']) ?></td>
-                                                                <td><?php echo strtoupper($student['cosv']) ?></td>
-                                                                <td><?php echo $student['title'] ?></td>
-                                                                <td><?php echo $total_time_this_month?></td>
-                                                                <td><?php echo $total_logbook?></td>
-                                                                </tr>
-                                                                <?php endif;?>
+                                                                        <?php if ($total_seconds_this_month / 3600 < $time_to_achieve) : ?>
+                                                                            <tr>
+                                                                                <td><?php echo $student['userid']; ?></td>
+                                                                                <td><?php echo strtoupper($student['uname']) ?></td>
+                                                                                <td><?php echo $student['email']; ?></td>
+                                                                                <td><?php echo $student['pcode']; ?></td>
+                                                                                <td><?php echo $student['phone'] ?></td>
+                                                                                <td><?php echo strtoupper($student['address']) ?></td>
+                                                                                <td><?php echo strtoupper($student['svname']) ?></td>
+                                                                                <td><?php echo strtoupper($student['cosv']) ?></td>
+                                                                                <td><?php echo $student['title'] ?></td>
+                                                                                <td><?php echo $total_time_this_month ?></td>
+                                                                                <td><?php echo $total_logbook ?></td>
+                                                                            </tr>
+                                                                        <?php endif; ?>
 
-                                                            <?php else : ?>
+                                                                    <?php else : ?>
 
-                                                                <tr>
-                                                                <td><?php echo $student['userid']; ?></td>
-                                                                <td><?php echo strtoupper($student['uname']) ?></td>
-                                                                <td><?php echo $student['email']; ?></td>
-                                                                <td><?php echo $student['pcode']; ?></td>
-                                                                <td><?php echo $student['phone'] ?></td>
-                                                                <td><?php echo strtoupper($student['address']) ?></td>
-                                                                <td><?php echo strtoupper($student['svname']) ?></td>
-                                                                <td><?php echo strtoupper($student['cosv']) ?></td>
-                                                                <td><?php echo $student['title'] ?></td>
-                                                                <td><?php echo $total_time_this_month?></td>
-                                                                <td><?php echo $total_logbook?></td>
-                                                                </tr>
+                                                                        <tr>
+                                                                            <td><?php echo $student['userid']; ?></td>
+                                                                            <td><?php echo strtoupper($student['uname']) ?></td>
+                                                                            <td><?php echo $student['email']; ?></td>
+                                                                            <td><?php echo $student['pcode']; ?></td>
+                                                                            <td><?php echo $student['phone'] ?></td>
+                                                                            <td><?php echo strtoupper($student['address']) ?></td>
+                                                                            <td><?php echo strtoupper($student['svname']) ?></td>
+                                                                            <td><?php echo strtoupper($student['cosv']) ?></td>
+                                                                            <td><?php echo $student['title'] ?></td>
+                                                                            <td><?php echo $total_time_this_month ?></td>
+                                                                            <td><?php echo $total_logbook ?></td>
+                                                                        </tr>
 
-                                                            <?php endif;?>
-                                                            <?php else :?>
-                                                                <tr>
-                                                                <td><?php echo $student['userid']; ?></td>
-                                                                <td><?php echo strtoupper($student['uname']) ?></td>
-                                                                <td><?php echo $student['email']; ?></td>
-                                                                <td><?php echo $student['pcode']; ?></td>
-                                                                <td><?php echo $student['phone'] ?></td>
-                                                                <td><?php echo strtoupper($student['address']) ?></td>
-                                                                <td><?php echo strtoupper($student['svname']) ?></td>
-                                                                <td><?php echo strtoupper($student['cosv']) ?></td>
-                                                                <td><?php echo $student['title'] ?></td>
-                                                                <td><?php echo $total_time_this_month?></td>
-                                                                <td><?php echo $total_logbook?></td>
-                                                                </tr>
-                                                            <?php endif; ?>
-                                                        
-                                                    <?php endforeach; ?>
-                                                    
+                                                                    <?php endif; ?>
+                                                                <?php else : ?>
+                                                                    <tr>
+                                                                        <td><?php echo $student['userid']; ?></td>
+                                                                        <td><?php echo strtoupper($student['uname']) ?></td>
+                                                                        <td><?php echo $student['email']; ?></td>
+                                                                        <td><?php echo $student['pcode']; ?></td>
+                                                                        <td><?php echo $student['phone'] ?></td>
+                                                                        <td><?php echo strtoupper($student['address']) ?></td>
+                                                                        <td><?php echo strtoupper($student['svname']) ?></td>
+                                                                        <td><?php echo strtoupper($student['cosv']) ?></td>
+                                                                        <td><?php echo $student['title'] ?></td>
+                                                                        <td><?php echo $total_time_this_month ?></td>
+                                                                        <td><?php echo $total_logbook ?></td>
+                                                                    </tr>
+                                                                <?php endif; ?>
+
+                                                            <?php endforeach; ?>
+
                                                         </tbody>
                                                     </table>
                                                 </div>
                                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                                    <p class="mb-0">Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson 8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson biodiesel. Art party scenester stumptown, tumblr butcher vero sint qui sapiente accusamus tattooed echo park.</p>
+                                                    <nav class="navbar navbar-expand-lg ">
+                                                        <div class="container-fluid" style="width: 100%;">
+                                                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                                                <form action="" method="post" style="padding-top: 20px;">
+                                                                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                                                        <li class="nav-item">
+                                                                            <select class="form-select" aria-label="Disabled select example" name="user">
+                                                                                <option value="1">All</option>
+                                                                                <?php foreach ($programlist as $p) : ?>
+                                                                                    <option value="<?php echo $p['pcode'] ?>"><?php echo $p['pcode'] ?></option>
+                                                                                <?php endforeach; ?>
+                                                                            </select>
+                                                                        </li>
+                                                                        <li class="nav-item">
+                                                                            <p class="nav-link active">Sort by :</p>
+                                                                        </li>
+                                                                        <div class="form-check" style="padding-top: 10px; margin-left: 15px; color: black">
+                                                                            <input class="form-check-input" type="radio" name="filter" id="flexRadioDefault1" value="1">
+                                                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                                                Complete
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="form-check" style="padding-top: 10px; margin-left: 15px; color: black">
+                                                                            <input class="form-check-input" type="radio" name="filter" id="flexRadioDefault2" value="2">
+                                                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                                                Not Complete
+                                                                            </label>
+                                                                        </div>
+                                                                        <li class="nav-item" style="padding: 12px;">
+                                                                            <button type="submit" class="btn btn-primary btn-sm" style="padding: 5px; width: 55px">Sort</button>
+                                                                        </li>
+                                                                    </ul>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </nav>
+                                                    <table class="table text-center">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">ID</th>
+                                                                <th scope="col">Name</th>
+                                                                <th scope="col">Email</th>
+                                                                <th scope="col">Phone</th>
+                                                                <th scope="col">Address</th>
+                                                                <th scope="col">Total Student</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php foreach ($svlist as $sv) : ?>
+                                                                <?php
+                                                                $svid = $sv['userid'];
+                                                                $student_query = $pdo->prepare("SELECT * FROM student WHERE svid = :svid");
+                                                                $student_query->bindParam(':svid', $svid, PDO::PARAM_STR);
+                                                                $student_query->execute();
+                                                                $student = $student_query->fetchAll();
+                                                                $total_student = $student_query->rowCount();
+                                                                ?>
+                                                                <tr>
+                                                                    <td><?php echo $sv['userid']; ?></td>
+                                                                    <td><?php echo strtoupper($sv['uname']) ?></td>
+                                                                    <td><?php echo $sv['email']; ?></td>
+                                                                    <td><?php echo $sv['phone'] ?></td>
+                                                                    <td><?php echo strtoupper($sv['address']) ?></td>
+                                                                    <td><?php echo $total_student; ?></td>
+                                                                </tr>
+                                                            <?php endforeach; ?>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
@@ -406,9 +476,10 @@ session_start();
 
     <!-- Required Js -->
     <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>
-	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="\espres-code\public\assets/js/pcoded.min.js"></script>
     <script src="\espres-code\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
 
 </body>
+
 </html>
