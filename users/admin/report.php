@@ -94,7 +94,7 @@ if ($_POST) {
                     <li class="nav-item pcoded-menu-caption">
                         <label>Navigation</label>
                     </li>
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
                     <li class="nav-item">
@@ -110,7 +110,7 @@ if ($_POST) {
                             <li class=""><a href="logbook.php" class="">Logbook</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a href="report.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Report</span></a>
                     </li>
                 </ul>
