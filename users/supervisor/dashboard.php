@@ -32,38 +32,40 @@ require 'PHPMailer-master\src\SMTP.php';
 
 $today = date('Y-m-d');
     $next_month = date('Y-m-d', strtotime('first day of next month'));
-    $reminder_date = date('Y-m-d', strtotime($next_month . ' - 23 days'));
+    $reminder_date = date('Y-m-d', strtotime($next_month . ' - 24 days'));
 
 if ($today == $reminder_date) {
-    $mail = new PHPMailer(true);
+    foreach($student as $getmail){
+        $mail = new PHPMailer(true);
 
-    $mail->isSMTP();// Set mailer to use SMTP
-    $mail->CharSet = "utf-8";// set charset to utf8
-    $mail->SMTPAuth = true;// Enable SMTP authentication
-    $mail->SMTPSecure =  PHPMailer::ENCRYPTION_STARTTLS;// Enable TLS encryption, `ssl` also accepted
-    
-    $mail->Host = 'smtp.gmail.com';// Specify main and backup SMTP servers
-    $mail->Port = 587;// TCP port to connect to
-    $mail->SMTPOptions = array(
-        'ssl' => array(
-            'verify_peer' => false,
-            'verify_peer_name' => false,
-            'allow_self_signed' => true
-        )
-    );
-    $mail->SMTPDebug = 0;
-    $mail->isHTML(true);// Set email format to HTML
-    
-    $mail->Username = 'arifhaikal228@gmail.com';// SMTP username
-    $mail->Password = 'tdrjxzbncjdkfobi';// SMTP password
-    
-    $mail->setFrom('arifhaikal228@gmail.com', 'arifhaikal228@gmail.com');//Your application NAME and EMAIL
-    $mail->Subject = 'Test';//Message subject
-    $mail->MsgHTML('Good Job');// Message body
-    $mail->addAddress('ariflegend182@gmail.com', 'john');// Target email
-    
-    
-    $mail->send();
+        $mail->isSMTP();// Set mailer to use SMTP
+        $mail->CharSet = "utf-8";// set charset to utf8
+        $mail->SMTPAuth = true;// Enable SMTP authentication
+        $mail->SMTPSecure =  PHPMailer::ENCRYPTION_STARTTLS;// Enable TLS encryption, `ssl` also accepted
+        
+        $mail->Host = 'smtp.gmail.com';// Specify main and backup SMTP servers
+        $mail->Port = 587;// TCP port to connect to
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+        $mail->SMTPDebug = 0;
+        $mail->isHTML(true);// Set email format to HTML
+        
+        $mail->Username = 'arifhaikal228@gmail.com';// SMTP username
+        $mail->Password = 'tdrjxzbncjdkfobi';// SMTP password
+        
+        $mail->setFrom('arifhaikal228@gmail.com', 'arifhaikal228@gmail.com');//Your application NAME and EMAIL
+        $mail->Subject = 'Complete Meeting Hour';//Message subject
+        $mail->MsgHTML('Your meeting hours are not enough. please complete your meeting hours before the start of the new month');// Message body
+        $mail->addAddress($getmail['email'], $getmail['uname']);// Target email
+        
+        
+        $mail->send();
+    }
 }
 
 // $mail = new PHPMailer(true);
