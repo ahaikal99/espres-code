@@ -18,7 +18,7 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $student_list = $pdo->prepare("SELECT * FROM student LIMIT 5");
+    $student_list = $pdo->prepare("SELECT DISTINCT pcode FROM student");
     $student_list->execute();
     $student = $student_list -> fetchAll();
 
@@ -284,21 +284,36 @@ session_start();
                                 <div class="col-xl-8 col-md-6">
                                     <div class="card Recent-Users">
                                         <div class="card-header">
-                                            <h5>Student</h5>
+                                            <h5>Program Code</h5>
                                         </div>
                                         <div class="card-block px-0 py-3">
                                             <div class="table-responsive">
                                                 <table class="table table-hover">
-                                                    <tbody>
+                                                    <thead class="text-center">
+                                                        <td>
+                                                            <h6 class="mb-1" style="font-weight: 900;">Program Code</h6>
+                                                        </td>
+                                                        <td>
+                                                        <h6 class="mb-1" style="font-weight: 900;">Student</h6>
+                                                        </td>
+                                                    </thead>
+                                                    <tbody class="text-center">
                                                         <?php foreach($student as $i => $data): ?>
+                                                            <?php
+                                                                $code = $data['pcode'];
+
+                                                                $listcode = $pdo->prepare("SELECT * FROM student WHERE pcode = '$code'");
+                                                                $listcode->execute();
+                                                                $rowCount = $listcode->rowCount();
+
+                                                            ?>
                                                             <tr class="unread">
                                                                 <td> 
-                                                                    <h6 class="mb-1"><?php echo $data['userid'] ?></h6>
+                                                                    <h6 class="mb-1"><?php echo $data['pcode'] ?></h6>
                                                                 </td>
                                                                 <td>
-                                                                    <h6 class="text-muted"><?php echo strtoupper($data['uname']) ?></h6>
+                                                                    <h6 class="text-muted"><?php echo $rowCount ?></h6>
                                                                 </td>
-                                                                <td><a href="student-profile.php" class="label theme-bg2 text-white f-12">View</a></td>
                                                             </tr>
                                                         <?php endforeach; ?>
                                                     </tbody>

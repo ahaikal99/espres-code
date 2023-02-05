@@ -17,6 +17,8 @@ session_start();
     $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

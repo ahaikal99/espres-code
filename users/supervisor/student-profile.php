@@ -27,22 +27,23 @@ session_start();
     $student_list2 = $db_list2 -> fetchAll();
 
     if($_POST){
-        $code = $_POST['pcode'] ?? '';
+        $code = $_POST['pcode'];
         $query = "SELECT * FROM student WHERE svid = :svid ";
         $params = [':svid' => $userid];
         if ($code != 'All'){
-            $query .= "AND pcode = :code ";
-            $params[':code'] = $code;
+            $query .= "AND pcode = :pcode ";
+            $params[':pcode'] = $code;
         }
-        $sql_check = $pdo->prepare($query);
-        $sql_check->execute($params);
-        $list_logbook = $sql_check -> fetchAll();
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+        $list_logbook = $stmt->fetchAll();
     
     } else{
-        $sql_check = $pdo->prepare("SELECT * FROM student WHERE svid = :svid");
-        $sql_check->execute([':svid' => $userid]);
-        $list_logbook = $sql_check -> fetchAll();
+        $stmt = $pdo->prepare("SELECT * FROM student WHERE svid = :svid");
+        $stmt->execute([':svid' => $userid]);
+        $list_logbook = $stmt->fetchAll();
     }
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -248,7 +249,7 @@ session_start();
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                    <?php foreach($student_list as $i => $data): ?>
+                                                    <?php foreach($list_logbook as $i => $data): ?>
                                                         <tr>
                                                             <td scope="row"><?php echo $i + 1 ?></td>
                                                             <td><?php echo $data['userid'] ?></td>
