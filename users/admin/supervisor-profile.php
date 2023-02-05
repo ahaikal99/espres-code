@@ -261,8 +261,10 @@ session_start();
                                             <form action="add-sv-excel.php" method="post" enctype="multipart/form-data">
                                                 <div class="modal-body">
                                                 <div class="input-group mb-3">
-                                                    <input type="file" class="form-control" name="file">
+                                                    <input type="file" class="form-control" name="file"><br>
                                                 </div>
+                                                <p style="color: red; font-size:smaller">* Only excel type files can be uploaded</p>
+                                                <p style="color: red; font-size:smaller">* Make sure column A: name, column B: email, column C: address, column D: , column E: phone and column F: ID</p>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button class="btn btn-primary" type="submit" name="submit" value="upload">Submit</button>

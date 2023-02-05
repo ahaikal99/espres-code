@@ -141,7 +141,7 @@ session_start();
                 </li>
                 <li class="nav-item">
                     <div>
-                        <h6><?php echo "Welcome"." ".$user_db['uname'] ?></h6>
+                        <!-- <h6><?php echo "Welcome"." ".$user_db['uname'] ?></h6> -->
                     </div>
                 </li>
             </ul>
@@ -253,7 +253,7 @@ session_start();
                                 </div>
                                 <!--[ year  sales section ] end-->
                                 <!--[ Recent Users ] start-->
-                                <div class="col-xl-8 col-md-6">
+                                <!-- <div class="col-xl-8 col-md-6">
                                     <div class="card Recent-Users">
                                         <div class="card-header">
                                             <h5>Supervisor</h5>
@@ -278,7 +278,7 @@ session_start();
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!--[ Recent Users ] end-->
                                 <!--[ Recent Users ] start-->
                                 <div class="col-xl-8 col-md-6">

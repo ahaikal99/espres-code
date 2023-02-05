@@ -266,21 +266,6 @@ session_start();
                                                         <?php endforeach; ?>
                                                     </tbody>
                                                 </table>
-                                                <nav aria-label="..." style="width: 245px; height: 60px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;">
-                                                    <ul class="pagination">
-                                                        <li class="page-item disabled">
-                                                            <a class="page-link">Previous</a>
-                                                        </li>
-                                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                                        <li class="page-item" aria-current="page">
-                                                            <a class="page-link" href="#">2</a>
-                                                        </li>
-                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                        <li class="page-item">
-                                                            <a class="page-link" href="#">Next</a>
-                                                        </li>
-                                                    </ul>
-                                                </nav>
                                             </div>
                                         </div>
                                         <?php endif; ?>
