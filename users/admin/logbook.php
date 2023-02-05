@@ -49,6 +49,23 @@ session_start();
         $num_pages = ceil($total_results / $per_page);
 
         $count = ($page-1) * $per_page + 1; // current number
+        
+        $program = $pdo->prepare("SELECT DISTINCT pcode FROM student");
+        $program->execute();
+        $programlist = $program->fetchAll();
+
+        
+        if (isset($_POST['new-hour']) && isset($_POST['program-code'])) {
+            foreach ($_POST['new-hour'] as $pcode => $total_time) {
+                $update = $pdo->prepare("UPDATE student SET total_time = :total_time WHERE pcode = :pcode");
+                $update->execute([
+                    ':total_time' => $total_time,
+                    ':pcode' => $pcode,
+                ]);
+            }
+        }
+
+
 
 ?>
 <!DOCTYPE html>
@@ -205,6 +222,34 @@ session_start();
     </header>
     <!-- [ Header ] end -->
 
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Meeting Hour</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="" method="post" style="margin-left: 100px;">
+                <?php foreach($programlist as $code): ?>
+                    <?php
+                        $hr = $code['pcode'];
+                        $newhour = $pdo->prepare("SELECT total_time FROM student WHERE pcode = :hr");
+                        $newhour->execute([':hr' => $hr]);
+                        $new = $newhour->fetch(PDO::FETCH_ASSOC);
+                    ?>
+                    <div class="input-group flex-nowrap mb-2" style="max-width: 300px;">
+                        <span class="input-group-text" id="addon-wrapping"><?php echo $code['pcode']; ?></span>
+                        <input type="text" class="form-control" name="new-hour[<?php echo $code['pcode']; ?>]" value="<?php echo $new['total_time'] ?? ''; ?>">
+                        <input type="hidden" class="form-control" name="program-code[<?php echo $code['pcode']; ?>]" value="<?php echo $code['pcode']; ?>">
+                    </div>
+                <?php endforeach; ?>
+                <input type="submit" value="Update" class="btn btn-primary">
+            </form>
+        </div>
+    </div>
+    </div>
+
     <!-- [ Main Content ] start -->
     <section class="pcoded-main-container">
         <div class="pcoded-wrapper">
@@ -240,6 +285,10 @@ session_start();
                                             <div class="input-group mb-3 m-auto" style="max-width: 600px;">
                                                 <input type="text" class="form-control" placeholder="Search" name="search">
                                                 <button class="btn bg-primary" type="submit" id="button-addon2"><i style="color: white; font-size: 20px; margin: auto" class="feather icon-search"></i></button>
+                                            </div>
+                                            <div style="margin-left: 20px;">
+                                                <!-- Button trigger modal -->
+                                                <button style="right: 0px" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Meeting Hour</button>
                                             </div>
                                         </form>
                                         <?php if(!$student_list): ?>

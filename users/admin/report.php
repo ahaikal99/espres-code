@@ -392,42 +392,6 @@ if ($_POST) {
                                                     </table>
                                                 </div>
                                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                                    <nav class="navbar navbar-expand-lg ">
-                                                        <div class="container-fluid" style="width: 100%;">
-                                                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                                                                <form action="" method="post" style="padding-top: 20px;">
-                                                                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                                                        <li class="nav-item">
-                                                                            <select class="form-select" aria-label="Disabled select example" name="user">
-                                                                                <option value="1">All</option>
-                                                                                <?php foreach ($programlist as $p) : ?>
-                                                                                    <option value="<?php echo $p['pcode'] ?>"><?php echo $p['pcode'] ?></option>
-                                                                                <?php endforeach; ?>
-                                                                            </select>
-                                                                        </li>
-                                                                        <li class="nav-item">
-                                                                            <p class="nav-link active">Sort by :</p>
-                                                                        </li>
-                                                                        <div class="form-check" style="padding-top: 10px; margin-left: 15px; color: black">
-                                                                            <input class="form-check-input" type="radio" name="filter" id="flexRadioDefault1" value="1">
-                                                                            <label class="form-check-label" for="flexRadioDefault1">
-                                                                                Complete
-                                                                            </label>
-                                                                        </div>
-                                                                        <div class="form-check" style="padding-top: 10px; margin-left: 15px; color: black">
-                                                                            <input class="form-check-input" type="radio" name="filter" id="flexRadioDefault2" value="2">
-                                                                            <label class="form-check-label" for="flexRadioDefault2">
-                                                                                Not Complete
-                                                                            </label>
-                                                                        </div>
-                                                                        <li class="nav-item" style="padding: 12px;">
-                                                                            <button type="submit" class="btn btn-primary btn-sm" style="padding: 5px; width: 55px">Sort</button>
-                                                                        </li>
-                                                                    </ul>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </nav>
                                                     <table class="table text-center">
                                                         <thead>
                                                             <tr>
