@@ -31,7 +31,7 @@ session_start();
         $result=$pdo->prepare($sql);
         $result->execute();
         $_SESSION["user"]=$userid;
-        header("Location: logbook.php");
+        header("Location: profile.php");
     
     
     }else{
@@ -271,16 +271,21 @@ session_start();
                                                         <tr>
                                                             <th>No.</th>
                                                             <th>Name</th>
+                                                            <th>State</th>
+                                                            <th>Branch</th>
                                                             <th>Email</th>
                                                             <th></th>
                                                         </tr>
                                                     </thead>
                                                     <?php foreach($list_sv as $data): ?>
+                                                        <?php if($data['userid'] != $user_db['svid']): ?>
                                                         <tbody>
                                                             <form action="" method="post">
                                                             <tr>
                                                                 <td><?php echo $count++ ?></td>
                                                                 <td><?php echo strtoupper($data['uname']) ?></td>
+                                                                <td><?php echo strtoupper($data['state']) ?></td>
+                                                                <td><?php echo strtoupper($data['branch']) ?></td>
                                                                 <td><?php echo strtoupper($data['email']) ?></td>
                                                                 <input type="text" value="<?php echo $data['uname'] ?>" name="svname" hidden>
                                                                 <input type="text" value="<?php echo $data['userid'] ?>" name="svid" hidden>
@@ -288,6 +293,7 @@ session_start();
                                                             </tr>
                                                             </form>
                                                         </tbody>
+                                                        <?php endif; ?>
                                                     <?php endforeach; ?>
                                                 </table>
                                                 <?php if($total_results>10): ?>

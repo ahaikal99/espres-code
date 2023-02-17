@@ -8,6 +8,7 @@ session_start();
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
+            $stuid=$_SESSION["id"]??'';
         }
 
     }else{
@@ -21,6 +22,11 @@ session_start();
     if($_POST){
         $id = $_POST['id'];
         $db_list = $pdo->prepare("SELECT * FROM student WHERE userid = '$id'");
+        $db_list->execute();
+        $student_list = $db_list -> fetch(PDO::FETCH_ASSOC);
+    }else {
+        
+        $db_list = $pdo->prepare("SELECT * FROM student WHERE userid = '$stuid'");
         $db_list->execute();
         $student_list = $db_list -> fetch(PDO::FETCH_ASSOC);
     }
@@ -231,6 +237,10 @@ session_start();
                                                             <td><?php echo $student_list['faculty'] ?></td>
                                                         </tr>
                                                         <tr>
+                                                            <th scope="row">Research Title</th>
+                                                            <td><?php echo strtoupper($student_list['title']) ?></td>
+                                                        </tr>
+                                                        <tr>
                                                             <th scope="row">Name</th>
                                                             <td><?php echo strtoupper($student_list['uname']) ?></td>
                                                         </tr>
@@ -246,10 +256,23 @@ session_start();
                                                             <th scope="row">Address</th>
                                                             <td><?php echo strtoupper($student_list['address']) ?></td>
                                                         </tr>
+                                                        <form action="add-supervisor.php" method="post">
                                                         <tr>
                                                             <th scope="row">Supervisor</th>
-                                                            <td><?php echo strtoupper($student_list['svname']) ?></td>
+                                                            <td><?php echo strtoupper($student_list['svname']) ?>
+                                                            <input type="hidden" value="<?php echo $student_list['userid'] ?>" name="studentid">
+                                                            <button type="submit" name="change" class="label bg-success text-white f-12 rounded" style="border:none">Change</button>
+                                                            </td>
                                                         </tr>
+                                                        </form>
+                                                        <form action="add-cosupervisor.php" method="post">
+                                                        <tr>
+                                                            <th scope="row">Co-Supervisor</th>
+                                                            <td><?php echo strtoupper($student_list['cosv']) ?>
+                                                            <input type="hidden" value="<?php echo $student_list['userid'] ?>" name="studentid">
+                                                            <button type="submit" name="change" class="label bg-success text-white f-12 rounded" style="border:none">Change</button></td>
+                                                        </tr>
+                                                        </form>
                                                     </tbody>
                                                 </table>
                                                 <form style="display: inline-block;" action="delete-student.php" method="POST">

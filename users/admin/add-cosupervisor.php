@@ -14,39 +14,21 @@ session_start();
         header("location: ../login.php");
     }
 
-    
-    $per_page = 10; // number of results per page
-    $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1; // current page number
-    $start = ($page-1) * $per_page; // starting limit for query
-
-        $search = $_GET['search']?? "";
-
-        if($search){
-            $query = $pdo->prepare("SELECT * FROM student WHERE email LIKE '%$search%' OR uname LIKE '%$search%' OR pcode LIKE '%$search%' OR userid LIKE '%$search%' ORDER BY uname DESC");
-            $total_results = $pdo->query("SELECT COUNT(*) FROM student WHERE email LIKE '%$search%' OR uname LIKE '%$search%' OR pcode LIKE '%$search%' OR userid LIKE '%$search%'")->fetchColumn();
-        } else{
-            $query = $pdo->prepare("SELECT * FROM student LIMIT :start, :per_page");
-            $query->bindValue(':start', $start, PDO::PARAM_INT);
-            $query->bindValue(':per_page', $per_page, PDO::PARAM_INT);
-            $total_results = $pdo->query("SELECT COUNT(*) FROM student")->fetchColumn();
-        }
-
-        $per_page = 10; // number of results per page
-        $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1; // current page number
-        $start = ($page-1) * $per_page; // starting limit for query
-
-        $query->execute();
-        $student_list = $query->fetchAll();
-
-        // number of pages
-        $num_pages = ceil($total_results / $per_page);
-
-        $count = ($page-1) * $per_page + 1; // current number
-
     $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+
+    if($_POST){
+        $studentid = $_POST['studentid']??'';
+        $sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$studentid'");
+        $sql_stmnt->execute();
+        $user_db2 = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
+    }
     
+    $sql_read = $pdo->prepare("SELECT * FROM supervisor");
+    $sql_read->execute();
+    $list_sv = $sql_read -> fetchAll();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -217,6 +199,10 @@ session_start();
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="student-profile.php">Student</a></li>
+                                        <li class="breadcrumb-item">
+                                            <a type="submit">Student Detail</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -228,99 +214,57 @@ session_start();
                             <!-- [ Main Content ] start -->
                             <div class="row">
                                 <!-- [ Hover-table ] start -->
-                                <div class="col">
+                                <div class="col-xl-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Student</h5>
+                                            <h5>Supervisor</h5>
                                         </div>
-                                        <form action="" method="get">
-                                            <div class="input-group mb-3 m-auto" style="max-width: 600px;">
-                                                <input type="text" class="form-control" placeholder="Search" name="search">
-                                                <button class="btn bg-primary" type="submit" id="button-addon2"><i style="color: white; font-size: 20px; margin: auto" class="feather icon-search"></i></button>
+                                        <div class="card-body">
+                                        <form class="row justify-content-center ">
+                                            <div class="input-group mb-3 w-50">
+                                                <input type="text" class="form-control" placeholder="Search" style="background-color: white">
+                                                <button class="btn bg-primary" type="submit" style="color: white;"><i class="feather icon-search m-0"></i></button>
                                             </div>
                                         </form>
-                                        <?php if(!$student_list): ?>
-                                            <div class="text-center" style="padding: 20px;">
-                                                <h4><?php echo "No Data"?></h4>
-                                            </div>
-                                        <?php else: ?>
-                                            <div class="card-block table-border-style">
-                                            <div class="table-responsive text-center">
-                                                <table class="table table-hover">
+                                        <div class="card-block table-border-style">
+                                            <div class="table-responsive">
+                                                <table class="table text-center">
                                                     <thead>
                                                         <tr>
-                                                            <th>No</th>
-                                                            <th>ID</th>
+                                                            <th>No.</th>
                                                             <th>Name</th>
-                                                            <th>Program Code</th>
+                                                            <th>State</th>
+                                                            <th>Branch</th>
                                                             <th>Email</th>
-                                                            <th>Detail</th>
+                                                            <th></th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
-                                                    <?php foreach($student_list as $data): ?>
-                                                        <tr>
-                                                            <td scope="row"><?php echo $count++ ?></td>
-                                                            <td><?php echo $data['userid'] ?></td>
-                                                            <td><?php echo strtoupper($data['uname']) ?></td>
-                                                            <td><?php echo $data['pcode'] ?></td>
-                                                            <td><?php echo $data['email'] ?></td>
-                                                            <td>
-                                                                <form action="student-view.php" method="post">
-                                                                    <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
-                                                                    <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                        <?php endforeach; ?>
-                                                    </tbody>
+                                                    <?php foreach($list_sv as $i=>$data): ?>
+                                                        <?php if($data['userid'] != $user_db2['svid'] AND $data['userid'] != $user_db2['cosvid']): ?>
+                                                        <tbody>
+                                                            <form action="updatecosv.php" method="post">
+                                                            <tr>
+                                                                <td><?php echo $i++ ?></td>
+                                                                <td><?php echo strtoupper($data['uname']) ?></td>
+                                                                <td><?php echo strtoupper($data['state']) ?></td>
+                                                                <td><?php echo strtoupper($data['branch']) ?></td>
+                                                                <td><?php echo strtoupper($data['email']) ?></td>
+                                                                <input type="text" value="<?php echo $data['uname'] ?>" name="svname" hidden>
+                                                                <input type="text" value="<?php echo $data['userid'] ?>" name="svid" hidden>
+                                                                <input type="text" value="<?php echo $studentid ?>" name="id" hidden>
+                                                                <td><button type="submit" class="label bg-success text-white f-12" style="border-radius: 10px; border-width: 0px; cursor:pointer">Change</button></td>
+                                                            </tr>
+                                                            </form>
+                                                        </tbody>
+                                                        <?php endif; ?>
+                                                    <?php endforeach; ?>
                                                 </table>
-                                                <?php if($total_results>10): ?>
-                                                    <nav>
-                                                        <ul class="pagination">
-                                                            <li class="<?php echo ($page <= 1) ? 'page-item disabled':'page-item' ?>"><a class="page-link" href="?page=<?php echo $page-1; ?>" >Previous</a></li>
-                                                            <?php for($i = 1; $i <= $num_pages; $i++): ?>
-                                                            <li class="<?php echo ($i == $page) ? 'active' : ''; ?>">
-                                                                <a class="page-link" href="?page=<?php echo $i; ?>">
-                                                                    <?php echo $i; ?>
-                                                                </a>
-                                                            </li>
-                                                            <?php endfor; ?>
-                                                            <li class="<?php echo ($page >= $num_pages) ? 'page-item disabled' : 'page-item'; ?>"><a class="page-link" href="?page=<?php echo $page+1; ?>">Next</a></li>
-                                                        </ul>
-                                                    </nav>
-                                                <?php endif; ?>
                                             </div>
                                         </div>
-                                        <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- [ Hover-table ] end -->
-                            </div>
-                            <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Add</button>
-
-                            <!-- Modal -->
-                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Add New Student</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <form action="add-student.php" method="post" enctype="multipart/form-data">
-                                        <div class="modal-body">
-                                        <div class="input-group mb-3">
-                                            <input type="file" class="form-control" name="file">
-                                        </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <button type="submit" name="submit" value="upload" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </form>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>

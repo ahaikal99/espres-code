@@ -309,8 +309,10 @@ session_start();
                                                             <th>No</th>
                                                             <th>ID</th>
                                                             <th>Name</th>
+                                                            <th>State</th>
+                                                            <th>Branch</th>
                                                             <th>Email</th>
-                                                            <th>Action</th>
+                                                            <th>Detail</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -319,6 +321,8 @@ session_start();
                                                             <td scope="row"><?php echo $count++ ?></td>
                                                             <td><?php echo $data['userid'] ?></td>
                                                             <td><?php echo strtoupper($data['uname']) ?></td>
+                                                            <td><?php echo $data['state'] ?></td>
+                                                            <td><?php echo $data['branch'] ?></td>
                                                             <td><?php echo $data['email'] ?></td>
                                                             <td>
                                                                 <form action="supervisor-view.php" method="post">

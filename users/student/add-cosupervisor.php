@@ -31,7 +31,7 @@ session_start();
         $result=$pdo->prepare($sql);
         $result->execute();
         $_SESSION["user"]=$userid;
-        header("location: logbook.php");
+        header("location: profile.php");
     
     
     }else{
@@ -241,23 +241,31 @@ session_start();
                                                 <table class="table text-center">
                                                     <thead>
                                                         <tr>
+                                                            <th>No.</th>
                                                             <th>Name</th>
-                                                            <th>ID</th>
+                                                            <th>State</th>
+                                                            <th>Branch</th>
+                                                            <th>Email</th>
                                                             <th></th>
                                                         </tr>
                                                     </thead>
                                                     <?php foreach($list_sv as $i=>$data): ?>
+                                                        <?php if($data['userid'] != $user_db['svid']): ?>
                                                         <tbody>
                                                             <form action="" method="post">
                                                             <tr>
+                                                                <td><?php echo $i++ ?></td>
                                                                 <td><?php echo strtoupper($data['uname']) ?></td>
-                                                                <td><?php echo strtoupper($data['userid']) ?></td>
+                                                                <td><?php echo strtoupper($data['state']) ?></td>
+                                                                <td><?php echo strtoupper($data['branch']) ?></td>
+                                                                <td><?php echo strtoupper($data['email']) ?></td>
                                                                 <input type="text" value="<?php echo $data['uname'] ?>" name="svname" hidden>
                                                                 <input type="text" value="<?php echo $data['userid'] ?>" name="svid" hidden>
                                                                 <td><button type="submit" class="label bg-success text-white f-12" style="border-radius: 10px; border-width: 0px; cursor:pointer">Add</button></td>
                                                             </tr>
                                                             </form>
                                                         </tbody>
+                                                        <?php endif; ?>
                                                     <?php endforeach; ?>
                                                 </table>
                                             </div>
