@@ -261,15 +261,12 @@ if ($_POST) {
                                                             </div>
                                                         </div>
                                                     </nav>
-                                                    <table class="table text-center">
+                                                    <table class="table">
                                                         <thead>
                                                             <tr>
                                                                 <th scope="col">ID</th>
                                                                 <th scope="col">Name</th>
-                                                                <th scope="col">Email</th>
                                                                 <th scope="col">Program Code</th>
-                                                                <th scope="col">Phone</th>
-                                                                <th scope="col">Address</th>
                                                                 <th scope="col">Supervisor</th>
                                                                 <th scope="col">Co-Supervisor</th>
                                                                 <th scope="col">Research Title</th>
@@ -323,10 +320,7 @@ if ($_POST) {
                                                                             <tr>
                                                                                 <td><?php echo $student['userid']; ?></td>
                                                                                 <td><?php echo strtoupper($student['uname']) ?></td>
-                                                                                <td><?php echo $student['email']; ?></td>
                                                                                 <td><?php echo $student['pcode']; ?></td>
-                                                                                <td><?php echo $student['phone'] ?></td>
-                                                                                <td><?php echo strtoupper($student['address']) ?></td>
                                                                                 <td><?php echo strtoupper($student['svname']) ?></td>
                                                                                 <td><?php echo strtoupper($student['cosv']) ?></td>
                                                                                 <td><?php echo $student['title'] ?></td>
@@ -341,10 +335,7 @@ if ($_POST) {
                                                                             <tr>
                                                                                 <td><?php echo $student['userid']; ?></td>
                                                                                 <td><?php echo strtoupper($student['uname']) ?></td>
-                                                                                <td><?php echo $student['email']; ?></td>
                                                                                 <td><?php echo $student['pcode']; ?></td>
-                                                                                <td><?php echo $student['phone'] ?></td>
-                                                                                <td><?php echo strtoupper($student['address']) ?></td>
                                                                                 <td><?php echo strtoupper($student['svname']) ?></td>
                                                                                 <td><?php echo strtoupper($student['cosv']) ?></td>
                                                                                 <td><?php echo $student['title'] ?></td>
@@ -358,10 +349,7 @@ if ($_POST) {
                                                                         <tr>
                                                                             <td><?php echo $student['userid']; ?></td>
                                                                             <td><?php echo strtoupper($student['uname']) ?></td>
-                                                                            <td><?php echo $student['email']; ?></td>
                                                                             <td><?php echo $student['pcode']; ?></td>
-                                                                            <td><?php echo $student['phone'] ?></td>
-                                                                            <td><?php echo strtoupper($student['address']) ?></td>
                                                                             <td><?php echo strtoupper($student['svname']) ?></td>
                                                                             <td><?php echo strtoupper($student['cosv']) ?></td>
                                                                             <td><?php echo $student['title'] ?></td>
@@ -374,10 +362,7 @@ if ($_POST) {
                                                                     <tr>
                                                                         <td><?php echo $student['userid']; ?></td>
                                                                         <td><?php echo strtoupper($student['uname']) ?></td>
-                                                                        <td><?php echo $student['email']; ?></td>
                                                                         <td><?php echo $student['pcode']; ?></td>
-                                                                        <td><?php echo $student['phone'] ?></td>
-                                                                        <td><?php echo strtoupper($student['address']) ?></td>
                                                                         <td><?php echo strtoupper($student['svname']) ?></td>
                                                                         <td><?php echo strtoupper($student['cosv']) ?></td>
                                                                         <td><?php echo $student['title'] ?></td>
