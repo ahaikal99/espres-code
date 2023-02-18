@@ -310,10 +310,12 @@ session_start();
                                                                         <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
                                                                         <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
                                                                     </form>
+                                                                    <?php if($data['status'] == "submitted"): ?>
                                                                     <form style="display: inline-block;" action="delete.php" method="POST">
                                                                         <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
                                                                         <button type="submit" class="label bg-danger text-white f-12" style="border-radius: 10px; border-width: 0px;">Delete</button>
                                                                     </form>
+                                                                    <?php endif;?>
                                                                 </td>
                                                                 </tr>
                                                                 <?php endforeach; ?>

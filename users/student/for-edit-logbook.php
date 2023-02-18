@@ -9,6 +9,7 @@ session_start();
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
+            $_SESSION['id']='';
         }
 
     }else{
@@ -66,8 +67,9 @@ if($_POST){
     $result= $pdo->prepare($sql);
     $result->execute();
     $_SESSION["user"]=$userid;
+    $_SESSION["id"]=$id;
 
-    header('Location: history.php');
+    header('Location: view-history.php');
 
 }else{
     $error='<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Error!</label>';

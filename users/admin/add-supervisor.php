@@ -231,7 +231,7 @@ session_start();
                                                 <table class="table text-center">
                                                     <thead>
                                                         <tr>
-                                                            <th>No.</th>
+                                                            <th>ID</th>
                                                             <th>Name</th>
                                                             <th>State</th>
                                                             <th>Branch</th>
@@ -244,15 +244,15 @@ session_start();
                                                         <tbody>
                                                             <form action="updatesv.php" method="post">
                                                             <tr>
-                                                                <td><?php echo $i++ ?></td>
+                                                                <td><?php echo strtoupper($data['userid']) ?></td>
                                                                 <td><?php echo strtoupper($data['uname']) ?></td>
                                                                 <td><?php echo strtoupper($data['state']) ?></td>
                                                                 <td><?php echo strtoupper($data['branch']) ?></td>
-                                                                <td><?php echo strtoupper($data['email']) ?></td>
+                                                                <td><?php echo $data['email'] ?></td>
                                                                 <input type="text" value="<?php echo $data['uname'] ?>" name="svname" hidden>
                                                                 <input type="text" value="<?php echo $data['userid'] ?>" name="svid" hidden>
                                                                 <input type="text" value="<?php echo $studentid ?>" name="id" hidden>
-                                                                <td><button type="submit" class="label bg-success text-white f-12" style="border-radius: 10px; border-width: 0px; cursor:pointer">Change</button></td>
+                                                                <td><button type="submit" class="label bg-success text-white f-12" style="border-radius: 10px; border-width: 0px; cursor:pointer">Add</button></td>
                                                             </tr>
                                                             </form>
                                                         </tbody>

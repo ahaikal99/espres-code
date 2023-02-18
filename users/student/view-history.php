@@ -8,7 +8,10 @@ session_start();
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
+            $check=$_SESSION["id"]??'';
         }
+
+        // echo var_dump($_SESSION);
 
     }else{
         header("location: ../login.php");
@@ -21,6 +24,10 @@ session_start();
     if($_POST){
         $check = $_POST['id'];
 
+        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE id = '$check'");
+        $db_sql->execute();
+        $logbook = $db_sql -> fetch(PDO::FETCH_ASSOC);
+    } else{
         $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE id = '$check'");
         $db_sql->execute();
         $logbook = $db_sql -> fetch(PDO::FETCH_ASSOC);
@@ -216,7 +223,7 @@ session_start();
                             <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>History</h5>
+                                            <h5>Detail Logbook</h5>
                                         </div>
                                         <div class="card-block table-border-style mb-4">
                                             <div class="">
@@ -283,10 +290,12 @@ session_start();
                                                 <?php endif; ?>
                                             </div>
                                         </div>
+                                        <?php if($logbook['status'] == "submitted"): ?>
                                         <form action="edit-logbook.php" method="post">
                                             <input type="hidden" value="<?php echo $logbook['id']; ?>" name="id">
                                             <button class="btn btn-primary m-2" style="position: absolute; right:0; bottom: 0;">Edit</button>
                                         </form>
+                                        <?php endif;?>
                                     </div>
                                 </div>
                             </div>
