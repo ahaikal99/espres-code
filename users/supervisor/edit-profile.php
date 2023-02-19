@@ -24,6 +24,8 @@ session_start();
         $phone = $_POST['phone'];
         $email = $_POST['email'];
         $address = $_POST['address'];
+        $state = $_POST['state'];
+        $branch = $_POST['branch'];
 
         if(!is_dir('image')){
             mkdir('image');
@@ -45,7 +47,7 @@ session_start();
     
             }
 
-            $sql="UPDATE supervisor SET uname='$name', email='$email', phone='$phone', address='$address' , pic='$file_path' WHERE userid='$userid'";
+            $sql="UPDATE supervisor SET uname='$name', email='$email', phone='$phone', address='$address' , pic='$file_path', branch='$branch', state='$state' WHERE userid='$userid'";
             $result=$pdo->prepare($sql);
             $result->execute();
 
@@ -275,6 +277,14 @@ session_start();
                                                         <div class="form-group">
                                                             <label for="email">Email</label>
                                                             <input type="text" class="form-control w-50" id="email"value="<?php echo $user_db['email'] ?>" name="email">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="email">State</label>
+                                                            <input type="text" class="form-control w-50" id="email"value="<?php echo $user_db['state'] ?>" name="state">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="email">Branch</label>
+                                                            <input type="text" class="form-control w-50" id="email"value="<?php echo $user_db['branch'] ?>" name="branch">
                                                         </div>
                                                         <div class="form-group">
                                                             <label for="address">Address</label>

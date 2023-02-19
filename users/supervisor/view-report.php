@@ -8,6 +8,7 @@ session_start();
             header("location: ../signin.php");
         }else{
             $userid=$_SESSION["userid"];
+            $id = $_SESSION["studentid"]??'';
         }
 
     }else{
@@ -20,6 +21,10 @@ session_start();
 
     if($_POST){
         $id = $_POST['id'];
+        $display = $pdo->prepare("SELECT * FROM report WHERE userid = '$id'");
+        $display->execute();
+        $list_logbook = $display -> fetchAll();
+    } else{
         $display = $pdo->prepare("SELECT * FROM report WHERE userid = '$id'");
         $display->execute();
         $list_logbook = $display -> fetchAll();
@@ -192,6 +197,7 @@ session_start();
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="report.php">List of Students</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -206,7 +212,7 @@ session_start();
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Logbook</h5>
+                                            <h5>Report</h5>
                                         </div>
                                         <?php if(!$list_logbook): ?>
                                             <div class="text-center" style="padding: 20px;">

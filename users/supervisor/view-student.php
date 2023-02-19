@@ -203,7 +203,7 @@ session_start();
                                 <div class="col-xl-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Profile</h5>
+                                            <h5>Student Profile</h5>
                                         </div>
                                         <?php foreach($student_list as $i => $data):?>
                                         <div class="card-block table-border-style">
@@ -224,6 +224,14 @@ session_start();
                                                             <td><?php echo strtoupper($data['uname']) ?></td>
                                                         </tr>
                                                         <tr>
+                                                            <th scope="row">Research Title</th>
+                                                            <td><?php echo strtoupper($data['title']) ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Program Code</th>
+                                                            <td><?php echo strtoupper($data['pcode']) ?></td>
+                                                        </tr>
+                                                        <tr>
                                                             <th scope="row">No. Tel</th>
                                                             <td><?php echo $data['phone'] ?></td>
                                                         </tr>
@@ -238,6 +246,10 @@ session_start();
                                                         <tr>
                                                             <th scope="row">Supervisor</th>
                                                             <td><?php echo strtoupper($data['svname']) ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Co-Supervisor</th>
+                                                            <td><?php echo strtoupper($data['cosv']) ?></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>

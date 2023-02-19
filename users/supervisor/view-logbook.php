@@ -188,6 +188,7 @@ session_start();
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="logbook.php">List of Students</a></li>
                                     </ul>
                                 </div>
                             </div>

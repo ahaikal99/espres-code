@@ -26,6 +26,8 @@ if ($_POST) {
     $month = $_POST['month'];
     $year = $_POST['year'];
 
+    $_SESSION['studentid']=$id;
+
     $db_list = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = '$month' AND YEAR(date) = '$year' AND userid = '$id'");
     $db_list->execute();
     $logbook_list = $db_list->fetchAll();
@@ -221,6 +223,8 @@ if ($_POST) {
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="report.php">List of Students</a></li>
+                                        <li class="breadcrumb-item"><a href="view-report.php">Report</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -243,6 +247,9 @@ if ($_POST) {
                                             </div>
                                             <div class="p-2">
                                                 <span> <a style="font-weight: bold;">Student ID : </a><?php echo $detail_logbook['userid'] ?></span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Program Code : </a><?php echo $detail_logbook['pcode'] ?></span>
                                             </div>
                                             <div class="p-2">
                                                 <span> <a style="font-weight: bold;">Month : </a>
@@ -281,7 +288,17 @@ if ($_POST) {
                                         </div>
                                         <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
                                             <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Research Title : </a><?php echo $detail_logbook['title'] ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
                                                 <span> <a style="font-weight: bold;">Supervisor Name : </a><?php echo $detail_logbook['svname'] ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Co-Supervisor Name : </a><?php echo $detail_logbook['cosv'] ?></span>
                                             </div>
                                         </div>
                                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">

@@ -17,6 +17,10 @@ $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
 $sql_stmnt->execute();
 $user_db = $sql_stmnt->fetch(PDO::FETCH_ASSOC);
 
+$sql_stmnt2 = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
+$sql_stmnt2->execute();
+$user_db2 = $sql_stmnt2->fetch(PDO::FETCH_ASSOC);
+
 if ($_POST) {
     $id = $_POST['id'];
 
@@ -131,7 +135,7 @@ if ($_POST) {
                 </li>
                 <li>
                     <div>
-                        <h6><?php echo "Welcome" . " " . strtoupper($user_db['uname']) ?></h6>
+                        <h6></h6>
                     </div>
                 </li>
             </ul>
@@ -194,7 +198,8 @@ if ($_POST) {
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
-                                        <li class="breadcrumb-item"><a href="history.php">History</a></li>
+                                        <li class="breadcrumb-item"><a href="logbook.php">List of Students</a></li>
+                                        <li class="breadcrumb-item"><a href="view-logbook.php">Logbook</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -208,7 +213,7 @@ if ($_POST) {
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>History</h5>
+                                            <h5>Logbook Detail</h5>
                                         </div>
                                         <div class="card-block table-border-style mb-4">
                                             <div class="">
@@ -248,9 +253,21 @@ if ($_POST) {
                                                 </div>
                                                 <div class="input-group mb-5" style="width: 600px;">
                                                     <div class="input-group-prepend">
+                                                        <span class="input-group-text">Research Title</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $user_db2['title'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
                                                         <span class="input-group-text">Activity</span>
                                                     </div>
                                                     <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 300px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Method</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['method'] ?>" disabled>
                                                 </div>
                                                 <div class="input-group mb-5" style="width: 1000px;">
                                                     <div class="input-group">
@@ -263,10 +280,12 @@ if ($_POST) {
                                                 <?php endif; ?>
                                             </div>
                                         </div>
-                                        <form action="verify.php" method="post">
-                                            <input type="hidden" value="<?php echo $logbook['id']; ?>" name="id">
-                                            <button class="btn btn-success m-2" style="position: absolute; right:0; bottom: 0;">Verify</button>
-                                        </form>
+                                        <?php if($logbook['status']=='submitted'): ?>
+                                            <form action="verify.php" method="post">
+                                                <input type="hidden" value="<?php echo $logbook['id']; ?>" name="id">
+                                                <button class="btn btn-success m-2" style="position: absolute; right:0; bottom: 0;">Verify</button>
+                                            </form>
+                                        <?php endif;?>
                                     </div>
                                 </div>
                             </div>

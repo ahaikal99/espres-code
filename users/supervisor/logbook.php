@@ -217,8 +217,8 @@ session_start();
                                                             <th>No</th>
                                                             <th>ID</th>
                                                             <th>Name</th>
-                                                            <th>Email</th>
-                                                            <th>Action</th>
+                                                            <th>Program Code</th>
+                                                            <th>Detail</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -227,7 +227,7 @@ session_start();
                                                             <td scope="row"><?php echo $i + 1 ?></td>
                                                             <td><?php echo $data['userid'] ?></td>
                                                             <td><?php echo strtoupper($data['uname']) ?></td>
-                                                            <td><?php echo $data['email'] ?></td>
+                                                            <td><?php echo $data['pcode'] ?></td>
                                                             <td>
                                                                 <form action="view-logbook.php" method="post">
                                                                     <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">

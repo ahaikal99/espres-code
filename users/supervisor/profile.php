@@ -226,6 +226,14 @@ session_start();
                                                             <td><?php echo $user_db['email'] ?></td>
                                                         </tr>
                                                         <tr>
+                                                            <th scope="row">State</th>
+                                                            <td><?php echo $user_db['state'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Branch</th>
+                                                            <td><?php echo $user_db['branch'] ?></td>
+                                                        </tr>
+                                                        <tr>
                                                             <th scope="row">Address</th>
                                                             <td><?php echo $user_db['address'] ?></td>
                                                         </tr>

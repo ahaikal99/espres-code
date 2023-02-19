@@ -202,7 +202,7 @@ session_start();
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Logbook</h5>
+                                            <h5>Report</h5>
                                         </div>
                                         <?php if(!$student_list): ?>
                                             <div class="text-center" style="padding: 20px;">

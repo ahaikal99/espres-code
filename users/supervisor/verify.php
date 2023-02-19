@@ -8,5 +8,5 @@ if($_POST){
     $submit = $pdo->prepare($sql);
     $submit->execute();
 
-    header('Location: logbook.php');
+    header('Location: view-logbook.php');
 }
