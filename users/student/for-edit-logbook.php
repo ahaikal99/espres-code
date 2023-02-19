@@ -28,6 +28,7 @@ if($_POST){
     $endTime = $_POST['endTime'];
     $activity = $_POST['activity'];
     $discuss = $_POST['discuss'];
+    $method = $_POST['method'];
 
     $sql_stmnt = $pdo->prepare("SELECT * FROM logbook WHERE id = '$id'");
     $sql_stmnt->execute();
@@ -37,10 +38,9 @@ if($_POST){
     $future_date_time_sec = strtotime($endTime);
     $difference = $future_date_time_sec-$current_date_time_sec;
     $hours = ($difference / 3600);
-    $minutes = ($difference / 60 % 60);
-    $seconds = ($difference % 60);  
+    $minutes = ($difference / 60 % 60); 
     $hours = ($hours % 24);
-    $total  =    sprintf("%02d",$hours).":".sprintf("%02d",$minutes).":".sprintf("%02d",$seconds);
+    $total  =    sprintf("%02d",$hours).":".sprintf("%02d",$minutes);
 
 
     
@@ -63,7 +63,7 @@ if($_POST){
 
     }
 
-    $sql="UPDATE logbook SET date='$date', starttime='$startTime', endtime='$endTime', activity='$activity', discuss='$discuss', doc='$file_path', totaltime='$total' WHERE id ='$id'";
+    $sql="UPDATE logbook SET date='$date', starttime='$startTime', endtime='$endTime', activity='$activity', method='$method', discuss='$discuss', doc='$file_path', totaltime='$total' WHERE id ='$id'";
     $result= $pdo->prepare($sql);
     $result->execute();
     $_SESSION["user"]=$userid;

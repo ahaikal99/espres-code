@@ -24,6 +24,7 @@ session_start();
         $sql_logbook = $pdo->prepare("SELECT * FROM logbook WHERE id = '$id'");
         $sql_logbook->execute();
         $logbook = $sql_logbook -> fetch(PDO::FETCH_ASSOC);
+        $_SESSION["id"]=$id;
     }
 
 ?>
@@ -203,6 +204,8 @@ session_start();
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="history.php">History</a></li>
+                                        <li class="breadcrumb-item"><a href="view-history.php">Detail Logbook</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -216,7 +219,7 @@ session_start();
                                 <div class="col-sm-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Logbook</h5>
+                                            <h5>Edit Logbook</h5>
                                         </div>
                                         <div class="card-body">
                                             <?php if(empty($user_db['svname'])):?>
@@ -242,6 +245,13 @@ session_start();
                                                                 <input type="time" value="<?php echo $logbook['endtime'] ?>" class="form-control" id="endTime" name="endTime" required>
                                                             </div>
                                                         </div>
+                                                        <div class="form-group">
+                                                                <label for="method">Method</label>
+                                                                <select class="form-control w-50" id="method" name="method" value="<?php echo $logbook['method'] ?>">
+                                                                    <option value="online">Online</option>
+                                                                    <option value="Physical">Physical</option>
+                                                                </select>
+                                                            </div>
                                                         <div class="form-group">
                                                             <label for="activity">Activity</label>
                                                             <input type="text" value="<?php echo $logbook['activity'] ?>" class="form-control" id="activity" name="activity">

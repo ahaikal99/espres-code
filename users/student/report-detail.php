@@ -8,11 +8,14 @@ session_start();
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
+            $id=$_SESSION['id']??'';
+            $month=$_SESSION['month']??'';
+            $year=$_SESSION['year']??'';
         }
-
     }else{
         header("location: ../login.php");
     }
+    // echo var_dump($_SESSION);
 
     $sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid'");
     $sql_stmnt->execute();
@@ -26,6 +29,9 @@ session_start();
         $db_report = $pdo->prepare("SELECT * FROM report WHERE id = '$id'");
         $db_report->execute();
         $report_list = $db_report -> fetch(PDO::FETCH_ASSOC);
+        $idreport=$report_list['id'];
+        $monthreport=$report_list['month'];
+        $yearreport=$report_list['year'];
 
         $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' && MONTH(date) = '$month' && YEAR(date) = '$year' ");
         $db_sql->execute();
@@ -52,6 +58,39 @@ session_start();
         // Format the seconds back into HH:MM:SS
         $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
 
+    } else{
+
+        $db_report = $pdo->prepare("SELECT * FROM report WHERE id = '$id'");
+        $db_report->execute();
+        $report_list = $db_report -> fetch(PDO::FETCH_ASSOC);
+        $idreport=$report_list['id'];
+        $monthreport=$report_list['month'];
+        $yearreport=$report_list['year'];
+
+        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' && MONTH(date) = '$month' && YEAR(date) = '$year' ");
+        $db_sql->execute();
+        $calculate_total = $db_sql -> fetchAll();
+
+        $total = 0;
+        // ------calculate total hour------------------------------
+        // Loop the data items
+        foreach( $calculate_total as $element):
+            
+            // Explode by separator :
+            $temp = explode(":", $element['totaltime']);
+            
+            // Convert the hours into seconds
+            // and add to total
+            $total+= (int) $temp[0] * 3600;
+            
+            // Convert the minutes to seconds
+            // and add to total
+            $total+= (int) $temp[1] * 60;
+            
+        endforeach;
+        
+        // Format the seconds back into HH:MM:SS
+        $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
     }
 
     ?>
@@ -255,6 +294,9 @@ session_start();
                                                 <span> <a style="font-weight: bold;">Student ID : </a><?php echo $user_db['userid'] ?></span>
                                             </div>
                                             <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Program Code : </a><?php echo $user_db['pcode'] ?></span>
+                                            </div>
+                                            <div class="p-2">
                                                 <span> <a style="font-weight: bold;">Month : </a>
                                                     <?php
                                                         if($report_list['month']==1){
@@ -320,6 +362,9 @@ session_start();
                                                 <div class="p-2 flex-fill w-25">
                                                     <form action="view-report.php" method="post">
                                                         <input type="text" name="id" value="<?php echo $logbook['id'] ?>" hidden>
+                                                        <input type="text" name="reportid" value="<?php echo $idreport ?>" hidden>
+                                                        <input type="text" name="month" value="<?php echo $monthreport ?>" hidden>
+                                                        <input type="text" name="year" value="<?php echo $yearreport ?>" hidden>
                                                         <button class="btn btn-primary" style="padding: 3px 15px 3px 15px;" type="submit">View</button>
                                                     </form>
                                                 </div>

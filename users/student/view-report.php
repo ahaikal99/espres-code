@@ -8,6 +8,9 @@ session_start();
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
+            $_SESSION["id"]="";
+            $_SESSION["month"]="";
+            $_SESSION["year"]="";
         }
 
     }else{
@@ -20,11 +23,28 @@ session_start();
 
     if($_POST){
         $check = $_POST['id'];
+        $reportid = $_POST['reportid'];
+        $year = $_POST['year'];
+        $month = $_POST['month'];
 
         $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE id = '$check'");
         $db_sql->execute();
         $logbook = $db_sql -> fetch(PDO::FETCH_ASSOC);
+
+        $_SESSION["year"]=$year;
+        $_SESSION["month"]=$month;
+
+        $_SESSION["id"]=$reportid;
     }
+
+
+    // $datey=$logbook['date'];
+    // $year = date("Y", strtotime($datey));
+    // $_SESSION["year"]=$year;
+
+    // $datem=$logbook['date'];
+    // $month = date("m", strtotime($datem));
+    // $_SESSION["month"]=$month;
 
 ?>
 <!DOCTYPE html>
@@ -202,6 +222,7 @@ session_start();
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="report-detail.php">Report</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -216,7 +237,7 @@ session_start();
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>History</h5>
+                                            <h5>Detail</h5>
                                         </div>
                                         <div class="card-block table-border-style mb-4">
                                             <div class="">
@@ -227,6 +248,7 @@ session_start();
                                                                 <span class="input-group-text">DATE</span>
                                                             </div>
                                                             <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['date'] ?>" disabled>
+                                                            
                                                         </div>
                                                     </div>
                                                     <div class="col-3">
@@ -256,9 +278,21 @@ session_start();
                                                 </div>
                                                 <div class="input-group mb-5" style="width: 600px;">
                                                     <div class="input-group-prepend">
+                                                        <span class="input-group-text">Research Title</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $user_db['title'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
                                                         <span class="input-group-text">Activity</span>
                                                     </div>
                                                     <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 300px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Method</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['method'] ?>" disabled>
                                                 </div>
                                                 <div class="input-group mb-5" style="width: 1000px;">
                                                     <div class="input-group">
