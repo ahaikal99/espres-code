@@ -26,6 +26,10 @@ if($_POST){
     $sql = $pdo->prepare("SELECT * FROM logbook WHERE id = '$id' AND userid = '$uid'");
     $sql->execute();
     $logbok_data = $sql->fetch(PDO::FETCH_ASSOC);
+
+    $sql2 = $pdo->prepare("SELECT * FROM student WHERE userid = '$uid'");
+    $sql2->execute();
+    $user_db2 = $sql2->fetch(PDO::FETCH_ASSOC);
 }
 
 ?>
@@ -81,9 +85,9 @@ if($_POST){
                     <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a href="supervisor-profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Supervisor</span></a>
                     </li>
@@ -249,6 +253,18 @@ if($_POST){
                                                             <input type="text" class="form-control" style="background-color: white" value="<?php echo $logbok_data['totaltime'] ?>" disabled>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">RESEARCH TITLE</span>
+                                                    </div>
+                                                    <input type="text" class="form-control" style="background-color: white" value="<?php echo $user_db2['title'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">METHOD</span>
+                                                    </div>
+                                                    <input type="text" class="form-control" style="background-color: white" value="<?php echo $logbok_data['method'] ?>" disabled>
                                                 </div>
                                                 <div class="input-group mb-5" style="width: 600px;">
                                                     <div class="input-group-prepend">

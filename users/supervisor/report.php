@@ -18,7 +18,7 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $db_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
+    $db_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid' OR cosvid = '$userid'");
     $db_list->execute();
     $student_list = $db_list -> fetchAll();
 ?>
@@ -218,7 +218,7 @@ session_start();
                                                             <th>ID</th>
                                                             <th>Name</th>
                                                             <th>Email</th>
-                                                            <th>Action</th>
+                                                            <th>Program Code</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -227,7 +227,7 @@ session_start();
                                                             <td scope="row"><?php echo $i + 1 ?></td>
                                                             <td><?php echo $data['userid'] ?></td>
                                                             <td><?php echo strtoupper($data['uname']) ?></td>
-                                                            <td><?php echo $data['email'] ?></td>
+                                                            <td><?php echo $data['pcode'] ?></td>
                                                             <td>
                                                                 <form action="view-report.php" method="post">
                                                                     <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">

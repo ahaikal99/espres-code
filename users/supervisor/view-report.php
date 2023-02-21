@@ -267,6 +267,7 @@ session_start();
                                                             <td>
                                                                 <form action="view-report-detail.php" method="post">
                                                                     <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
+                                                                    <input type="hidden" name="reid" value="<?php echo $data['id'] ?>">
                                                                     <input type="hidden" name="year" value="<?php echo $data['year'] ?>">
                                                                     <input type="hidden" name="month" value="<?php echo $data['month'] ?>">
                                                                     <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>

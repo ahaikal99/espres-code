@@ -8,27 +8,78 @@ if (isset($_SESSION["userid"])) {
         header("location: ../signin.php");
     } else {
         $userid = $_SESSION["userid"];
+        $stuid=$_SESSION['id']??'';
+        $month=$_SESSION['month']??'';
+        $year=$_SESSION['year']??'';
+        $reid=$_SESSION['reid']??'';
     }
 } else {
     header("location: ../login.php");
 }
 
+echo var_dump($_SESSION);
+
 $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
 $sql_stmnt->execute();
 $user_db = $sql_stmnt->fetch(PDO::FETCH_ASSOC);
 
-$student = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
+$student = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid' OR cosvid = '$userid'");
 $student->execute();
 $detail_logbook = $student->fetch(PDO::FETCH_ASSOC);
 
 if ($_POST) {
-    $id = $_POST['id'];
+    $reid = $_POST['reid'];
+    $stuid = $_POST['id'];
     $month = $_POST['month'];
     $year = $_POST['year'];
 
-    $_SESSION['studentid']=$id;
+    $db_report = $pdo->prepare("SELECT * FROM report WHERE id = '$reid'");
+    $db_report->execute();
+    $report_list = $db_report -> fetch(PDO::FETCH_ASSOC);
+    $idreport=$report_list['id']??'';
+    $monthreport=$report_list['month']??'';
+    $yearreport=$report_list['year']??'';
 
-    $db_list = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = '$month' AND YEAR(date) = '$year' AND userid = '$id'");
+    $_SESSION['studentid']=$stuid;
+
+    $db_list = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = '$month' AND YEAR(date) = '$year' AND userid = '$stuid'");
+    $db_list->execute();
+    $logbook_list = $db_list->fetchAll();
+
+    $total = 0;
+    // ------calculate total hour------------------------------
+    // Loop the data items
+    foreach ($logbook_list as $element) :
+
+        // Explode by separator :
+        $temp = explode(":", $element['totaltime']);
+
+        // Convert the hours into seconds
+        // and add to total
+        $total += (int) $temp[0] * 3600;
+
+        // Convert the minutes to seconds
+        // and add to total
+        $total += (int) $temp[1] * 60;
+
+        // Add the seconds to total
+        // $total += (int) $temp[2];
+    endforeach;
+
+    // Format the seconds back into HH:MM:SS
+    $display = sprintf('%02d:%02d', ($total / 3600), ($total / 60 % 60), $total % 60);
+} else{
+
+    $db_report = $pdo->prepare("SELECT * FROM report WHERE id = '$reid'");
+    $db_report->execute();
+    $report_list = $db_report -> fetch(PDO::FETCH_ASSOC);
+    $idreport=$report_list['id']??'';
+    $monthreport=$report_list['month']??'';
+    $yearreport=$report_list['year']??'';
+
+    $_SESSION['studentid']=$stuid;
+
+    $db_list = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = '$month' AND YEAR(date) = '$year' AND userid = '$stuid'");
     $db_list->execute();
     $logbook_list = $db_list->fetchAll();
 
@@ -224,7 +275,7 @@ if ($_POST) {
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
                                         <li class="breadcrumb-item"><a href="report.php">List of Students</a></li>
-                                        <li class="breadcrumb-item"><a href="view-report.php">Report</a></li>
+                                        <li class="breadcrumb-item"><a href="view-report.php">List of Report</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -239,7 +290,7 @@ if ($_POST) {
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Logbook</h5>
+                                            <h5>Report Detail</h5>
                                         </div>
                                         <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
                                             <div class="p-2">
@@ -306,6 +357,7 @@ if ($_POST) {
                                             <div class="p-2 flex-fill w-25">Date</div>
                                             <div class="p-2 flex-fill w-25">Activity</div>
                                             <div class="p-2 flex-fill w-25">Duration</div>
+                                            <div class="p-2 flex-fill w-25"></div>
                                         </div>
                                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                                         <?php foreach ($logbook_list as $logbook) : ?>
@@ -313,6 +365,16 @@ if ($_POST) {
                                                 <div class="p-2 flex-fill w-25"><?php echo $logbook['date'] ?></div>
                                                 <div class="p-2 flex-fill w-25"><?php echo $logbook['activity'] ?></div>
                                                 <div class="p-2 flex-fill w-25"><?php echo $logbook['totaltime'] ?></div>
+                                                <div class="p-2 flex-fill w-25">
+                                                    <form action="view-report-student.php" method="post">
+                                                        <input type="text" name="id" value="<?php echo $logbook['userid'] ?>" hidden>
+                                                        <input type="text" name="reportid" value="<?php echo $logbook['id'] ?>" hidden>
+                                                        <input type="text" name="month" value="<?php echo $monthreport ?>" hidden>
+                                                        <input type="text" name="year" value="<?php echo $yearreport ?>" hidden>
+                                                        <input type="text" name="stuid" value="<?php echo $stuid ?>" hidden>
+                                                        <button class="btn btn-primary" style="padding: 3px 15px 3px 15px;" type="submit">View</button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         <?php endforeach; ?>
                                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">

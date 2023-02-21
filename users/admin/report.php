@@ -97,9 +97,9 @@ if ($_POST) {
                     <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a href="supervisor-profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Supervisor</span></a>
                     </li>
@@ -270,6 +270,7 @@ if ($_POST) {
                                                                 <th scope="col">Supervisor</th>
                                                                 <th scope="col">Co-Supervisor</th>
                                                                 <th scope="col">Research Title</th>
+                                                                <th scope="col">Total Hour This Month</th>
                                                                 <th scope="col">Total Hour</th>
                                                                 <th scope="col">Total Logbook</th>
                                                             </tr>
@@ -291,6 +292,19 @@ if ($_POST) {
                                                                     $total_seconds_this_month += (int) $time[0] * 3600 + (int) $time[1] * 60;
                                                                 endforeach;
                                                                 $total_time_this_month = sprintf('%02d:%02d', ($total_seconds_this_month / 3600), ($total_seconds_this_month / 60 % 60));
+
+                                                                // ----------------------------
+                                                                $logbook_query2 = $pdo->prepare("SELECT * FROM logbook WHERE userid = ? AND YEAR(date) = ?");
+                                                                $logbook_query2->execute([$user_id, $current_year]);
+                                                                $logbook_this_month2 = $logbook_query2->fetchAll();
+
+                                                                $total_seconds_this_month2 = 0;
+                                                                foreach ($logbook_this_month2 as $log) :
+                                                                    $time = explode(":", $log['totaltime']);
+                                                                    $total_seconds_this_month2 += (int) $time[0] * 3600 + (int) $time[1] * 60;
+                                                                endforeach;
+                                                                $total_time_this_month2 = sprintf('%02d:%02d', ($total_seconds_this_month2 / 3600), ($total_seconds_this_month2 / 60 % 60));
+                                                                // ----------------------------
 
                                                                 $user_query = $pdo->prepare("SELECT * FROM student WHERE userid = ?");
                                                                 $user_query->execute([$user_id]);
@@ -325,6 +339,7 @@ if ($_POST) {
                                                                                 <td><?php echo strtoupper($student['cosv']) ?></td>
                                                                                 <td><?php echo $student['title'] ?></td>
                                                                                 <td><?php echo $total_time_this_month ?></td>
+                                                                                <td><?php echo $total_time_this_month2 ?></td>
                                                                                 <td><?php echo $total_logbook ?></td>
                                                                             </tr>
                                                                         <?php endif; ?>
@@ -340,6 +355,7 @@ if ($_POST) {
                                                                                 <td><?php echo strtoupper($student['cosv']) ?></td>
                                                                                 <td><?php echo $student['title'] ?></td>
                                                                                 <td><?php echo $total_time_this_month ?></td>
+                                                                                <td><?php echo $total_time_this_month2 ?></td>
                                                                                 <td><?php echo $total_logbook ?></td>
                                                                             </tr>
                                                                         <?php endif; ?>
@@ -354,6 +370,7 @@ if ($_POST) {
                                                                             <td><?php echo strtoupper($student['cosv']) ?></td>
                                                                             <td><?php echo $student['title'] ?></td>
                                                                             <td><?php echo $total_time_this_month ?></td>
+                                                                                <td><?php echo $total_time_this_month2 ?></td>
                                                                             <td><?php echo $total_logbook ?></td>
                                                                         </tr>
 
@@ -367,6 +384,7 @@ if ($_POST) {
                                                                         <td><?php echo strtoupper($student['cosv']) ?></td>
                                                                         <td><?php echo $student['title'] ?></td>
                                                                         <td><?php echo $total_time_this_month ?></td>
+                                                                                <td><?php echo $total_time_this_month2 ?></td>
                                                                         <td><?php echo $total_logbook ?></td>
                                                                     </tr>
                                                                 <?php endif; ?>
@@ -384,7 +402,6 @@ if ($_POST) {
                                                                 <th scope="col">Name</th>
                                                                 <th scope="col">Email</th>
                                                                 <th scope="col">Phone</th>
-                                                                <th scope="col">Address</th>
                                                                 <th scope="col">Total Student</th>
                                                             </tr>
                                                         </thead>
@@ -392,9 +409,12 @@ if ($_POST) {
                                                             <?php foreach ($svlist as $sv) : ?>
                                                                 <?php
                                                                 $svid = $sv['userid'];
-                                                                $student_query = $pdo->prepare("SELECT * FROM student WHERE svid = :svid");
+                                                                $cosvid = $sv['userid'];
+                                                                $student_query = $pdo->prepare("SELECT * FROM student WHERE svid = :svid OR cosvid = :cosvid");
                                                                 $student_query->bindParam(':svid', $svid, PDO::PARAM_STR);
+                                                                $student_query->bindParam(':cosvid', $cosvid, PDO::PARAM_STR);
                                                                 $student_query->execute();
+
                                                                 $student = $student_query->fetchAll();
                                                                 $total_student = $student_query->rowCount();
                                                                 ?>
@@ -403,7 +423,6 @@ if ($_POST) {
                                                                     <td><?php echo strtoupper($sv['uname']) ?></td>
                                                                     <td><?php echo $sv['email']; ?></td>
                                                                     <td><?php echo $sv['phone'] ?></td>
-                                                                    <td><?php echo strtoupper($sv['address']) ?></td>
                                                                     <td><?php echo $total_student; ?></td>
                                                                 </tr>
                                                             <?php endforeach; ?>

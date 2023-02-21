@@ -18,7 +18,7 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    $sudent_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
+    $sudent_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid' OR cosvid = '$userid'");
     $sudent_list->execute();
     $student = $sudent_list -> fetchAll();
 
@@ -32,7 +32,7 @@ require 'PHPMailer-master\src\SMTP.php';
 
 $today = date('Y-m-d');
     $next_month = date('Y-m-d', strtotime('first day of next month'));
-    $reminder_date = date('Y-m-d', strtotime($next_month . ' - 24 days'));
+    $reminder_date = date('Y-m-d', strtotime($next_month . ' - 9 days'));
 
 if ($today == $reminder_date) {
     foreach($student as $getmail){

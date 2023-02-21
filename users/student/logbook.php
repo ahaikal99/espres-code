@@ -26,6 +26,8 @@ if ($_POST) {
     $discuss = $_POST['discuss'];
     $svname = $_POST['svname'];
     $svid = $_POST['svid'];
+    $cosv = $_POST['cosv'];
+    $cosvid = $_POST['cosvid'];
     $method = $_POST['method'];
 
     $current_date_time_sec = strtotime($startTime);
@@ -51,7 +53,7 @@ if ($_POST) {
         move_uploaded_file($char_file['tmp_name'], $file_path);
     }
 
-    $sql = "INSERT INTO logbook(date,starttime,endtime,activity,discuss,doc,userid,svname,svid,status,totaltime,method) values ('$date','$startTime','$endTime','$activity','$discuss','$file_path','$userid','$svname','$svid','submitted', '$total','$method')";
+    $sql = "INSERT INTO logbook(date,starttime,endtime,activity,discuss,doc,userid,svname,svid,status,totaltime,method,cosv,cosvid) values ('$date','$startTime','$endTime','$activity','$discuss','$file_path','$userid','$svname','$svid','submitted', '$total','$method','$cosv','$cosvid')";
     $result = $pdo->prepare($sql);
     $result->execute();
     echo '<script type="text/javascript">';
@@ -323,7 +325,9 @@ function randomString($n)
                                                         </div>
                                                     </div>
                                                     <input type="text" value="<?php echo $user_db['svname'] ?>" name="svname" hidden>
+                                                    <input type="text" value="<?php echo $user_db['cosv'] ?>" name="cosv" hidden>
                                                     <input type="text" value="<?php echo $user_db['svid'] ?>" name="svid" hidden>
+                                                    <input type="text" value="<?php echo $user_db['cosvid'] ?>" name="cosvid" hidden>
                                                     <button type="submit" class="btn btn-primary">Submit</button>
                                                 </form>
                                             <?php endif; ?>

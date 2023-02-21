@@ -3,54 +3,49 @@ include 'connection.php';
 
 session_start();
 
-    if(isset($_SESSION["userid"])){
-        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='supervisor'){
-            header("location: ../signin.php");
-        }else{
-            $userid=$_SESSION["userid"];
-        }
-
-    }else{
-        header("location: ../login.php");
-    }
-
-    $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
-    $sql_stmnt->execute();
-    $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
-
-    $db_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid' OR cosvid = '$userid'");
-    $db_list->execute();
-    $student_list = $db_list -> fetchAll();
-
-    $db_list2 = $pdo->prepare("SELECT DISTINCT pcode as pcode FROM student WHERE svid = '$userid' OR cosvid = '$userid'");
-    $db_list2->execute();
-    $student_list2 = $db_list2 -> fetchAll();
-
-    if ($_POST) {
-        $code = $_POST['pcode'];
-        $query = "SELECT * FROM student WHERE svid = :svid OR cosvid = :cosvid";
-        $params = [':svid' => $userid, ':cosvid' => $userid];
-        if ($code != 'All') {
-            $query .= " AND pcode = :pcode";
-            $params[':pcode'] = $code;
-        }
-        $stmt = $pdo->prepare($query);
-        $stmt->execute($params);
-        $list_logbook = $stmt->fetchAll();
+if (isset($_SESSION["userid"])) {
+    if (($_SESSION["userid"]) == "" or $_SESSION['usertype'] != 'supervisor') {
+        header("location: ../signin.php");
     } else {
-        $stmt = $pdo->prepare("SELECT * FROM student WHERE svid = :svid OR cosvid = :cosvid");
-        $stmt->execute([':svid' => $userid, ':cosvid' => $userid]);
-        $list_logbook = $stmt->fetchAll();
+        $userid = $_SESSION["userid"];
+        $_SESSION["id"]="";
+        $_SESSION["month"]="";
+        $_SESSION["year"]="";
+        $_SESSION["reid"]="";
     }
-    
-    
+} else {
+    header("location: ../login.php");
+}
+
+$sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
+$sql_stmnt->execute();
+$user_db = $sql_stmnt->fetch(PDO::FETCH_ASSOC);
+
+$sql_stmnt2 = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid' OR cosvid = '$userid'");
+$sql_stmnt2->execute();
+$user_db2 = $sql_stmnt2->fetch(PDO::FETCH_ASSOC);
+
+if ($_POST) {
+    $check = $_POST['reportid'];
+    $year = $_POST['year'];
+    $month = $_POST['month'];
+
+    $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE id = '$check'");
+    $db_sql->execute();
+    $logbook = $db_sql -> fetch(PDO::FETCH_ASSOC);
+
+    $_SESSION["year"]=$year;
+    $_SESSION["month"]=$month;
+}
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>ESPRES</title>
-    
+    <title>Home</title>
+
     <!-- Meta -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
@@ -100,14 +95,14 @@ session_start();
                     <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
                     </li>
-                    <li  class="nav-item pcoded-hasmenu active">
+                    <li class="nav-item pcoded-hasmenu ">
                         <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="bi bi-mortarboard-fill"></i></span><span class="pcoded-mtext">Student</span></a>
                         <ul class="pcoded-submenu">
-                            <li class=" active"><a href="student-profile.php" class="">Profile</a></li>
-                            <li class=""><a href="logbook.php" class="">Logbook</a></li>
+                            <li class=""><a href="student-profile.php" class="">Profile</a></li>
+                            <li class=" "><a href="logbook.php" class="">Logbook</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a href="report.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file"></i></span><span class="pcoded-mtext">Report</span></a>
                     </li>
                 </ul>
@@ -181,7 +176,7 @@ session_start();
                             <div class="pro-head">
                                 <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
                                 <span><?php echo strtoupper($user_db['uname']) ?></span>
-                                
+
                             </div>
                             <ul class="pro-body">
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
@@ -207,10 +202,13 @@ session_start();
                             <div class="row align-items-center">
                                 <div class="col-md-12">
                                     <div class="page-header-title">
-                                        
+
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <!-- <li class="breadcrumb-item"><a href="report.php">List of Students</a></li>
+                                        <li class="breadcrumb-item"><a href="view-report.php">List of Report</a></li>
+                                        <li class="breadcrumb-item"><a href="view-report-detail.php">Report Detail</a></li> -->
                                     </ul>
                                 </div>
                             </div>
@@ -221,57 +219,84 @@ session_start();
                         <div class="page-wrapper">
                             <!-- [ Main Content ] start -->
                             <div class="row">
-                                <!-- [ Hover-table ] start -->
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Student</h5>
+                                            <h5>Logbook Detail</h5>
                                         </div>
-                                        <!-- Button trigger modal -->
-                                        <button type="button" class="btn btn-primary p-1" style="max-width: 100px; margin-left: 20px" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="feather icon-filter" style="color:white"></i>Filter</button>
-                                        
-                                        <?php if(!$student_list): ?>
-                                            <div class="text-center" style="padding: 20px;">
-                                                <h4><?php echo "No Data"?></h4>
-                                            </div>
-                                        <?php else: ?>
-                                            <div class="card-block table-border-style">
-                                            <div class="table-responsive text-center">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>No</th>
-                                                            <th>ID</th>
-                                                            <th>Name</th>
-                                                            <th>Program Code</th>
-                                                            <th>Email</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <?php foreach($list_logbook as $i => $data): ?>
-                                                        <tr>
-                                                            <td scope="row"><?php echo $i + 1 ?></td>
-                                                            <td><?php echo $data['userid'] ?></td>
-                                                            <td><?php echo strtoupper($data['uname']) ?></td>
-                                                            <td><?php echo $data['pcode'] ?></td>
-                                                            <td><?php echo $data['email'] ?></td>
-                                                            <td>
-                                                                <form action="view-student.php" method="post">
-                                                                    <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
-                                                                    <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                        <?php endforeach; ?>
-                                                    </tbody>
-                                                </table>
+                                        <div class="card-block table-border-style mb-4">
+                                            <div class="">
+                                                <div class="row mb-5">
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 220px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">DATE</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['date'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 230px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Start Time</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['starttime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 210px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">End Time</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['endtime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 210px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Duration</span>
+                                                            </div>
+                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['totaltime'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Research Title</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $user_db2['title'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 600px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Activity</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 300px;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Method</span>
+                                                    </div>
+                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['method'] ?>" disabled>
+                                                </div>
+                                                <div class="input-group mb-5" style="width: 1000px;">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text" style="width: 1000px;">Discussion</span>
+                                                    </div>
+                                                    <div class="form-control" style="height: 300px; background-color: white;"><?php echo $logbook['discuss'] ?></div>
+                                                </div>
+                                                <?php if (!empty($logbook['doc'])) : ?>
+                                                    <iframe src="\espres-code\users\student\<?php echo $logbook['doc'] ?>" width="100%" height="1000px"></iframe>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
-                                        <?php endif; ?>
+                                        <?php if($logbook['status']=='submitted'): ?>
+                                            <form action="verify.php" method="post">
+                                                <input type="hidden" value="<?php echo $logbook['id']; ?>" name="id">
+                                                <button class="btn btn-success m-2" style="position: absolute; right:0; bottom: 0;">Verify</button>
+                                            </form>
+                                        <?php endif;?>
                                     </div>
                                 </div>
-                                <!-- [ Hover-table ] end -->
                             </div>
                         </div>
                     </div>
@@ -279,37 +304,15 @@ session_start();
             </div>
         </div>
     </section>
-    <!-- [ Main Content ] end -->
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="" method="post">
-                <div class="modal-body">
-                    <div class="input-group mb-4">
-                        <label class="input-group-text" for="pcode">Program Code</label>
-                        <select class="form-select" id="pcode" name="pcode">
-                            <option selected value="All" >All</option>
-                            <?php foreach($student_list2 as $st): ?>
-                                <option value="<?php echo $st['pcode'] ?>"><?php echo $st['pcode'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                <div class="modal-footer">
-                    <button name="submit" type="submit" class="btn btn-primary">Filter</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+    <!-- [ Main Content ] start -->
+
+
     <!-- Required Js -->
     <script src="\espres-code\public\assets/js/vendor-all.min.js"></script>
-	<script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="\espres-code\public\assets/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script src="\espres-code\public\assets/js/pcoded.min.js"></script>
     <script src="\espres-code\node_modules\bootstrap\dist\js\bootstrap.min.js"></script>
 
 </body>
+
 </html>

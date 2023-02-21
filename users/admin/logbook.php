@@ -120,9 +120,9 @@ session_start();
                     <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a href="supervisor-profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Supervisor</span></a>
                     </li>
@@ -240,7 +240,7 @@ session_start();
                     ?>
                     <div class="input-group flex-nowrap mb-2" style="max-width: 300px;">
                         <span class="input-group-text" id="addon-wrapping"><?php echo $code['pcode']; ?></span>
-                        <input type="text" class="form-control" name="new-hour[<?php echo $code['pcode']; ?>]" value="<?php echo $new['total_time'] ?? ''; ?>">
+                        <input type="text" class="form-control" name="new-hour[<?php echo $code['pcode']; ?>]" value="<?php echo $new['total_time'] ?? ''; ?> Hour">
                         <input type="hidden" class="form-control" name="program-code[<?php echo $code['pcode']; ?>]" value="<?php echo $code['pcode']; ?>">
                     </div>
                 <?php endforeach; ?>
@@ -304,8 +304,8 @@ session_start();
                                                             <th>No</th>
                                                             <th>ID</th>
                                                             <th>Name</th>
-                                                            <th>Email</th>
-                                                            <th>Action</th>
+                                                            <th>Program Code</th>
+                                                            <th>Detail</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -314,7 +314,7 @@ session_start();
                                                             <td scope="row"><?php echo $count++ ?></td>
                                                             <td><?php echo $data['userid'] ?></td>
                                                             <td><?php echo strtoupper($data['uname']) ?></td>
-                                                            <td><?php echo $data['email'] ?></td>
+                                                            <td><?php echo $data['pcode'] ?></td>
                                                             <td>
                                                                 <form action="list-logbook.php" method="post">
                                                                     <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">

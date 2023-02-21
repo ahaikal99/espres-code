@@ -25,7 +25,7 @@ session_start();
         $db_sql->execute();
         $sv_list = $db_sql -> fetch(PDO::FETCH_ASSOC);
 
-        $db_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$id'");
+        $db_list = $pdo->prepare("SELECT * FROM student WHERE svid = '$id' OR cosvid = '$id'");
         $db_list->execute();
         $student_list = $db_list -> fetchAll();
     }
@@ -85,9 +85,9 @@ session_start();
                     <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
-                    </li>
+                    </li> -->
                     <li class="nav-item active">
                         <a href="supervisor-profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Supervisor</span></a>
                     </li>
@@ -243,6 +243,14 @@ session_start();
                                                         <tr>
                                                             <th scope="row">Email</th>
                                                             <td><?php echo $sv_list['email'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">State</th>
+                                                            <td><?php echo $sv_list['state'] ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Branch</th>
+                                                            <td><?php echo $sv_list['branch'] ?></td>
                                                         </tr>
                                                         <tr>
                                                             <th scope="row">Address</th>

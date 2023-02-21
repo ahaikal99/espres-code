@@ -17,7 +17,7 @@ $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
 $sql_stmnt->execute();
 $user_db = $sql_stmnt->fetch(PDO::FETCH_ASSOC);
 
-$sql_stmnt2 = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid'");
+$sql_stmnt2 = $pdo->prepare("SELECT * FROM student WHERE svid = '$userid' OR cosvid = '$userid'");
 $sql_stmnt2->execute();
 $user_db2 = $sql_stmnt2->fetch(PDO::FETCH_ASSOC);
 
