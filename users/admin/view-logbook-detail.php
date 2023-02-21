@@ -9,11 +9,16 @@ session_start();
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
+            $studentid=$_SESSION["studentid"]??'';
+            $month = $_SESSION["month"]??'';
+            $year = $_SESSION["year"]??'';
         }
 
     }else{
         header("location: ../login.php");
     }
+
+    // echo var_dump($_SESSION);
 
     $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
     $sql_stmnt->execute();
@@ -30,6 +35,7 @@ if($_POST){
     $sql2 = $pdo->prepare("SELECT * FROM student WHERE userid = '$uid'");
     $sql2->execute();
     $user_db2 = $sql2->fetch(PDO::FETCH_ASSOC);
+    $name = $user_db2['uname'];
 }
 
 ?>
@@ -202,7 +208,9 @@ if($_POST){
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
-                                        <li class="breadcrumb-item"><a href="history.php">History</a></li>
+                                        <li class="breadcrumb-item"><a href="logbook.php">List of Student</a></li>
+                                        <li class="breadcrumb-item"><a href="list-logbook.php">Logbook</a></li>
+                                        <li class="breadcrumb-item"><a href="view-logbook.php">List of Logbook</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -221,6 +229,25 @@ if($_POST){
                                         <div class="card-block table-border-style">
                                             <div class="">
                                                 <div class="row mb-5">
+                                                    <div class="col-6">
+                                                        <div class="input-group" style="width: 520px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Student Name</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" style="background-color: white" value="<?php echo $name ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group" style="width: 220px;">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text">Student ID</span>
+                                                            </div>
+                                                            <input type="text" class="form-control" style="background-color: white" value="<?php echo $logbok_data['userid'] ?>" disabled>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-5">
+                                                    
                                                     <div class="col-3">
                                                         <div class="input-group" style="width: 220px;">
                                                             <div class="input-group-prepend">

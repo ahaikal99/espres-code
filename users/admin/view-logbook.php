@@ -8,19 +8,34 @@ session_start();
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
+            $id=$_SESSION["studentid"]??'';
+            $month = $_SESSION["month"]??'';
+            $year = $_SESSION["year"]??'';
         }
 
     }else{
         header("location: ../login.php");
     }
-
-    $id = $_POST['id'];
+    // echo var_dump($_SESSION);
+    
+    if($_POST){
+        $id = $_POST['id'];
     $month = $_POST['month'];
     $year = $_POST['year'];
+
+    $_SESSION["month"]= $month;
+    $_SESSION["year"]= $year;
+
+    $_SESSION["studentid"] = $id;
 
     $db_list = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = '$month' AND YEAR(date) = '$year' AND userid = '$id'");
     $db_list->execute();
     $logbook_list = $db_list -> fetchAll();
+    } else{
+        $db_list = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = '$month' AND YEAR(date) = '$year' AND userid = '$id'");
+        $db_list->execute();
+        $logbook_list = $db_list -> fetchAll();
+    }
 
     $detail = $pdo->prepare("SELECT * FROM student WHERE userid = '$id'");
     $detail->execute();
@@ -222,6 +237,8 @@ session_start();
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="logbook.php">List of Student</a></li>
+                                        <li class="breadcrumb-item"><a href="list-logbook.php">Logbook</a></li>
                                     </ul>
                                 </div>
                             </div>

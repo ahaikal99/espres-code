@@ -8,19 +8,25 @@ session_start();
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
+            $studentid = $_SESSION["studentid"]??'';
         }
 
     }else{
         header("location: ../login.php");
     }
-
+    // echo var_dump($_SESSION);
     if($_POST){
         $studentid = $_POST['id'];
+        $_SESSION["studentid"] = $studentid;
 
         $student_report = $pdo->prepare("SELECT DISTINCT MONTH(date) as month, YEAR(date) as year, userid FROM logbook WHERE userid = '$studentid'");
         $student_report->execute();
         $list_logbook = $student_report->fetchAll();
 
+    } else{
+        $student_report = $pdo->prepare("SELECT DISTINCT MONTH(date) as month, YEAR(date) as year, userid FROM logbook WHERE userid = '$studentid'");
+        $student_report->execute();
+        $list_logbook = $student_report->fetchAll();
     }
 
     $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
@@ -197,6 +203,7 @@ session_start();
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="logbook.php">List of student</a></li>
                                     </ul>
                                 </div>
                             </div>

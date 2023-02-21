@@ -19,6 +19,9 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
+    
+
+
     if($_POST){
         $id = $_POST['userid'];
         $year = $_POST['year'];
@@ -60,15 +63,45 @@ session_start();
 
             }
     }
+    
 
     $report_db = $pdo->prepare("SELECT * FROM report WHERE userid = '$userid' ORDER BY year DESC");
     $report_db->execute();
     $report_data = $report_db->fetchAll();
 
-    $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = 1 && YEAR(date) = 2022 && userid = '$userid';");
-    $db_sql->execute();
-    $calculate_total = $db_sql -> fetchAll();
+    // $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE MONTH(date) = 1 && YEAR(date) = 2022 && userid = '$userid';");
+    // $db_sql->execute();
+    // $calculate_total = $db_sql -> fetchAll();
 
+    // foreach($report_data as $newdata){
+    //     $month = $newdata['month'];
+    //     $year = $newdata['year'];
+    //     $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' && MONTH(date) = '$month' && YEAR(date) = '$year' ");
+    //     $db_sql->execute();
+    //     $calculate_total = $db_sql -> fetchAll();
+
+    //     $total = 0;
+    //     // ------calculate total hour------------------------------
+    //     // Loop the data items
+    //     foreach( $calculate_total as $element):
+            
+    //         // Explode by separator :
+    //         $temp = explode(":", $element['totaltime']);
+            
+    //         // Convert the hours into seconds
+    //         // and add to total
+    //         $total+= (int) $temp[0] * 3600;
+            
+    //         // Convert the minutes to seconds
+    //         // and add to total
+    //         $total+= (int) $temp[1] * 60;
+            
+    //     endforeach;
+        
+    //     // Format the seconds back into HH:MM:SS
+    //     $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
+    // }
+    
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -321,7 +354,8 @@ session_start();
                                                         <tr>
                                                             <th>Year</th>
                                                             <th>Month</th>
-                                                            <th>Action</th>
+                                                            <th>Total Hour</th>
+                                                            <th>Detail</th>
                                                         </tr>
                                                     </thead>
                                                     <?php if(empty($report_data)):?>
@@ -331,6 +365,34 @@ session_start();
                                                     <?php else: ?>
                                                         <tbody>
                                                         <?php foreach($report_data as $data): ?>
+                                                            <?php
+                                                                $month = $data['month'];
+                                                                $year = $data['year'];
+                                                                $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' && MONTH(date) = '$month' && YEAR(date) = '$year' ");
+                                                                $db_sql->execute();
+                                                                $calculate_total = $db_sql -> fetchAll();
+                                                        
+                                                                $total = 0;
+                                                                // ------calculate total hour------------------------------
+                                                                // Loop the data items
+                                                                foreach( $calculate_total as $element):
+                                                                    
+                                                                    // Explode by separator :
+                                                                    $temp = explode(":", $element['totaltime']);
+                                                                    
+                                                                    // Convert the hours into seconds
+                                                                    // and add to total
+                                                                    $total+= (int) $temp[0] * 3600;
+                                                                    
+                                                                    // Convert the minutes to seconds
+                                                                    // and add to total
+                                                                    $total+= (int) $temp[1] * 60;
+                                                                    
+                                                                endforeach;
+                                                                
+                                                                // Format the seconds back into HH:MM:SS
+                                                                $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
+                                                            ?>
                                                             <tr>
                                                                 <td><?php echo $data['year'] ?></td>
                                                                 <td><?php 
@@ -362,16 +424,13 @@ session_start();
                                                                 }
 
                                                                 ?></td>
+                                                                <td><?php echo $display ?></td>
                                                                 <td>
                                                                     <form style="display: inline-block;" action="report-detail.php" method="post">
                                                                         <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
                                                                         <input type="hidden" name="year" value="<?php echo $data['year'] ?>">
                                                                         <input type="hidden" name="month" value="<?php echo $data['month'] ?>">
                                                                         <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
-                                                                    </form>
-                                                                    <form style="display: inline-block;" action="delete-report.php" method="post">
-                                                                        <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
-                                                                        <button type="submit" class="label bg-danger text-white f-12" style="border-radius: 10px; border-width: 0px;">Delete</button>
                                                                     </form>
                                                                 </td>
                                                             </tr>

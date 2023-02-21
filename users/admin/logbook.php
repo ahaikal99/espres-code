@@ -8,12 +8,13 @@ session_start();
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
+            $_SESSION["studentid"]="";
         }
 
     }else{
         header("location: ../login.php");
     }
-
+    // echo var_dump($_SESSION);
     $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
@@ -279,7 +280,7 @@ session_start();
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Logbook</h5>
+                                            <h5>Student</h5>
                                         </div>
                                         <form action="" method="get">
                                             <div class="input-group mb-3 m-auto" style="max-width: 600px;">

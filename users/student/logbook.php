@@ -1,4 +1,7 @@
 <?php
+
+use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Month;
+
 include 'connection.php';
 
 session_start();
@@ -60,6 +63,32 @@ if ($_POST) {
     echo ' alert("Information has been successfully saved.")';  //not showing an alert box.
     echo '</script>';
     $_SESSION["user"] = $userid;
+
+    $year = date('Y', strtotime($date));
+    $month = date('m', strtotime($date));
+    // prepare a SQL query to retrieve data based on the year and month
+    $sql2 = "SELECT * FROM report WHERE year = :year AND month = :month AND userid='$userid'";
+    $stmt1 = $pdo->prepare($sql2);
+    $stmt1->bindParam(':year', $year, PDO::PARAM_INT);
+    $stmt1->bindParam(':month', $month, PDO::PARAM_INT);
+
+    // execute the query and fetch the results
+    $stmt1->execute();
+    $results2 = $stmt1->fetchAll();
+
+    // check if any records were returned
+    if (count($results2) < 1) {
+
+       
+
+        // year and month exist in database
+        $sql3 = "INSERT INTO report(year,month,userid) values ('$year','$month','$userid')";
+        $result4 = $pdo->prepare($sql3);
+        $result4->execute();
+    }
+
+    
+
 } else {
     $error = '<label for="promter" class="form-label" style="color:rgb(255, 62, 62);text-align:center;">Error!</label>';
 }
