@@ -17,7 +17,7 @@ if (isset($_SESSION["userid"])) {
     header("location: ../login.php");
 }
 
-echo var_dump($_SESSION);
+// echo var_dump($_SESSION);
 
 $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
 $sql_stmnt->execute();

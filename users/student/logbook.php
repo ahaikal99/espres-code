@@ -207,7 +207,7 @@ function randomString($n)
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li>
-                    <span class="badge text-bg-success">Student</span>
+                    <!-- <span class="badge text-bg-success">Student</span> -->
                 </li>
                 <li>
                     <div class="dropdown">

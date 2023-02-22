@@ -8,45 +8,89 @@ session_start();
             header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
-            $_SESSION["id"]="";
-            $_SESSION["month"]="";
-            $_SESSION["year"]="";
+            $id=$_SESSION['id']??'';
+            $month=$_SESSION['month']??'';
+            $year=$_SESSION['year']??'';
         }
-
     }else{
         header("location: ../login.php");
     }
+    // echo var_dump($_SESSION);
 
     $sql_stmnt = $pdo->prepare("SELECT * FROM student WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    if($_POST){
-        $check = $_POST['id'];
-        $reportid = $_POST['reportid'];
-        $year = $_POST['year'];
-        $month = $_POST['month'];
-
-        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE id = '$check'");
+    if ($_POST) {
+        $id = $_POST['id'];
+    
+        // Use a placeholder in the query string and bind the parameter
+        $db_report = $pdo->prepare("SELECT * FROM sem WHERE id = :id");
+        $db_report->bindParam(':id', $id);
+        $db_report->execute();
+    
+        $report_list = $db_report->fetch(PDO::FETCH_ASSOC);
+    
+        $sdate = $report_list['startdate'];
+        $edate = $report_list['enddate'];
+    
+        // Use placeholders in the query string and bind the parameters
+        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE date >= :start_date AND date <= :end_date AND userid = :id");
+        $db_sql->bindParam(':id', $userid);
+        $db_sql->bindParam(':start_date', $sdate);
+        $db_sql->bindParam(':end_date', $edate);
         $db_sql->execute();
-        $logbook = $db_sql -> fetch(PDO::FETCH_ASSOC);
+    
+        $calculate_total = $db_sql->fetchAll(PDO::FETCH_ASSOC);
+    
+        $total = 0;
+    
+        // Loop through the result set and calculate the total time
+        foreach ($calculate_total as $element) {
+            $temp = explode(":", $element['totaltime']);
+            $total += (int)$temp[0] * 3600 + (int)$temp[1] * 60;
+        }
+    
+        // Format the total time as a string in HH:MM:SS format
+        $display = gmdate('H:i', $total);
+    }
+     else{
 
-        $_SESSION["year"]=$year;
-        $_SESSION["month"]=$month;
+        $db_report = $pdo->prepare("SELECT * FROM report WHERE id = '$id'");
+        $db_report->execute();
+        $report_list = $db_report -> fetch(PDO::FETCH_ASSOC);
+        $idreport=$report_list['id'];
+        $monthreport=$report_list['month'];
+        $yearreport=$report_list['year'];
 
-        $_SESSION["id"]=$reportid;
+        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' && MONTH(date) = '$month' && YEAR(date) = '$year' ");
+        $db_sql->execute();
+        $calculate_total = $db_sql -> fetchAll();
+
+        $total = 0;
+        // ------calculate total hour------------------------------
+        // Loop the data items
+        foreach( $calculate_total as $element):
+            
+            // Explode by separator :
+            $temp = explode(":", $element['totaltime']);
+            
+            // Convert the hours into seconds
+            // and add to total
+            $total+= (int) $temp[0] * 3600;
+            
+            // Convert the minutes to seconds
+            // and add to total
+            $total+= (int) $temp[1] * 60;
+            
+        endforeach;
+        
+        // Format the seconds back into HH:MM:SS
+        $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
     }
 
-
-    // $datey=$logbook['date'];
-    // $year = date("Y", strtotime($datey));
-    // $_SESSION["year"]=$year;
-
-    // $datem=$logbook['date'];
-    // $month = date("m", strtotime($datem));
-    // $_SESSION["month"]=$month;
-
-?>
+    ?>
+    
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -223,7 +267,6 @@ session_start();
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
                                         <li class="breadcrumb-item"><a href="report.php">Report</a></li>
-                                        <li class="breadcrumb-item"><a href="report-detail.php">Report Detail</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -236,83 +279,62 @@ session_start();
                             <div class="row">
                                 <!-- [ Hover-table ] start -->
                                 <div class="col">
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h5>Logbook Detail</h5>
+                                    <div class="card" id="printableArea">
+                                        <div class="card-header mb-3">
+                                            <h5>Report</h5>
                                         </div>
-                                        <div class="card-block table-border-style mb-4">
-                                            <div class="">
-                                                <div class="row mb-5">
-                                                    <div class="col-3">
-                                                        <div class="input-group" style="width: 220px;">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text">DATE</span>
-                                                            </div>
-                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['date'] ?>" disabled>
-                                                            
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <div class="input-group" style="width: 230px;">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text">Start Time</span>
-                                                            </div>
-                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['starttime'] ?>" disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <div class="input-group" style="width: 210px;">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text">End Time</span>
-                                                            </div>
-                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['endtime'] ?>" disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <div class="input-group" style="width: 210px;">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text">Duration</span>
-                                                            </div>
-                                                            <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['totaltime'] ?>" disabled>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="input-group mb-5" style="width: 600px;">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">Research Title</span>
-                                                    </div>
-                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $user_db['title'] ?>" disabled>
-                                                </div>
-                                                <div class="input-group mb-5" style="width: 600px;">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">Activity</span>
-                                                    </div>
-                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['activity'] ?>" disabled>
-                                                </div>
-                                                <div class="input-group mb-5" style="width: 300px;">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text">Method</span>
-                                                    </div>
-                                                    <input style="background-color: white;" type="text" class="form-control" value="<?php echo $logbook['method'] ?>" disabled>
-                                                </div>
-                                                <div class="input-group mb-5" style="width: 1000px;">
-                                                    <div class="input-group">
-                                                        <span class="input-group-text" style="width: 1000px;">Discussion</span>
-                                                    </div>
-                                                    <div class="form-control" style="height: 300px; background-color: white;"><?php echo $logbook['discuss'] ?></div>
-                                                </div>
-                                                <?php if($logbook['doc']): ?>
-                                                    <iframe src="<?php echo $logbook['doc'] ?>" width="100%" height="1000px"></iframe>
-                                                <?php endif; ?>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Student Name : </a><?php echo strtoupper($user_db['uname']) ?></span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Student ID : </a><?php echo $user_db['userid'] ?></span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Program Code : </a><?php echo $user_db['pcode'] ?></span>
+                                            </div>
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Semester : </a><?php echo $sdate .' '. '-' .' '. $edate ?></span>
                                             </div>
                                         </div>
-                                        <!-- <form action="edit-logbook.php" method="post">
-                                            <input type="" value="<?php  ?>" name="month">
-                                            <input type="" value="<?php  ?>" name="year">
-                                            <input type="" value="<?php  ?>" name="month">
-                                            <button class="btn btn-primary m-2" style="position: absolute; right:0; bottom: 0;">Edit</button>
-                                        </form> -->
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Research Title : </a><?php echo $user_db['title'] ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 d-flex flex-row mb-3 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Supervisor Name : </a><?php echo strtoupper($user_db['svname']) ?></span>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 d-flex flex-row mb-2 gap-5" style="color: black;">
+                                            <div class="p-2">
+                                                <span> <a style="font-weight: bold;">Co-Supervisor Name : </a><?php echo strtoupper($user_db['cosv']) ?></span>
+                                            </div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="p-2 d-flex"style="font-weight: bold; color: black;">
+                                            <div class="p-2 flex-fill w-25">Date</div>
+                                            <div class="p-2 flex-fill w-25">Activity</div>
+                                            <div class="p-2 flex-fill w-25">Duration</div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <?php foreach($calculate_total as $logbook): ?>
+                                            <div class="p-2 d-flex"style="color: black;">
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['date']?></div>
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['activity']?></div>
+                                                <div class="p-2 flex-fill w-25"><?php echo $logbook['totaltime']?></div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="p-2 d-flex"style="color: black;">
+                                            <div class="p-2 flex-fill"></div>
+                                            <div class="p-2 flex-fill"></div>
+                                            <div class="p-2 flex-fill"><a style="font-weight: bold;">Total Hours : </a><?php echo $display." "."Hours" ?></div>
+                                        </div>
+                                        <hr class="mb-3" style="height:2px;border-width:0;color:gray;background-color:gray">
                                     </div>
+                                    <a href="javascript:void(0);" class="m-2 btn btn-primary" onclick="printPageArea('printableArea')">Print</a>
                                 </div>
                             </div>
                         </div>

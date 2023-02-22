@@ -285,13 +285,13 @@ session_start();
                                                             <label for="title">Research Title</label>
                                                             <input type="text" class="form-control w-50" id="title" value="<?php echo $user_db['title'] ?>" name="title">
                                                         </div>
-                                                        <div class="form-group">
+                                                        <!-- <div class="form-group">
                                                             <label for="date">Faculty</label>
                                                             <select class="form-control w-50" id="exampleFormControlSelect1" name="faculty">
                                                                 <option>Please Choose</option>
                                                                 <option>FSKM</option>
                                                             </select>
-                                                        </div>
+                                                        </div> -->
                                                         <div class="form-group">
                                                             <label for="pcode">Program Code</label>
                                                             <input type="text" class="form-control w-50" id="pcode" value="<?php echo $user_db['pcode'] ?>" name="pcode">

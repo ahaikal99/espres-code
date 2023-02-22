@@ -229,10 +229,10 @@ session_start();
                                                             <th scope="row">Research Title<Title></Title></th>
                                                             <td><?php echo $user_db['title'] ?></td>
                                                         </tr>
-                                                        <tr>
-                                                            <th scope="row">Faculty</th>
+                                                        <!-- <tr>
+                                                            <th scope="row" >Faculty</th>
                                                             <td><?php echo $user_db['faculty'] ?></td>
-                                                        </tr>
+                                                        </tr> -->
                                                         <tr>
                                                             <th scope="row">Program Code</th>
                                                             <td><?php echo strtoupper($user_db['pcode']) ?></td>

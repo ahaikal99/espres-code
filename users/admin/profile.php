@@ -18,6 +18,37 @@ session_start();
     $sql->execute();
     $admin_data = $sql->fetch(PDO::FETCH_ASSOC);
 
+    $sem = $pdo->prepare("SELECT * FROM sem");
+    $sem->execute();
+    $semdata = $sem->fetchAll();
+
+    if ($_POST) {
+        $start = $_POST['start'];
+        $end = $_POST['end'];
+    
+        // Use placeholders in the prepared statement to prevent SQL injection
+        $check = $pdo->prepare("SELECT * FROM sem WHERE startdate = :start AND enddate = :end");
+        $check->bindParam(':start', $start);
+        $check->bindParam(':end', $end);
+        $check->execute();
+        
+        // Check if the query returned any rows, not just if the statement executed successfully
+        if ($check->rowCount() > 0) {
+            $mssg = 'The Semester Already Exist';
+            echo '<script type="text/javascript">alert("' . $mssg . '");</script>';
+        } else {
+            // Use placeholders in the SQL statement to prevent SQL injection
+            $insert = "INSERT INTO sem(startdate, enddate) VALUES(:start, :end)";
+            $sql1 = $pdo->prepare($insert);
+            $sql1->bindParam(':start', $start);
+            $sql1->bindParam(':end', $end);
+            $sql1->execute();
+
+            header('Location: profile.php');
+        }
+    }
+    
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -200,41 +231,65 @@ session_start();
                                 <div class="col-xl-12">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Profile</h5>
+                                            <h5>Semester</h5>
                                         </div>
                                         <div class="card-block table-border-style">
-                                            <?php if(empty($admin_data['pic'])): ?>
-                                                <div class="mb-5"><img src="profile.png" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
-                                            <?php else: ?>
-                                                <div class="mb-5"><img src="<?php echo $admin_data['pic'] ?>" style="width: 200px; height: 200px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;"></div>
-                                            <?php endif; ?>
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">ID</th>
-                                                            <td><?php echo $admin_data['userid'] ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Name</th>
-                                                            <td><?php echo strtoupper($admin_data['uname']) ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">No. Tel</th>
-                                                            <td><?php echo $admin_data['phone'] ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Email</th>
-                                                            <td><?php echo $admin_data['email'] ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Address</th>
-                                                            <td><?php echo $admin_data['address'] ?></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                                    <a href="edit-profile.php" type="button" class="btn btn-primary" style="position: absolute; right:0; bottom: 0;">Edit</a>
+                                            <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                        Add Semester
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Semester</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
+                                            <form action="" method="post">
+                                                <div class="modal-body">
+                                                <div class="input-group mb-5">
+                                                    <span class="input-group-text" id="basic-addon1">Start Date</span>
+                                                    <input type="date" class="form-control" name="start">
+                                                </div>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" id="basic-addon1">End Date</span>
+                                                    <input type="date" class="form-control" name="end">
+                                                </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Create</button>
+                                                </div>
+                                            </form>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        <table class="table">
+                                        <thead>
+                                            <tr>
+                                            <th scope="col">No.</th>
+                                            <th scope="col">Semester</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <?php 
+                                        $b = 1; // Move this line outside of the foreach loop
+                                        foreach ($semdata as $i): ?>
+                                            <tr>
+                                                <td scope="col"><?php echo $b++; ?></td> <!-- Increment $b after outputting its value -->
+                                                <td scope="col"><?php echo $i['startdate'] .' '. '-' .' '. $i['enddate']; ?></td>
+                                                <td>
+                                                    <form action="deletesem.php" method="post">
+                                                        <input type="hidden" value="<?php echo $i['id'] ?>" name="id">
+                                                        <button class="btn bg-danger" style="color: white" type="submit">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                        </tbody>
+                                        </table>
+                                        </div>
                                         </div>
                                     </div>
                                 </div>

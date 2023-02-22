@@ -19,7 +19,9 @@ session_start();
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
 
-    
+    $sql_stmnt3 = $pdo->prepare("SELECT * FROM sem");
+    $sql_stmnt3->execute();
+    $go = $sql_stmnt3->fetchAll();
 
 
     if($_POST){
@@ -293,9 +295,144 @@ session_start();
                                             <h5>Report</h5>
                                         </div>
                                         <div class="card-body">
+                                        
+                                        <div class="col-sm-12">
+                                            <hr>
+                                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Month</a>
+                                                </li>
+                                                <!-- <li class="nav-item">
+                                                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Semester</a>
+                                                </li> -->
+                                            </ul>
+                                            <div class="tab-content" id="pills-tabContent">
+                                                <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                                                <div class="card-block table-border-style">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover text-center">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Year</th>
+                                                                    <th>Month</th>
+                                                                    <th>Total Hour</th>
+                                                                    <th>Detail</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <?php if(empty($report_data)):?>
+                                                                <td></td>
+                                                                <td><?php echo "No Data";?></td>
+                                                                <td></td>
+                                                            <?php else: ?>
+                                                                <tbody>
+                                                                <?php foreach($report_data as $data): ?>
+                                                                    <?php
+                                                                        $month = $data['month'];
+                                                                        $year = $data['year'];
+                                                                        $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' && MONTH(date) = '$month' && YEAR(date) = '$year' ");
+                                                                        $db_sql->execute();
+                                                                        $calculate_total = $db_sql -> fetchAll();
+                                                                
+                                                                        $total = 0;
+                                                                        // ------calculate total hour------------------------------
+                                                                        // Loop the data items
+                                                                        foreach( $calculate_total as $element):
+                                                                            
+                                                                            // Explode by separator :
+                                                                            $temp = explode(":", $element['totaltime']);
+                                                                            
+                                                                            // Convert the hours into seconds
+                                                                            // and add to total
+                                                                            $total+= (int) $temp[0] * 3600;
+                                                                            
+                                                                            // Convert the minutes to seconds
+                                                                            // and add to total
+                                                                            $total+= (int) $temp[1] * 60;
+                                                                            
+                                                                        endforeach;
+                                                                        
+                                                                        // Format the seconds back into HH:MM:SS
+                                                                        $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
+                                                                    ?>
+                                                                    <tr>
+                                                                        <td><?php echo $data['year'] ?></td>
+                                                                        <td><?php 
+                                                                        
+                                                                        if($data['month']==1){
+                                                                            echo "January";
+                                                                        } elseif($data['month']==2){
+                                                                            echo "February";
+                                                                        } elseif($data['month']==3){
+                                                                            echo "March";
+                                                                        } elseif($data['month']==4){
+                                                                            echo "April";
+                                                                        } elseif($data['month']==5){
+                                                                            echo "May";
+                                                                        } elseif($data['month']==6){
+                                                                            echo "June";
+                                                                        } elseif($data['month']==7){
+                                                                            echo "July";
+                                                                        } elseif($data['month']==8){
+                                                                            echo "August";
+                                                                        } elseif($data['month']==9){
+                                                                            echo "September";
+                                                                        } elseif($data['month']==10){
+                                                                            echo "October";
+                                                                        } elseif($data['month']==11){
+                                                                            echo "November";
+                                                                        } else{
+                                                                            echo "December";
+                                                                        }
+
+                                                                        ?></td>
+                                                                        <td><?php echo $display ?></td>
+                                                                        <td>
+                                                                            <form style="display: inline-block;" action="report-detail.php" method="post">
+                                                                                <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
+                                                                                <input type="hidden" name="year" value="<?php echo $data['year'] ?>">
+                                                                                <input type="hidden" name="month" value="<?php echo $data['month'] ?>">
+                                                                                <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
+                                                                            </form>
+                                                                        </td>
+                                                                    </tr>
+                                                                <?php endforeach; ?>
+                                                            </tbody>
+                                                            <?php endif; ?>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                                                    <table class="table table-hover text-center">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>No.</th>
+                                                                <th>Semester</th>
+                                                                <th>Detail</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <?php 
+                                                        $b = 1; // Move this line outside of the foreach loop
+                                                        foreach ($go as $i): ?>
+                                                            <tr>
+                                                                <td scope="col"><?php echo $b++; ?></td> <!-- Increment $b after outputting its value -->
+                                                                <td scope="col"><?php echo $i['startdate'] .' '. '-' .' '. $i['enddate']; ?></td>
+                                                                <td>
+                                                                    <form action="sem.php" method="post">
+                                                                        <input type="hidden" value="<?php echo $i['id'] ?>" name="id">
+                                                                        <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>                                                                    </form>
+                                                                </td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <!-- Button trigger modal -->
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Generate Report</button>
+                                        <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Generate Report</button> -->
 
                                         <!-- Modal -->
                                         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -345,99 +482,6 @@ session_start();
                                                         </div>
                                                     </form>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="card-block table-border-style">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover text-center">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Year</th>
-                                                            <th>Month</th>
-                                                            <th>Total Hour</th>
-                                                            <th>Detail</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <?php if(empty($report_data)):?>
-                                                        <td></td>
-                                                        <td><?php echo "No Data";?></td>
-                                                        <td></td>
-                                                    <?php else: ?>
-                                                        <tbody>
-                                                        <?php foreach($report_data as $data): ?>
-                                                            <?php
-                                                                $month = $data['month'];
-                                                                $year = $data['year'];
-                                                                $db_sql = $pdo->prepare("SELECT * FROM logbook WHERE userid = '$userid' && MONTH(date) = '$month' && YEAR(date) = '$year' ");
-                                                                $db_sql->execute();
-                                                                $calculate_total = $db_sql -> fetchAll();
-                                                        
-                                                                $total = 0;
-                                                                // ------calculate total hour------------------------------
-                                                                // Loop the data items
-                                                                foreach( $calculate_total as $element):
-                                                                    
-                                                                    // Explode by separator :
-                                                                    $temp = explode(":", $element['totaltime']);
-                                                                    
-                                                                    // Convert the hours into seconds
-                                                                    // and add to total
-                                                                    $total+= (int) $temp[0] * 3600;
-                                                                    
-                                                                    // Convert the minutes to seconds
-                                                                    // and add to total
-                                                                    $total+= (int) $temp[1] * 60;
-                                                                    
-                                                                endforeach;
-                                                                
-                                                                // Format the seconds back into HH:MM:SS
-                                                                $display = sprintf('%02d:%02d',($total / 3600),($total / 60 % 60),$total % 60);
-                                                            ?>
-                                                            <tr>
-                                                                <td><?php echo $data['year'] ?></td>
-                                                                <td><?php 
-                                                                
-                                                                if($data['month']==1){
-                                                                    echo "January";
-                                                                } elseif($data['month']==2){
-                                                                    echo "February";
-                                                                } elseif($data['month']==3){
-                                                                    echo "March";
-                                                                } elseif($data['month']==4){
-                                                                    echo "April";
-                                                                } elseif($data['month']==5){
-                                                                    echo "May";
-                                                                } elseif($data['month']==6){
-                                                                    echo "June";
-                                                                } elseif($data['month']==7){
-                                                                    echo "July";
-                                                                } elseif($data['month']==8){
-                                                                    echo "August";
-                                                                } elseif($data['month']==9){
-                                                                    echo "September";
-                                                                } elseif($data['month']==10){
-                                                                    echo "October";
-                                                                } elseif($data['month']==11){
-                                                                    echo "November";
-                                                                } else{
-                                                                    echo "December";
-                                                                }
-
-                                                                ?></td>
-                                                                <td><?php echo $display ?></td>
-                                                                <td>
-                                                                    <form style="display: inline-block;" action="report-detail.php" method="post">
-                                                                        <input type="hidden" name="id" value="<?php echo $data['id'] ?>">
-                                                                        <input type="hidden" name="year" value="<?php echo $data['year'] ?>">
-                                                                        <input type="hidden" name="month" value="<?php echo $data['month'] ?>">
-                                                                        <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
-                                                                    </form>
-                                                                </td>
-                                                            </tr>
-                                                        <?php endforeach; ?>
-                                                    </tbody>
-                                                    <?php endif; ?>
-                                                </table>
                                             </div>
                                         </div>
                                         </div>

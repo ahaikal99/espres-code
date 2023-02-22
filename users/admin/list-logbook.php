@@ -220,6 +220,13 @@ session_start();
                                         <div class="card-header">
                                             <h5>Logbook</h5>
                                         </div>
+                                        <!-- <a href="sem.php" type="button" class="btn bg-primary" style="color:white; width:100px">Semester</a>
+                                        
+                                        <form action="semdetail.php" method="post">
+                                            <input type="hidden" name="id" value="<?php echo $studentid ?>">
+                                            <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
+                                        </form> -->
+                                        
                                         <?php if(!$list_logbook): ?>
                                             <div class="text-center" style="padding: 20px;">
                                                 <h4><?php echo "No Data"?></h4>
@@ -316,7 +323,7 @@ session_start();
                                                         <?php endforeach; ?>
                                                     </tbody>
                                                 </table>
-                                                <nav aria-label="..." style="width: 245px; height: 60px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;">
+                                                <!-- <nav aria-label="..." style="width: 245px; height: 60px;  object-fit: fill;display: block; margin-left: auto; margin-right: auto; border-radius: 100px;">
                                                     <ul class="pagination">
                                                         <li class="page-item disabled">
                                                             <a class="page-link">Previous</a>
@@ -330,7 +337,7 @@ session_start();
                                                             <a class="page-link" href="#">Next</a>
                                                         </li>
                                                     </ul>
-                                                </nav>
+                                                </nav> -->
                                             </div>
                                         </div>
                                         <?php endif; ?>

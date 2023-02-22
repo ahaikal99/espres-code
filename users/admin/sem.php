@@ -4,42 +4,44 @@ include 'connection.php';
 session_start();
 
     if(isset($_SESSION["userid"])){
-        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='supervisor'){
-            header("location: ../signin.php");
+        if(($_SESSION["userid"])=="" or $_SESSION['usertype']!='admin'){
+            header("location: ../login.php");
         }else{
             $userid=$_SESSION["userid"];
-            $id = $_SESSION["studentid"]??'';
+            $studentid = $_SESSION["studentid"]??'';
         }
 
     }else{
         header("location: ../login.php");
     }
-
+    // echo var_dump($_SESSION);
     $sql_stmnt3 = $pdo->prepare("SELECT * FROM sem");
     $sql_stmnt3->execute();
     $go = $sql_stmnt3->fetchAll();
+    if($_POST){
+        $studentid = $_POST['id'];
+        $_SESSION["studentid"] = $studentid;
 
-    $sql_stmnt = $pdo->prepare("SELECT * FROM supervisor WHERE userid = '$userid'");
+        $student_report = $pdo->prepare("SELECT DISTINCT MONTH(date) as month, YEAR(date) as year, userid FROM logbook WHERE userid = '$studentid'");
+        $student_report->execute();
+        $list_logbook = $student_report->fetchAll();
+
+    } else{
+        $student_report = $pdo->prepare("SELECT DISTINCT MONTH(date) as month, YEAR(date) as year, userid FROM logbook WHERE userid = '$studentid'");
+        $student_report->execute();
+        $list_logbook = $student_report->fetchAll();
+    }
+
+    $sql_stmnt = $pdo->prepare("SELECT * FROM admin WHERE userid = '$userid'");
     $sql_stmnt->execute();
     $user_db = $sql_stmnt -> fetch(PDO::FETCH_ASSOC);
-
-    if($_POST){
-        $id = $_POST['id'];
-        $display = $pdo->prepare("SELECT * FROM report WHERE userid = '$id'");
-        $display->execute();
-        $list_logbook = $display -> fetchAll();
-    } else{
-        $display = $pdo->prepare("SELECT * FROM report WHERE userid = '$id'");
-        $display->execute();
-        $list_logbook = $display -> fetchAll();
-    }
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>ESPRES</title>
+    <title>Home</title>
     
     <!-- Meta -->
     <meta charset="utf-8">
@@ -87,18 +89,21 @@ session_start();
                     <li class="nav-item">
                         <a href="dashboard.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-user"></i></span><span class="pcoded-mtext">Profile</span></a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a href="supervisor-profile.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-users"></i></span><span class="pcoded-mtext">Supervisor</span></a>
                     </li>
-                    <li  class="nav-item pcoded-hasmenu">
-                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="bi bi-mortarboard-fill"></i></span><span class="pcoded-mtext">Student</span></a>
+                    <li  class="nav-item pcoded-hasmenu active">
+                        <a href="javascript:" class="nav-link active"><span class="pcoded-micon active"><i class="bi bi-mortarboard-fill"></i></span><span class="pcoded-mtext">Student</span></a>
                         <ul class="pcoded-submenu">
                             <li class=""><a href="student-profile.php" class="">Profile</a></li>
-                            <li class=""><a href="logbook.php" class="">Logbook</a></li>
+                            <li class="active"><a href="logbook.php" class="">Logbook</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item active">
-                        <a href="report.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file"></i></span><span class="pcoded-mtext">Report</span></a>
+                    <li class="nav-item">
+                        <a href="report.php" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Report</span></a>
                     </li>
                 </ul>
             </div>
@@ -136,7 +141,7 @@ session_start();
                         </div>
                     </div>
                 </li>
-                <li>
+                <li class="nav-item">
                     <div>
                         <h6></h6>
                     </div>
@@ -169,9 +174,9 @@ session_start();
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-notification">
                             <div class="pro-head">
-                                <img src="<?php echo $user_db['pic'] ?>" class="img-radius">
+                                <img src="profile.png" class="img-radius">
                                 <span><?php echo $user_db['uname'] ?></span>
-                                
+                            
                             </div>
                             <ul class="pro-body">
                                 <li><a href="change-password.php" class="dropdown-item"><i class="feather icon-settings"></i> Change Password</a></li>
@@ -201,7 +206,7 @@ session_start();
                                     </div>
                                     <ul class="breadcrumb">
                                         <li class="breadcrumb-item"><a href="dashboard.php"><i class="feather icon-home"></i></a></li>
-                                        <li class="breadcrumb-item"><a href="report.php">List of Students</a></li>
+                                        <li class="breadcrumb-item"><a href="logbook.php">List of student</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -216,89 +221,8 @@ session_start();
                                 <div class="col">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h5>Report</h5>
+                                            <h5>Logbook</h5>
                                         </div>
-                                        <div class="col-sm-12">
-                                    <hr>
-                                    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">Month</a>
-                                        </li>
-                                        <!-- <li class="nav-item">
-                                            <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">Semester</a>
-                                        </li> -->
-                                    </ul>
-                                    <div class="tab-content" id="pills-tabContent">
-                                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-                                            
-                                        <?php if(!$list_logbook): ?>
-                                            <div class="text-center" style="padding: 20px;">
-                                                <h4><?php echo "No Data"?></h4>
-                                            </div>
-                                        <?php else: ?>
-                                            <div class="card-block table-border-style">
-                                            <div class="table-responsive text-center">
-                                                <table class="table table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>No</th>
-                                                            <th>Year</th>
-                                                            <th>Month</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <?php foreach($list_logbook as $i => $data): ?>
-                                                        <tr>
-                                                            <td scope="row"><?php echo $i + 1 ?></td>
-                                                            <td><?php echo $data['year'] ?></td>
-                                                            <td>
-                                                                <?php 
-                                                                if($data['month']==1){
-                                                                    echo "January";
-                                                                } elseif($data['month']==2){
-                                                                    echo "February";
-                                                                } elseif($data['month']==3){
-                                                                    echo "March";
-                                                                } elseif($data['month']==4){
-                                                                    echo "April";
-                                                                } elseif($data['month']==5){
-                                                                    echo "May";
-                                                                } elseif($data['month']==6){
-                                                                    echo "June";
-                                                                } elseif($data['month']==7){
-                                                                    echo "July";
-                                                                } elseif($data['month']==8){
-                                                                    echo "August";
-                                                                } elseif($data['month']==9){
-                                                                    echo "September";
-                                                                } elseif($data['month']==10){
-                                                                    echo "October";
-                                                                } elseif($data['month']==11){
-                                                                    echo "November";
-                                                                } else{
-                                                                    echo "December";
-                                                                }
-                                                                ?>
-                                                            </td>
-                                                            <td>
-                                                                <form action="view-report-detail.php" method="post">
-                                                                    <input type="hidden" name="id" value="<?php echo $data['userid'] ?>">
-                                                                    <input type="hidden" name="reid" value="<?php echo $data['id'] ?>">
-                                                                    <input type="hidden" name="year" value="<?php echo $data['year'] ?>">
-                                                                    <input type="hidden" name="month" value="<?php echo $data['month'] ?>">
-                                                                    <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>
-                                                                </form>
-                                                            </td>
-                                                        </tr>
-                                                        <?php endforeach; ?>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <?php endif; ?>
-                                        </div>
-                                        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                                         <table class="table table-hover text-center">
                                                         <thead>
                                                             <tr>
@@ -315,7 +239,7 @@ session_start();
                                                                 <td scope="col"><?php echo $b++; ?></td> <!-- Increment $b after outputting its value -->
                                                                 <td scope="col"><?php echo $i['startdate'] .' '. '-' .' '. $i['enddate']; ?></td>
                                                                 <td>
-                                                                    <form action="sem.php" method="post">
+                                                                    <form action="semdetail.php" method="post">
                                                                         <input type="hidden" value="<?php echo $i['id'] ?>" name="id">
                                                                         <button type="submit" class="label bg-primary text-white f-12" style="border-radius: 10px; border-width: 0px;">View</button>                                                                    </form>
                                                                 </td>
@@ -323,9 +247,6 @@ session_start();
                                                         <?php endforeach; ?>
                                                         </tbody>
                                                     </table>
-                                        </div>
-                                    </div>
-                                </div>
                                     </div>
                                 </div>
                                 <!-- [ Hover-table ] end -->

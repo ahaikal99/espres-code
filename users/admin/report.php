@@ -213,6 +213,7 @@ if ($_POST) {
                                         <div class="card-header">
                                             <h5>Report</h5>
                                         </div>
+                                        <!-- <a href="sem.php" type="button" class="btn btn-primary btn-sm" style="padding: 5px; width: 100px">Semester</a> -->
                                         <div class="col-sm-12 p-0" style="overflow: scroll;">
                                             <hr>
                                             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -393,6 +394,9 @@ if ($_POST) {
 
                                                         </tbody>
                                                     </table>
+                                                </div>
+                                                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                                                    <p class="mb-0">Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade. Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork. Williamsburg banh mi whatever gluten-free, carles pitchfork biodiesel fixie etsy retro mlkshk vice blog. Scenester cred you probably haven't heard of them, vinyl craft beer blog stumptown. Pitchfork sustainable tofu synth chambray yr.</p>
                                                 </div>
                                                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                                     <table class="table text-center">
