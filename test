@@ -1,0 +1,1004 @@
+<?php
+require 'db_config.php';
+require_once 'dompdf/autoload.inc.php';
+
+use Dompdf\Dompdf;
+
+$dompdf = new Dompdf();
+
+function paparRowSpecial($id_ah,$kodkategori){
+    global $db;
+	 $sqlcheck="select SUM(anggarandisemak) as anggarandisemak,SUM(anggaran) as anggaran ";
+	$sqlcheck.=" FROM ahndetails where id_ah ='$id_ah' AND kodkategori='$kodkategori'";
+	$sqlcheck.=" AND statuspapar='1'";
+
+	$qcheck = $db->query($sqlcheck);
+	//echo $sqlcheck;
+	
+	$row   = $qcheck->fetch_assoc();
+	$anggarandisemak=$row['anggarandisemak'];	
+	$anggaran=$row['anggaran'];	
+
+	
+	return array(
+		'anggarandisemak'=> $anggarandisemak,
+		'anggaran'=> $anggaran
+
+	);
+		
+	
+	
+}
+
+
+function number_formatting($val){
+	 return number_format($val,2);
+}
+
+
+function getTerimaanPast($tahun,$kodjabatan,$kodhasil,$q,$kodptj){
+	global $db;
+		$sqlt1 = "SELECT *";
+		$sqlt1 .=" FROM terimaandetails_full";
+		$sqlt1 .= " WHERE tahun = '$tahun'";
+		 //$sqlt1 .= " AND kodjabatan = '$kodjabatan'";
+		 $sqlt1 .= " AND kodhasil = '$kodhasil'";
+		 
+		if($kodptj!=""){
+			  $sqlt1 .= " AND kodptj = '$kodptj'";
+		  } 
+		 
+		 
+		 
+		 
+		 if($q==1){
+			 $sqlt1 .= " ORDER BY bulan ASC";
+		}else{//2,0
+			$sqlt1 .= " ORDER BY bulan DESC";
+		 }
+		 $sqlt1 .= " LIMIT 1";
+		 $queryt1 = $db->query($sqlt1);
+		  $isExist=$queryt1->num_rows;
+		if($isExist>0){
+			$rowt1   = $queryt1->fetch_assoc();
+			$perkara=$rowt1['sebenar'];
+			$asal=$rowt1['asal'];
+		}else{
+		
+		//$perkara= "<font color='red'>Tiada rekod</font>";
+		$perkara =0;
+		 }
+		 
+		 //$perkara = $sqlt1;
+
+		//return $perkara."<br>".$sqlt1;
+		return $perkara;		
+}
+
+
+
+function getTerimaanPastAsal($tahun,$kodjabatan,$kodhasil,$q,$kodptj){
+	global $db;
+		$sqlt1 = "SELECT *";
+		$sqlt1 .=" FROM terimaandetails_full";
+		$sqlt1 .= " WHERE tahun = '$tahun'";
+		 //$sqlt1 .= " AND kodjabatan = '$kodjabatan'";
+		 $sqlt1 .= " AND kodhasil = '$kodhasil'";
+		 
+		 
+		 if($kodptj!=""){
+			  $sqlt1 .= " AND kodptj = '$kodptj'";
+		  }
+		  
+		 
+		 
+		 if($q==1){
+			 $sqlt1 .= " ORDER BY bulan ASC";
+		}else{//2,0
+			$sqlt1 .= " ORDER BY bulan DESC";
+		 }
+		 
+		
+		 
+		 
+		 $sqlt1 .= " LIMIT 1";
+		 $queryt1 = $db->query($sqlt1);
+		 $isExist=$queryt1->num_rows;
+		if($isExist>0){
+			$rowt1   = $queryt1->fetch_assoc();
+			 $perkara=$rowt1['asal'];
+		}else{
+		
+		$perkara= "<font color='red'>Tiada rekod</font>";
+		
+		 }
+		 
+		 //$perkara = $sqlt1;
+
+		//return $perkara."<br>".$sqlt1;
+		return $perkara;		
+}
+
+
+
+
+
+	
+	
+function getTerimaan($tahun,$kodptj,$kodhasil){
+	global $db;
+	$sqlt1 = "SELECT a.kodjabatan,a.kodptj,a.tahun,a.bulan,";
+	$sqlt1 .=" b.kodptj,b.kodhasil,b.asal,b.disemak,b.sebenar as sebenar";
+	$sqlt1 .=" FROM terimaan a,terimaandetails b";
+	
+	$sqlt1 .= " WHERE a.tahun = '$tahun'";
+	if($kodptj!=""){
+		$sqlt1 .= " AND b.kodptj = '$kodptj'";
+	}
+	$sqlt1 .= " AND b.kodhasil = '$kodhasil'";
+	$queryt1 = $db->query($sqlt1);
+	
+	
+	$isExist=$queryt1->num_rows;
+	if($isExist>0){
+		$rowt1   = $queryt1->fetch_assoc();
+		$perkara=$rowt1['sebenar'];
+	}else{
+		  $perkara= "<font color='red'>Tiada<br>Rekod</font>";
+	  }
+	 
+	 
+	  return $perkara;
+	
+	
+	
+}	
+	
+
+function getName($kodhasil){
+    global $db;
+	$sqlt1 = "SELECT * FROM kodhasil";
+	$sqlt1 .= " WHERE kod = '$kodhasil'";
+	$queryt1 = $db->query($sqlt1);
+	$isExist=$queryt1->num_rows;
+	if($isExist>0){
+		$rowt1   = $queryt1->fetch_assoc();
+		$perkara=$rowt1['perkara'];
+	}else{
+		//check di kod_cucu 
+		$perkara ="Tidak wujud";
+		//$this->checkkod($kodhasil);		
+			
+	
+	 }
+	  return $perkara;
+ }	
+ 
+ 
+ 
+ 
+ function getNameKategori($kodhasil){
+    global $db;
+	 $sqlt1 = "SELECT * FROM kodhasilkategori";
+	 $sqlt1 .= " WHERE kodkategori = '$kodhasil'";
+	 $queryt1 = $db->query($sqlt1);
+	 $isExist=$queryt1->num_rows;
+	 if($isExist>0){
+		 $rowt1   = $queryt1->fetch_assoc();
+		 $perkara=$rowt1['perkara'];
+	 }else{
+		 //check di kod_cucu 
+		 $perkara ="Tidak wujud";
+		 //$this->checkkod($kodhasil);		
+			 
+	 
+	  }
+	   return $perkara;
+  }
+ 
+ 
+	
+
+// function test(){
+// 	$kodhasil = 
+// 	$this->checkkod($kodhasil);		
+
+	
+// }	
+	
+	
+function checkkod($kodhasil){
+    global $db;
+	$sqlt2 = "SELECT * FROM kod_cucu";
+	$sqlt2 .= " WHERE kod = '$kodhasil'";
+	$queryt2 = $db->query($sqlt2);
+	$isExist2=$queryt2->num_rows;
+	
+	
+	if($isExist2>0){
+		$perkara=$rowt2->perkara;
+		
+		$sqladdkodhasil = "INSERT INTO kodhasil";
+		$sqladdkodhasil.= "(kodkategori,kodhasil,perkara)";
+		$sqladdkodhasil.= " VALUES ('','$kodhasil','$perkara')";
+		$queryaddkodhasil = $db->query($sqladdkodhasil);
+		
+	}else{
+		$perkara = "tiada";
+
+		
+	}
+	
+	//echo $sqladdkodhasil;
+	
+	
+}
+
+	
+
+
+
+
+
+
+
+
+function checkupdatedInput($id_ahndetails,$medan){
+		
+    global $db;
+	$sql="select * from ahndetails_log where id_ahndetails='$id_ahndetails'";
+	$sql.=" AND medan ='$medan'";//0-anggaran,1-anggaran disemak
+	$sql.=" ORDER BY id DESC LIMIT 1";
+	$query = $db->query($sql);
+	$isExist=$query->num_rows;
+	if($isExist>0){
+		$row   = $query->fetch_assoc();
+		$anggarandisemak_before=$row['value1'];
+	}else{
+		$anggarandisemak_before =0;
+	}
+	
+			 
+	
+	return $anggarandisemak_before;
+}
+
+
+
+function year(){
+	
+	$i=0;
+	$year =array();
+	for($y=date("Y")-3; $y<=date("Y"); $y++){
+		$i++;
+		 $year[$i] =  $y;
+		 
+		 
+		//echo $year[$i]."<br>";
+	}
+	
+	
+}
+
+function getTotal($kodhasil,$kodptj,$year){
+	global $db;
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	error_reporting(E_ALL);
+	
+	$kodptj = "20600000";
+
+	$total =0;
+	$sqlcheck = "select *";
+	$sqlcheck .= " FROM terimaandetails_full where kodptj = '$kodptj' AND tahun ='2020'";
+	$sqlcheck .=" AND `kodhasil` ='$kodhasil'";
+	$qcheck = $db->query($sqlcheck);
+	$isExist=$qcheck->num_rows;
+
+	
+		 if($isExist > 0) {
+		 	$row = $qcheck->fetch_assoc();
+			$sebenar=$row['sebenar'];
+
+			 
+		 }else{
+ 		 	$sebenar=0;
+ 		 }
+		
+		$total = $total + $sebenar;
+
+	
+	return $total;
+	
+}
+
+function get_jum_every_year($kodkategori, $kodjabatan, $kodptj, $year) {
+//function get_jum_every_year() {
+
+	
+	$kodptj = "20600000";
+	$total = 0;
+	$sqlcheck = "select *";
+	$sqlcheck .= " FROM terimaandetails_full where kodptj = '$kodptj' AND tahun ='2020'";
+	$sqlcheck .=" AND `kodhasil` ='$kodkategori'";
+
+	return $kodkategori;
+
+}
+
+//muka depan
+$html = '
+<div style="margin-top: 100px;"></div>
+<div style="text-align: center; margin: auto;">
+    <h1>LAMPIRAN C</h1>
+</div>
+<div style="margin-bottom: 100px;"></div>
+<div style="border: 1px solid black; padding: 30px; margin: 0 auto; width: 400px;">
+    <div style="text-align: center; margin: auto;">
+        <p style="margin-bottom: 0;"><b>FORMAT CADANGAN ANGGARAN HASIL</b></p>
+        <p style="margin-top: 0; margin-bottom: 0;"><b>TAHUN 2024</p></p>
+    </div>
+    <div style="margin-bottom: 30px;"></div>
+    <div style="text-align: center; margin: auto;">
+        <p style="margin-bottom: 0;"><b>AHN 1(ANGGARAN HASIL MENGIKUT</b></p>
+        <p style="margin-top: 0; margin-bottom: 0;"><b>OBJEK AM/OBJEK SEBAGAI)</p></p>
+    </div>
+    <div style="margin-bottom: 30px;"></div>
+    <div style="text-align: center; margin: auto;">
+        <p style="margin-bottom: 0;"><b>AHN 2(ANGGARAN HASIL MENGIKUT</b></p>
+        <p style="margin-top: 0; margin-bottom: 0;"><b>OBJEK LANJUT)</p>
+    </div>
+</div>
+';
+
+$html .= '<div style="page-break-before: always;"></div>';
+// $html .= '<style>@page { size: A4 landscape; }</style>';
+
+//ahn 1
+$html .= '
+<div style="text-align: center;">
+    <p style="margin-bottom: 2px; font-weight: bold; font-size: 12px;">CADANGAN ANGGARAN HASIL TAHUN 2024</p>
+    <p style="margin-top: 0; margin-bottom: 0; font-weight: bold; font-size: 12px;">ANGGARAN HASIL MENGIKUT OBJEK AM/OBJEK SEBAGAI</p>
+</div>
+
+<br>
+
+<div>
+    <p style="margin-bottom: 0; font-weight: normal; font-size: 10px;">JABATAN : PEJABAT DAERAH & TANAH KUALA SELANGOR</p>
+    <p style="margin-top: 0; font-weight: normal; font-size: 10px;">PUSAT TANGGUNGJAWAB (PTJ) : PEJABAT DAERAH & TANAH KUALA SELANGOR / PEJABAT DAERAH & TANAH KUALA SELANGOR (HASIL)</p>
+</div>
+
+<style>
+    table, th, td {
+        border: 1px solid black;
+        font-size: 10px;
+        border-collapse: collapse;
+    }
+    th {
+        background-color: rgb(215, 176, 252);
+    }
+    .clr {
+        background-color: rgb(255, 255, 162);
+    }
+    .jumlah {
+        background-color: rgb(255, 201, 131);
+    }
+</style>
+
+<div style="margin-top: 0;">
+    <table style="width:100%;">
+        <thead>
+            <tr>
+                <th rowspan="3" colspan="2">PERIHAL</th>
+                <th colspan="4">TAHUN SEBELUM</th>
+                <th colspan="4">SEMAKAN PRESTASI HASIL SEMASA TAHUN 2023</th>
+                <th rowspan="2" colspan="2">ANGGARAN 2024</th>
+                <th class="clr" rowspan="3" >RUMUSAN ANALISA PRESTASI HASIL (KEGUNAAN URUS SETIA)
+                </th>
+            </tr>
+            <tr>
+                <th>2020</th>
+                <th>2021</th>
+                <th colspan="2">2022</th>
+                <th colspan="4">2023</th>
+            </tr>
+            <tr>
+                <th>SEBENAR 31 DIS</th>
+                <th>SEBENAR 31 DIS</th>
+                <th>SEBENAR 31 DIS</th>
+                <th>SEBENAR 31 MAC</th>
+                <th>ANGGARAN ASAL</th>
+                <th>SEBENAR 31 MAC</th>
+                <th>PERATUS</th>
+                <th class="clr">ANGGARAN DISEMAK (Disahkan Oleh PTJ)</th>
+                <th class="clr">PTJ (Disahkan oleh PTJ)</th>
+                <th>PERBENDAHARAAN (Tindakan Jika Setuju)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="13">HASIL BUKAN CUKAI</td>
+            </tr>
+            <tr>
+                <td>81101</td>
+                <td>TERIMAAN BALIK BAYARAN</td>
+                <td>Tiada rekod</td>
+                <td>Tiada rekod</td>
+                <td>582.77</td>
+                <td>582.77</td>
+                <td>Tiada rekod</td>
+                <td>Tiada rekod</td>
+                <td>0.00</td>
+                <td>0</td>
+                <td>0</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>81101</td>
+                <td>TERIMAAN BALIK BAYARAN</td>
+                <td>Tiada rekod</td>
+                <td>Tiada rekod</td>
+                <td>582.77</td>
+                <td>582.77</td>
+                <td>Tiada rekod</td>
+                <td>Tiada rekod</td>
+                <td>0.00</td>
+                <td>0</td>
+                <td>0</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="jumlah">
+                <td colspan="2">JUMLAH HASIL BUKAN CUKAI (I)</td>
+                <td>Tiada rekod</td>
+                <td>Tiada rekod</td>
+                <td>582.77</td>
+                <td>582.77</td>
+                <td>Tiada rekod</td>
+                <td>Tiada rekod</td>
+                <td>0.00</td>
+                <td>0</td>
+                <td>0</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <br>
+    <div>
+        <p style="margin-bottom: 0; font-weight: normal; font-size: small;"><b>PENGESAHAN OLEH :</b></p>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <b>..............................................................</b>
+        <p style="margin-bottom: 0; font-weight: normal; font-size: small;">COP PEGAWAI PENGAWAL</p>
+        <br>
+        <p style="margin-bottom: 0; font-weight: normal; font-size: small;">TARIKH :</p>
+    </div>
+</div>
+';
+
+
+// Add a page break and set landscape orientation for page 4
+$html .= '<div style="page-break-before: always;"></div>';
+$html .= '<style>@page { size: A4 landscape; }</style>';
+
+// =====================================================================================================================================
+//start template anggaran (ahn2)
+
+
+$kodjabatan = $_GET['kodjabatan'];
+$id_ah = $_GET['id_ah'];
+
+$sql="select * from ah where id='$id_ah'";
+$query = $db->query($sql);
+$rowah   = $query->fetch_assoc();
+
+$ah_status = $rowah['isLock'];
+
+
+$sql = "SELECT * FROM template_anggaran";
+$sql .= " WHERE kodjabatan = '$kodjabatan'";
+$sql .= " AND status = '1'";
+
+if(!empty($_GET['kodptj'])) {
+	$kodptj = $_GET['kodptj'];
+	$sql .= " AND kodptj='$kodptj'";
+}
+
+$sql .= " GROUP BY kodhasil";
+$sql .= " ORDER BY kodhasil_order ASC";
+
+
+$qt = $db->query($sql);
+$bilangankodhasil = 0;
+
+// $output =""; 
+
+$i=0;
+$year =array();
+for($y=date("Y")-3; $y<=date("Y"); $y++) {
+	$i++;
+	$year[$i] =  $y;
+}
+
+
+$html .= '
+<div style="text-align: center;">
+    <p style="margin-bottom: 2px; font-weight: bold; font-size: 12px;">CADANGAN ANGGARAN HASIL TAHUN 2024</p>
+    <p style="margin-top: 0; margin-bottom: 0; font-weight: bold; font-size: 12px;">ANGGARAN HASIL MENGIKUT OBJEK AM/OBJEK SEBAGAI</p>
+</div>
+
+<br>
+
+<div>
+    <p style="margin-bottom: 0; font-weight: normal; font-size: 10px;">JABATAN : PEJABAT DAERAH & TANAH KUALA SELANGOR</p>
+    <p style="margin-top: 0; font-weight: normal; font-size: 10px;">PUSAT TANGGUNGJAWAB (PTJ) : PEJABAT DAERAH & TANAH KUALA SELANGOR / PEJABAT DAERAH & TANAH KUALA SELANGOR (HASIL)</p>
+</div>
+
+<style>
+    table, th, td {
+        border: 1px solid black;
+        font-size: 10px;
+        border-collapse: collapse;
+    }
+    th {
+        background-color: rgb(215, 176, 252);
+    }
+    .clr {
+        background-color: rgb(255, 255, 162);
+    }
+    .kepala {
+        background-color: rgb(159, 255, 226);
+    }
+    .jumlah {
+        background-color: rgb(255, 201, 131);
+    }
+</style>
+
+<div style="margin-top: 0;">
+    <table style="width:100%;">
+        <thead>
+            <tr>
+                <th rowspan="3" colspan="2">PERIHAL</th>
+                <th colspan="4">TAHUN SEBELUM</th>
+                <th colspan="4">SEMAKAN PRESTASI HASIL SEMASA TAHUN 2023</th>
+                <th rowspan="2" colspan="2">ANGGARAN 2024</th>
+                <th class="clr" rowspan="3" >PERINCIAN PERKIRAAN ANGGARAN HASIL BERASASKAN KADAR CUKAI, CAJ, FI, JUALAN, SEWAAN -DLL / TREND PERMOHONAN / KELULUSAN / KUANTITI / UNIT
+                    (Diisikan Oleh PTJ)
+                </th>
+                <th class="clr" rowspan="3" >PENJELASAN PENINGKATAN/PENURUNAN ANGGARAN HASIL
+                    (Diisikan Oleh PTJ)
+                </th>
+            </tr>
+            <tr>
+                <th>'.$year[1].'</th>
+                <th>'.$year[2].'</th>
+                <th colspan="2">'.$year[3].'</th>
+                <th colspan="4">2023</th>
+            </tr>
+            <tr>
+                <th>SEBENAR 31 DIS</th>
+                <th>SEBENAR 31 DIS</th>
+                <th>SEBENAR 31 DIS</th>
+                <th>SEBENAR 31 MAC</th>
+                <th>ANGGARAN ASAL</th>
+                <th>SEBENAR 31 MAC</th>
+                <th>PERATUS</th>
+                <th class="clr">ANGGARAN DISEMAK (Disahkan Oleh PTJ)</th>
+                <th class="clr">PTJ (Disahkan oleh PTJ)</th>
+                <th>PERBENDAHARAAN (Tindakan Jika Setuju)</th>
+            </tr>
+        </thead>
+        <tbody>';
+
+$medan = 1;
+$medan2 = 2;
+
+while ($rowst = $qt->fetch_assoc()){
+
+    $ekodhasil = $rowst['kodhasil'];//$ekod;
+	$ekodkategori = $rowst['kodkategori'];
+	$ekodhasil_order = $rowst['kodhasil_order'];
+
+	$template_anggaran_id_kodhasil = $rowst['id'];
+
+	$ekodlevel = $rowst['level'];
+	$kodptj = $rowst['kodptj'];
+	$kodjabatan = $rowst['kodjabatan'];
+	$status = $rowst['status'];
+
+    $sqlcheck = "select * from ahndetails where id_ah ='$id_ah' AND kodhasil='$ekodhasil'";
+    $qcheck = $db->query($sqlcheck);
+
+    $isExist = $qcheck->num_rows;
+  
+    if($isExist<1) {
+        $statuspapar = 1;
+        $level = 0;
+        $sqladd ="INSERT INTO ahndetails (`id_ah`,`kodjabatan`,`kodptj`,`kodkategori`,`kodhasil`,`anggarandisemak`,`anggaran`,`flag`,`kodtype`,`level`,`kodhasil_order`,`statuspapar`)VALUES('$id_ah','$kodjabatan','$kodptj','$ekodkategori','$ekodhasil','0','0','0','0','$level','$ekodhasil_order','$statuspapar')";
+        $qadd = $db->query($sqladd);
+
+        echo $sqladd."<br>";
+    } else {
+        //delete
+    // $sqldel ="DELETE FROM ahndetails WHERE kodhasil='$ekodhasil'";
+    //	$qdel = $db->query($sqldel);
+        
+        
+    }
+
+    $sqlstatuspapar ="UPDATE ahndetails SET statuspapar='1',kodkategori='$ekodkategori',kodhasil_order='$ekodhasil_order',level='$ekodlevel' WHERE id_ah='$id_ah' AND kodhasil='$ekodhasil'";
+    $qpapar = $db->query($sqlstatuspapar);
+
+    $sql = "SELECT DISTINCT id,kodhasil,kodjabatan,kodkategori,id_ah,kodptj,kodhasil_order,level,anggaran,anggarandisemak,flag,catatan1,catatan2 FROM ahndetails";
+	$sql .= " WHERE kodjabatan = '$kodjabatan'";
+	$sql .= " AND id_ah = '$id_ah'";
+	$sql .= " AND kodhasil ='$ekodhasil'";
+
+
+    if(!empty($_GET['kodptj'])){
+		$kodptj = $_GET['kodptj'];
+		$sql .= " AND kodptj='$kodptj'";
+	 }else{
+		 
+		 $kodptj ="";
+	 }
+	
+	$sql .= " GROUP BY kodhasil";
+
+    $query2 = $db->query($sql);
+	
+	
+	$jumlah_anggaran = 0;
+	$jumlah_anggarandisemak = 0;
+	$level=$ekodlevel;
+
+	$jumlah_year1 = 0;
+	$jumlah_year2 = 0;
+	$jumlah_year3 = 0;
+	$jumlah_year3_2 = 0;
+
+
+    //KOD CUCU
+    while ($rows = $query2->fetch_assoc()) {
+				 
+        $id_ahndetails=$rows['id'];
+        $lblcheckupdatedInput=checkupdatedInput($id_ahndetails,$medan);
+        $lblcheckupdatedInput2=checkupdatedInput($id_ahndetails,$medan2);//anggaran disemak
+
+
+        $anggaran = $rows['anggaran'];
+        $anggarandisemak = $rows['anggarandisemak'];
+        $kodkategori = $rows['kodkategori'];
+        
+
+        if(!is_numeric($anggaran)) {
+
+            $anggaran = floatval(str_replace('RM', '', $anggaran));
+        }
+
+        if(!is_numeric($anggarandisemak)) {
+
+            $anggarandisemak = floatval(str_replace('RM', '', $anggarandisemak));
+        }
+
+        
+        $jumlah_anggaran = $jumlah_anggaran + $anggaran;
+        $jumlah_anggarandisemak = $jumlah_anggarandisemak + $anggarandisemak;
+
+
+        $ischeck = "";
+        if($rows['flag'] ==1){ 
+            $ischeck="checked";
+            $stylecheck = "style='background-color: red'";
+        }else{
+            $stylecheck ="";
+            
+        }
+
+        // $output.="<tbody ".$stylecheck.">";
+        
+        $kodhasil=$rows['kodhasil'];
+
+
+        if($level == 1){ 
+					
+            $total_year_1 = 0;
+            $total_year_2 = 0;
+            $total_year_3 = 0;
+            $total_year_4 = 0;
+            
+            //KODUTAMA
+            //=================================================//
+
+            $html .= '<tr class="kepala">';
+            $html .= '<td>'.$rows['kodhasil'].'</td>';
+            $html .= '<td>'.getName($rows['kodhasil']).'</td>';
+            $html .= "<td colspan='12'></td>";
+            $html .= "</tr>";
+            //=================================================//
+
+        } else if($level == 0) {
+
+
+        $html .= '
+            <tr>';
+
+            $html .= '<td><input type="hidden" name="id" id="id" value="'.$rows['id'].'">'.$rows['kodhasil'].'</td>'; //kodhasil
+
+            $html .= '<td>'.getName($rows['kodhasil']).'</td>'; //perihal
+
+            //2020
+            $year_1_sebenar = getTerimaanPast($year[1], $kodjabatan, $rows['kodhasil'],$q=0,$kodptj);
+												
+            if($year_1_sebenar > 0) {
+                $year_1_sebenar = $year_1_sebenar;
+            } else {
+                $year_1_sebenar =$year_1_sebenar;
+            }
+                
+            $html .= '<td>'.$year_1_sebenar.'</td>';
+
+
+            //2021
+            $year_2_sebenar = getTerimaanPast($year[2], $kodjabatan, $rows['kodhasil'],$q=0,$kodptj);
+												
+            if($year_2_sebenar > 0) {
+                $year_2_sebenar = number_formatting($year_2_sebenar);
+            } else {
+                $year_2_sebenar =$year_2_sebenar;
+            }
+
+            $html .= '<td>'.$year_2_sebenar.'</td>';
+                
+            //2022 (1)
+            $year_3_sebenar1 = getTerimaanPast($year[3], $kodjabatan, $rows['kodhasil'],$q=1,$kodptj);
+									
+            if($year_3_sebenar1 > 0) {
+                $year_3_sebenar1 = number_formatting($year_3_sebenar1);
+            }else{
+                $year_3_sebenar1 =$year_3_sebenar1;
+            }
+
+            $html .= '<td>'.$year_3_sebenar1.'</td>';
+                
+            //2022(2)
+            $year_3_sebenar2 = getTerimaanPast($year[3], $kodjabatan, $rows['kodhasil'],$q2=2,$kodptj);
+            
+            if($year_3_sebenar2 > 0) {
+                $year_3_sebenar2 = number_formatting($year_3_sebenar2);
+            } else {
+                $year_3_sebenar2 =$year_3_sebenar2;
+            }
+
+            $html .= '<td>'.$year_3_sebenar2.'</td>';
+
+            //2023(asal)
+            $year_4_asal = getTerimaanPastAsal($year[4], $kodjabatan, $rows['kodhasil'],$q=0,$kodptj);
+            
+            $year_4_asal_numeric = $year_4_asal;
+
+            if($year_4_asal > 0) {
+                $year_4_asal = number_formatting($year_4_asal);
+            } else {
+                $year_4_asal =$year_4_asal;
+            }
+                
+            $html .= '<td>'.$year_4_asal.'</td>';
+                
+
+            //2023(sebenar)
+            $year_4_sebenar = getTerimaanPast($year[4], $kodjabatan, $rows['kodhasil'],$q=0,$kodptj);
+								  
+            $year_4_sebenar_numeric = $year_4_sebenar;
+            
+            if($year_4_sebenar > 0) {
+                $year_4_sebenar = number_formatting($year_4_sebenar);
+            } else {
+                $year_4_sebenar =$year_4_sebenar;
+            }
+
+            $html .= '<td>'.$year_4_sebenar.'</td>';
+
+            //untuk SUM setiap column
+            $year_2_sebenar = preg_replace("/[^0-9&.]/", "", $year_2_sebenar);
+            $year_3_sebenar1 = preg_replace("/[^0-9&.]/", "", $year_3_sebenar1);
+            $year_3_sebenar2 = preg_replace("/[^0-9&.]/", "", $year_3_sebenar2);
+
+            $total_year_1 = $total_year_1 + $year_1_sebenar;//penting
+            $total_year_2 = $total_year_2 + $year_2_sebenar;
+            $total_year_3 = $total_year_3 + $year_3_sebenar1;
+            $total_year_4 = $total_year_4 + $year_3_sebenar2;
+
+            $tahun_semasa = date("Y");
+
+            if( ($year_4_sebenar_numeric > 0) && ($year_4_asal_numeric > 0) ) {
+                $peratus ="";
+            } else {
+                $peratus ="";
+            }
+
+            $tiada_rekod = "<font color='red'>Tiada rekod</font>";
+
+            //peratus
+            if($year_4_asal_numeric == $tiada_rekod || $year_4_sebenar_numeric == $tiada_rekod ) {
+
+                $peratus = "0";
+                $peratus = number_formatting($peratus);
+
+            } else {
+
+                if($year_4_asal_numeric > 0) {
+
+                    //$calc = (float)($year_4_asal_numeric / $year_4_sebenar_numeric ) * 100;
+                    $calc = (float)($year_4_sebenar_numeric / $year_4_asal_numeric ) * 100;
+
+                    $peratus = number_formatting($calc);;
+                } else {
+                    
+                    $peratus = "0";
+                    $peratus = number_formatting($peratus);
+                }
+            }
+
+            $html .= '<td>'.$peratus.'</td>';
+
+            if($lblcheckupdatedInput > 0) {
+                $prevVal="";
+            } else {
+                $prevVal="";
+            }
+
+            if($lblcheckupdatedInput2 > 0) {
+                $prevVal="";
+            } else {
+                $prevVal2="";
+            }
+
+            $html.="
+            <script>				
+                $('.currency').on({
+                    keyup: function() {
+                        formatCurrency($(this));
+                    },
+                    blur: function() { 
+                        formatCurrency($(this), 'blur');
+                    }
+                });
+            </script>";
+
+            //anggaran disemak
+            //========================================================================================
+            $anggarandisemak = number_format($anggarandisemak);
+            $html .= '<td>'.$anggarandisemak.'</td>';
+
+            //anggaran
+            //========================================================================================
+            $anggaran=number_format($anggaran);
+            $html .= '<td>'.$anggaran.'</td>';
+
+                
+            $html .= '<td></td>';
+            $html .= '<td>'.$rows['catatan1'].'</td>';
+            $html .= '<td>'.$rows['catatan2'].'</td>';
+            $html .= '</tr>';
+
+
+        } else {
+
+// TOTAL ROW
+// ===================================================================================================
+
+            $jumlah=paparRowSpecial($id_ah,$kodkategori);
+            $jumlahAnggaranDisemak=number_format($jumlah['anggarandisemak']);
+            $jumlahAnggaran=number_format($jumlah['anggaran']);
+
+
+            $html .= '<tr class="jumlah">';
+            $html .= '<td>'.$rows['kodhasil'].'</td>';
+            $html .= '<td>'.getName($rows['kodhasil']).'</td>';
+
+            $total_col_2020=getTotal($kodhasil,$kodptj,"2020");
+            $kodhasilval=intval($rows['kodhasil']);
+
+            $html .= '<td>'.number_formatting($total_year_1).'</td>';
+            $html .= '<td>'.number_formatting($total_year_2).'</td>';
+            $html .= '<td>'.number_formatting($total_year_3).'</td>';
+            $html .= '<td>'.number_formatting($total_year_4).'</td>';
+            $html .= '<td>Tiada rekod</td>';
+            $html .= '<td>Tiada rekod</td>';
+            $html .= '<td>0.00</td>';
+
+            $html .= '<td>'.$jumlahAnggaranDisemak.'</td>';
+            $html .= '<td>'.$jumlahAnggaran.'</td>';
+            $html .= '<td colspan="3"></td>';
+            $html .= '</tr>';
+
+            $total_year_1 = 0;
+            $total_year_2 = 0;
+            $total_year_3 = 0;
+            $total_year_4 = 0;
+        }
+
+        $bilangankodhasil = $bilangankodhasil + 1;
+
+    }//foreach ahndetails
+}//foreach template_anggaran
+
+$html .= '
+        </tbody>
+    </table>
+</div>
+';
+
+$html .= "<input type='hidden' id='baseurl' value='http://eahn.selangor.gov.my/v2/index.php/'>";
+$html.="<br>";
+
+if($ah_status == 0){
+$html .="<script src='http://eahn.selangor.gov.my/v2/assets/custom/anggaran.js'></script>";
+}
+
+$html .="<script src='http://eahn.selangor.gov.my/v2/assets/custom/anggaran.js'></script>";
+
+
+
+$html.="
+
+<script>
+
+function getAmount(nn){
+	  var sum_value = 0;
+	  
+	  
+	  $('.anggarandisemak_'+nn).each(function(){
+		sum_value += parseInt(+$(this).val().replace(/,/g,''));
+
+
+
+	  })
+	  
+	  var display = sum_value.toLocaleString('en-US');
+	  
+	  $('.jumlah_anggarandisemak_'+nn).val(display);
+
+	  
+ }
+ 
+ 
+ function getAmount2(nn){
+	   var sum_value = 0;
+	   $('.anggaran_'+nn).each(function(){
+		 sum_value += parseInt(+$(this).val().replace(/,/g,''));
+
+	   })
+	   
+	   var display2 = sum_value.toLocaleString('en-US');
+		 $('.jumlah_anggaran_'+nn).val(display2);
+
+  }
+ 
+ function onloadVal(){
+	 
+	 
+ }
+
+</script>
+";
+
+$dompdf->loadHtml($html);
+$dompdf->setPaper('A4', 'landscape');
+$dompdf->render();
+
+// Output the generated PDF to Browser
+header('Content-Type: application/pdf');
+header('Content-Disposition: inline; filename="document.pdf"'); // This will display the PDF in the browser
+
+echo $dompdf->output();
+?>
